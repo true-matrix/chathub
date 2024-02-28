@@ -162,16 +162,45 @@ background: #1d813e;
   align-items: center;
   height: 100%;
   padding: 8px;
+  position: relative;
 }
 
 .nav-icons li {
   height: 60px;
   display: flex;
   align-items: center;
+  width: 100%;
+  justify-content: center;
+  position: relative;
 }
 
 .profile-user-dropdown button img{ 
   height: 55px;
   width: 55px;
   object-fit: cover;
+}
+
+
+.nav-icons li.nav-item a.active:after {
+  content: "";
+  height: 25px;
+  width: 3px;
+  display: block;
+  background: #42ab65;
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-14.5px);
+}
+
+.nav-icons li.nav-item a.nav-link {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-icons li.nav-item a.nav-link.active  img,.nav-icons li.nav-item a.nav-link:hover img {
+  filter: invert(57%) sepia(48%) saturate(540%) hue-rotate(87deg) brightness(92%) contrast(83%); 
 }
