@@ -204,3 +204,61 @@ background: #1d813e;
 .nav-icons li.nav-item a.nav-link.active  img,.nav-icons li.nav-item a.nav-link:hover img {
   filter: invert(57%) sepia(48%) saturate(540%) hue-rotate(87deg) brightness(92%) contrast(83%); 
 }
+
+
+a.dropdown-item,div.dropdown-item .custom-pointer{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 6px 6px 10px;
+  margin-bottom: 3px;
+  border-radius: 6px;
+}
+
+a.dropdown-item:hover , div.dropdown-item .custom-pointer:hover{
+background: whitesmoke;
+cursor: pointer;
+}
+
+.react-confirm-alert-overlay {
+  background: rgb(55 55 55 / 22%);
+  backdrop-filter: blur(2px);
+  z-index: 999;
+}
+.react-confirm-alert{
+  width: 100%;
+  max-width: 400px;
+}
+.logout-poppup-modal-container{
+  border-radius: 10px;
+  text-align: center;
+}
+
+.logout-poppup-modal-container .modal-header.d-block {
+  background-color: #42ab65;
+  padding: 10px;
+}
+
+.logout-poppup-modal-container .confirmFooter button{
+  padding: 5px 28px;
+  background-color: #e9e9e9;
+  border-radius: 7px;
+  margin: 3px;
+}
+
+.logout-poppup-modal-container .confirmFooter button.close{
+  background-color: #6f6f6f;
+  color:#fff; 
+}
+.logout-poppup-modal-container .confirmFooter button.close:hover{
+  background-color: #414141;
+  transition-duration: .3s;
+}
+.logout-poppup-modal-container .confirmFooter button.logout{
+  background-color: red;
+  color:#fff;
+}
+.logout-poppup-modal-container .confirmFooter button.logout:hover{
+  background-color: rgb(172, 0, 0);
+transition-duration: .3s;
+}

@@ -246,7 +246,7 @@ const GroupChatDetailsModal: React.FC<{
                           {groupDetails?.participants.slice(0, 3).map((p) => {
                             return (
                               <img
-                                className="w-24 h-24 -ml-16 rounded-full outline outline-1 outline-secondary"
+                                className="w-24 h-24 -ml-16 rounded-full outline outline-4 outline-secondary"
                                 key={p._id}
                                 src={p.avatar.url}
                                 alt="avatar"

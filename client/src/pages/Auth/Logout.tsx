@@ -33,7 +33,7 @@ export const Logout = () => {
   return (
     <>
     { 
-       <div onClick={() => logoutMe()} className="dropdown-item d-flex align-items-center justify-content-between custom-pointer">Logout <img src={logout_img} /></div> 
+       <div onClick={() => logoutMe()} className="custom-pointer">Logout <img src={logout_img} /></div> 
     }
     </>
   )

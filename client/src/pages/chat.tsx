@@ -398,7 +398,7 @@ const ChatPage = () => {
             <div className="flex-lg-column my-0 sidemenu-navigation">
               <ul className="nav nav-icons" role="tablist">
                 <li className="nav-item">
-                  <a className="nav-link active" href="/chat">
+                  <a className="nav-link active" href="/chat"  data-tooltip-target="tooltip-top" data-tooltip-placement="right">
                     <img src={chat} />
                   </a>
                 </li> 
@@ -426,11 +426,10 @@ const ChatPage = () => {
                                 <img crossOrigin="anonymous" src={user_image} alt="" className="profile-user rounded-full"/>
                             </button>} position="top left" closeOnDocumentClick>
                         <div>
-                            <Link to={'/profile'} className="dropdown-item d-flex align-items-center justify-content-between">Profile <img src={profile} /> </Link >
-                            <Link to={'/settings'} className="dropdown-item d-flex align-items-center justify-content-between">Settings <img src={setting} /> </Link>
-                            {/* <Link to={'/'} className="dropdown-item d-flex align-items-center justify-content-between">Change Password <i className="bx bx-lock-open text-muted ms-1"></i></Link> */}
+                            <Link to={'/profile'} className="dropdown-item">Profile <img src={profile} /> </Link >
+                            <Link to={'/settings'} className="dropdown-item">Settings <img src={setting} /> </Link> 
                             <div className="dropdown-divider"></div>
-                            <div><Logout /></div>
+                            <div className="dropdown-item"><Logout /></div>
                         </div>
                         </Popup>
                 </li>
