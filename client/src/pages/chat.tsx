@@ -6,7 +6,7 @@ import {
 /// <reference lib="node" />
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-// import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { Logout } from './Auth/Logout';
@@ -38,6 +38,8 @@ import {
   getChatObjectMetadata,
   requestHandler,
 } from "../utils";
+import { useGlobal } from "../context/GlobalContext";
+import Sidebar from "./Common/Sidebar";
 
 const CONNECTED_EVENT = "connected";
 const DISCONNECT_EVENT = "disconnect";
@@ -55,6 +57,7 @@ const ChatPage = () => {
   // Import the 'useAuth' and 'useSocket' hooks from their respective contexts
   const { user } = useAuth();
   const { socket } = useSocket();
+  const { activeButton, setActiveButton } = useGlobal();
 
   // Create a reference using 'useRef' to hold the currently selected chat.
   // 'useRef' is used here because it ensures that the 'currentChat' value within socket event callbacks
@@ -84,6 +87,9 @@ const ChatPage = () => {
   const [localSearchQuery, setLocalSearchQuery] = useState(""); // For local search functionality
 
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]); // To store files attached to messages
+
+
+  // const [activeButton, setActiveButton] = useState("chat");
 
   /**
    *  A  function to update the last message of a specified chat to update the chat list
@@ -307,7 +313,20 @@ const ChatPage = () => {
 
 
   // Function to handle button click
- 
+  const handleButtonClick = (buttonId : any) => {  
+    // if(buttonId !== "chat") {
+    //     setActiveButton(buttonId === activeButton ? "chat" : buttonId);
+    // }
+    if(buttonId === "chat"){
+        setActiveButton(buttonId);
+    }
+    if(buttonId === "contacts" || buttonId === "profile" || buttonId === "settings"){
+      setActiveButton(buttonId);
+    }
+    else {
+        setActiveButton("chat")
+    }
+  };
 
 
   useEffect(() => {
@@ -388,6 +407,7 @@ const ChatPage = () => {
 
       <div className="w-full justify-between items-stretch h-screen flex flex-shrink-0 overflow-hidden"> 
       {/* Left Sidebar Tabs */}
+      <Sidebar/>
       <div className="flex-shrink-0 tabs-sidebar"> 
         <div className="side-menu-icons"> 
             <div className="navbar-brand-box">
@@ -438,9 +458,11 @@ const ChatPage = () => {
 
         </div> 
       </div>
+      
+      
 
       {/* Chat Sidebar */}
-        <div className="w-1/3 relative ring-white overflow-y-auto px-0">
+      {activeButton === "chat" && <div className="w-1/3 relative ring-white overflow-y-auto px-0">
           <div className="z-10 w-full sticky top-0 bg-white text-sm flex justify-between items-center gap-3 user-searchbar">
             <Input
               placeholder="Search user or group... "
@@ -506,10 +528,10 @@ const ChatPage = () => {
                 );
               })
           )}
-        </div>
+        </div>}
 
         {/* Chat Body */}
-        <div className="w-2/3 border-l-[0.1px] border-secondary chat-background">
+        {activeButton === "chat" && <div className="w-2/3 border-l-[0.1px] border-secondary chat-background">
           {currentChat.current && currentChat.current?._id ? (
             <>
               <div className="p-4 py-3 sticky top-0 z-20 flex justify-between items-center w-full border-b-[0.1px] border-secondary user-chat-header">
@@ -665,7 +687,7 @@ const ChatPage = () => {
               No chat selected
             </div>
           )}
-        </div>
+        </div>}
       </div>
     </>
   );
