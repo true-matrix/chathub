@@ -555,7 +555,7 @@ const ChatPage = () => {
                               key={participant._id}
                               src={participant.avatar.url}
                               className={classNames(
-                                "w-9 h-9 border-[1px] border-white rounded-full absolute outline outline-4 outline-white",
+                                "w-9 h-9 border-[1px] border-white rounded-full absolute outline outline-1 outline-white",
                                 i === 0
                                   ? "left-0 z-30"
                                   : i === 1
