@@ -59,7 +59,7 @@ const ChatItem: React.FC<{
           " px-4 bg-light-gray",
           isActive ? "border-[1px] border-success active bg-success-light" : "",
           unreadCount > 0
-            ? " bg-success/20 font-bold"
+            ? "font-bold"
             : ""
         )}
       >
