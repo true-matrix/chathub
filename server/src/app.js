@@ -29,7 +29,7 @@ const app = express();
 
 const httpServer = createServer(app);
 
-app.use(express.static(buildpath))
+// app.use(express.static(buildpath))
 
 const io = new Server(httpServer, {
   pingTimeout: 60000,
