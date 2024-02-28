@@ -5,10 +5,11 @@ import {
 } from "@heroicons/react/20/solid";
 /// <reference lib="node" />
 import { useEffect, useRef, useState } from "react";
-// import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 // import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-// import Popup from 'reactjs-popup';
+import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
+import { Logout } from './Auth/Logout';
 import { getChatMessages, getUserChats, sendMessage } from "../api";
 import AddChatModal from "../components/chat/AddChatModal";
 import ChatItem from "../components/chat/ChatItem";
@@ -386,7 +387,7 @@ const ChatPage = () => {
       />
 
       <div className="w-full justify-between items-stretch h-screen flex flex-shrink-0 overflow-hidden"> 
-      {/* Chat Sidebar tabs */}
+      {/* Left Sidebar Tabs */}
       <div className="flex-shrink-0 tabs-sidebar"> 
         <div className="side-menu-icons"> 
             <div className="navbar-brand-box">
@@ -418,9 +419,20 @@ const ChatPage = () => {
                   </a>
                 </li>
                 <li className="nav-item dropdown profile-user-dropdown">
-                  <button className="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-describedby="popup-78477">
+                  {/* <button className="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-describedby="popup-78477">
                     <img src={user_image} alt="" className="profile-user rounded-full"/>
-                  </button>
+                  </button> */}
+                  <Popup trigger={<button className="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-describedby="popup-78477">
+                                <img crossOrigin="anonymous" src={user_image} alt="" className="profile-user rounded-full"/>
+                            </button>} position="top left" closeOnDocumentClick>
+                        <div>
+                            <Link to={'/profile'} className="dropdown-item d-flex align-items-center justify-content-between">Profile <img src={profile} /> </Link >
+                            <Link to={'/settings'} className="dropdown-item d-flex align-items-center justify-content-between">Settings <img src={setting} /> </Link>
+                            {/* <Link to={'/'} className="dropdown-item d-flex align-items-center justify-content-between">Change Password <i className="bx bx-lock-open text-muted ms-1"></i></Link> */}
+                            <div className="dropdown-divider"></div>
+                            <div><Logout /></div>
+                        </div>
+                        </Popup>
                 </li>
               </ul>
             </div>
