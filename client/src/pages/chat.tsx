@@ -6,7 +6,7 @@ import {
 /// <reference lib="node" />
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-// import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { Logout } from './Auth/Logout';
@@ -84,6 +84,9 @@ const ChatPage = () => {
   const [localSearchQuery, setLocalSearchQuery] = useState(""); // For local search functionality
 
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]); // To store files attached to messages
+
+
+  const [activeButton, setActiveButton] = useState(null);
 
   /**
    *  A  function to update the last message of a specified chat to update the chat list
@@ -307,7 +310,20 @@ const ChatPage = () => {
 
 
   // Function to handle button click
- 
+  const handleButtonClick = (buttonId : any) => {  
+    if(buttonId !== "chat") {
+        setActiveButton(buttonId === activeButton ? null : buttonId);
+    }
+    if(buttonId === "chat"){
+        setActiveButton(buttonId);
+    }
+    if(buttonId === "contacts" || buttonId === "profile" || buttonId === "settings"){
+        setActiveButton(buttonId);
+    }
+    else {
+        setActiveButton(null)
+    }
+  };
 
 
   useEffect(() => {
@@ -406,6 +422,19 @@ const ChatPage = () => {
                   <a className="nav-link" href="/profile">
                     <img src={profile} /> 
                   </a>
+                  {/* <OverlayTrigger 
+                            delay={{ hide: 150, show: 100 }} 
+                            overlay={(props) => ( 
+                            <Tooltip {...props}> 
+                                Profile 
+                            </Tooltip> 
+                            )} 
+                            placement="right" 
+                            >
+                                <NavLink to="/profile" className={activeButton === 'profile' ? 'nav-link active' : 'nav-link'} onClick={() => handleButtonClick('profile')} id="pills-user-tab" data-bs-toggle="pill" role="tab">
+                                <img src={profile} />
+                                </NavLink>
+                  </OverlayTrigger>  */}
                 </li>
                 <li className="nav-item">
                   <a className="nav-link" href="/settings">
