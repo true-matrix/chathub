@@ -11,7 +11,7 @@ import AUTH_IMG from "../assets/images/auth-img.png"
 
 
 interface FormValues {
-    username: string;
+    email: string;
     password: string;
   }
 // Component for the Login page
@@ -20,17 +20,12 @@ const LoginPage = () => {
     const { login } = useAuth();
     const [isPasswordHide, setIsPasswordHide] = useState(false);
     
-  // State to manage input data (username and password)
-//   const [data, setData] = useState({
-//     username: "",
-//     password: "",
-//   });
   const formInititalState : FormValues = {
-    username: '',
+    email: '',
     password: ''
   };
   const LoginSchema = Yup.object({
-    username: Yup.string().required('Username is required'),
+    email: Yup.string().email("Invalid Email").required('Username is required'),
     password: Yup.string().required('Password is required'),
   });
   const formik = useFormik({
@@ -38,8 +33,6 @@ const LoginPage = () => {
     initialValues: formInititalState,
     validationSchema:LoginSchema,
     onSubmit: async (values) => {
-        console.log("values",values);
-        
       // Handle the form submission here
     //  await onLogin({ url: `auth/login`, payload: values });
     await login(values);
@@ -49,20 +42,6 @@ const LoginPage = () => {
 const handlePasswordHide = () => {
     setIsPasswordHide(!isPasswordHide)
 }
-
-  
-
-  // Function to update state when input data changes
-//   const handleDataChange =
-//     (name: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
-//       setData({
-//         ...data,
-//         [name]: e.target.value,
-//       });
-//     };
-
-  // Function to handle the login process
-//   const handleLogin = async () => await login(data);
 
   return (
     <>
@@ -105,20 +84,20 @@ const handlePasswordHide = () => {
                         <form onSubmit={formik.handleSubmit}>
                         <div className="mb-3">
                             <label className="form-label">
-                            Username
+                            email
                             </label>
                             <input
                             type="text"
                             className="form-control"
-                            id="username"
-                            name="username"
-                            placeholder="Enter Username"
+                            id="email"
+                            name="email"
+                            placeholder="Enter email"
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
-                            value={formik.values.username}
+                            value={formik.values.email}
                             />
-                            {formik.touched.username && formik.errors.username ? (
-                                <div className='error-msg'>{formik.errors.username}</div>
+                            {formik.touched.email && formik.errors.email ? (
+                                <div className='error-msg'>{formik.errors.email}</div>
                                 ) : null}
                         </div>
                         <div className="mb-3">
