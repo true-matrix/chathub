@@ -28,14 +28,16 @@ const Sidebar = () => {
         setActiveButton("chat")
     }
   };
-  
+  const handleContextMenu = (e : any) => {
+    e.preventDefault();
+  };
 
   return (
     <>
     <div className="flex-shrink-0 tabs-sidebar"> 
         <div className="side-menu-icons"> 
             <div className="navbar-brand-box">
-              <a className="logo" href="/chat"><span className="logo-sm"><img src={logo} alt="Logo" className="img-fluid"/></span>
+              <a className="logo" href="/chat" onContextMenu={handleContextMenu}><span className="logo-sm"><img src={logo} alt="Logo" className="img-fluid"/></span>
               </a>
             </div>
 
@@ -45,7 +47,7 @@ const Sidebar = () => {
                   {/* <a className={activeButton === 'chat' ? 'nav-link active' : 'nav-link'} onClick={() => setActiveButton('chat')} href="/chat">
                     <img src={chat} />
                   </a> */}
-                  <NavLink to="/chat" className={activeButton === 'chat' ? 'nav-link active' : 'nav-link'} onClick={() => setActiveButton('chat')} id="pills-user-tab" data-bs-toggle="pill" role="tab">
+                  <NavLink to="/chat" className={activeButton === 'chat' ? 'nav-link active' : 'nav-link'} onClick={() => setActiveButton('chat')} onContextMenu={handleContextMenu} id="pills-user-tab" data-bs-toggle="pill" role="tab">
                                 <img src={chat} />
                   </NavLink>
                 </li> 
@@ -62,7 +64,7 @@ const Sidebar = () => {
                             )} 
                             placement="right" 
                             > */}
-                                <NavLink to="/profile" className={activeButton === 'profile' ? 'nav-link active' : 'nav-link'} onClick={() => setActiveButton('profile')} id="pills-user-tab" data-bs-toggle="pill" role="tab">
+                                <NavLink to="/profile" className={activeButton === 'profile' ? 'nav-link active' : 'nav-link'} onClick={() => setActiveButton('profile')} onContextMenu={handleContextMenu} id="pills-user-tab" data-bs-toggle="pill" role="tab">
                                 <img src={profile} />
                                 </NavLink>
                   {/* </OverlayTrigger>  */}
@@ -71,13 +73,13 @@ const Sidebar = () => {
                   {/* <a className="nav-link" href="/settings">
                      <img src={setting} /> 
                   </a> */}
-                  <NavLink to="/settings" className={activeButton === 'settings' ? 'nav-link active' : 'nav-link'} onClick={() => setActiveButton('settings')} id="pills-user-tab" data-bs-toggle="pill" role="tab">
+                  <NavLink to="/settings" className={activeButton === 'settings' ? 'nav-link active' : 'nav-link'} onClick={() => setActiveButton('settings')} onContextMenu={handleContextMenu} id="pills-user-tab" data-bs-toggle="pill" role="tab">
                                 <img src={setting} />
                  </NavLink>
                 </li>
 
                 <li className="nav-item mt-auto">
-                  <a className="nav-link" href="#">
+                  <a className="nav-link" href="#" onContextMenu={handleContextMenu}>
                     <img src={dashboard} /> 
                   </a>
                 </li>
@@ -89,8 +91,8 @@ const Sidebar = () => {
                                 <img crossOrigin="anonymous" src={user_image} alt="" className="profile-user rounded-full"/>
                             </button>} position="top left" closeOnDocumentClick>
                         <div>
-                            <Link to={'/profile'} className="dropdown-item d-flex align-items-center justify-content-between">Profile <img src={profile} /> </Link >
-                            <Link to={'/settings'} className="dropdown-item d-flex align-items-center justify-content-between">Settings <img src={setting} /> </Link>
+                            <Link to={'/profile'} className="dropdown-item d-flex align-items-center justify-content-between" onContextMenu={handleContextMenu}>Profile <img src={profile} /> </Link >
+                            <Link to={'/settings'} className="dropdown-item d-flex align-items-center justify-content-between" onContextMenu={handleContextMenu}>Settings <img src={setting} /> </Link>
                             {/* <Link to={'/'} className="dropdown-item d-flex align-items-center justify-content-between">Change Password <i className="bx bx-lock-open text-muted ms-1"></i></Link> */}
                             <div className="dropdown-divider"></div>
                             <div className='dropdown-item'><Logout /></div>
