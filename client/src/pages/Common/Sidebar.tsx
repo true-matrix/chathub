@@ -29,25 +29,6 @@ const Sidebar = () => {
     }
   };
   
-  useEffect(() => {
-    const handleMouseClick = (event:any) => {
-      // Check if the left mouse button was clicked
-      if (event.button === 0) {
-        // Prevent the default behavior of the click event
-        event.preventDefault();
-
-        // Optionally, you can add your own logic here
-      }
-    };
-
-    // Attach the event listener when the component mounts
-    document.addEventListener('mousedown', handleMouseClick);
-
-    // Clean up the event listener when the component unmounts
-    return () => {
-      document.removeEventListener('mousedown', handleMouseClick);
-    };
-  }, []);
 
   return (
     <>
@@ -112,7 +93,7 @@ const Sidebar = () => {
                             <Link to={'/settings'} className="dropdown-item d-flex align-items-center justify-content-between">Settings <img src={setting} /> </Link>
                             {/* <Link to={'/'} className="dropdown-item d-flex align-items-center justify-content-between">Change Password <i className="bx bx-lock-open text-muted ms-1"></i></Link> */}
                             <div className="dropdown-divider"></div>
-                            <div><Logout /></div>
+                            <div className='dropdown-item'><Logout /></div>
                         </div>
                         </Popup>
                 </li>
