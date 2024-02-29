@@ -408,59 +408,6 @@ const ChatPage = () => {
       <div className="w-full justify-between items-stretch h-screen flex flex-shrink-0 overflow-hidden"> 
       {/* Left Sidebar Tabs */}
       <Sidebar/>
-      <div className="flex-shrink-0 tabs-sidebar"> 
-        <div className="side-menu-icons"> 
-            <div className="navbar-brand-box">
-              <a className="logo" href="/chat"><span className="logo-sm"><img src={logo} alt="Logo" className="img-fluid"/></span>
-              </a>
-            </div>
-
-            <div className="flex-lg-column my-0 sidemenu-navigation">
-              <ul className="nav nav-icons" role="tablist">
-                <li className="nav-item">
-                  <a className="nav-link active" href="/chat"  data-tooltip-target="tooltip-top" data-tooltip-placement="right">
-                    <img src={chat} />
-                  </a>
-                </li> 
-                <li className="nav-item">
-                  <a className="nav-link" href="/profile">
-                    <img src={profile} /> 
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="/settings">
-                     <img src={setting} /> 
-                  </a>
-                </li>
-
-                <li className="nav-item mt-auto">
-                  <a className="nav-link" href="#">
-                    <img src={dashboard} /> 
-                  </a>
-                </li>
-                <li className="nav-item dropdown profile-user-dropdown">
-                  {/* <button className="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-describedby="popup-78477">
-                    <img src={user_image} alt="" className="profile-user rounded-full"/>
-                  </button> */}
-                  <Popup trigger={<button className="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-describedby="popup-78477">
-                                <img crossOrigin="anonymous" src={user_image} alt="" className="profile-user rounded-full"/>
-                            </button>} position="top left" closeOnDocumentClick>
-                        <div>
-                            <Link to={'/profile'} className="dropdown-item">Profile <img src={profile} /> </Link >
-                            <Link to={'/settings'} className="dropdown-item">Settings <img src={setting} /> </Link> 
-                            <div className="dropdown-divider"></div>
-                            <div className="dropdown-item"><Logout /></div>
-                        </div>
-                        </Popup>
-                </li>
-              </ul>
-            </div>
-
-        </div> 
-      </div>
-      
-      
-
       {/* Chat Sidebar */}
       {activeButton === "chat" && <div className="w-1/3 relative ring-white overflow-y-auto px-0">
           <div className="z-10 w-full sticky top-0 bg-white text-sm flex justify-between items-center gap-3 user-searchbar">
