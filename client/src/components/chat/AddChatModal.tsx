@@ -228,6 +228,7 @@ const AddChatModal: React.FC<{
                         return {
                           label: user.username,
                           value: user._id,
+                          avatar: user.avatar,
                         };
                       })}
                       onChange={({ value }) => {

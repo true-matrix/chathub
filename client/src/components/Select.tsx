@@ -7,9 +7,14 @@ const Select: React.FC<{
   options: {
     value: string;
     label: string;
+    avatar: {
+      url: string;
+      localPath: string;
+      _id: string;
+    };
   }[];
   value: string;
-  onChange: (value: { value: string; label: string }) => void;
+  onChange: (value: { value: string; label: string, avatar: any }) => void;
   placeholder: string;
 }> = ({ options, value, placeholder, onChange }) => {
   const [localOptions, setLocalOptions] = useState<typeof options>([]);
@@ -44,7 +49,6 @@ const Select: React.FC<{
             aria-hidden="true"
           />
         </Combobox.Button>
-
         {localOptions.length > 0 && (
           <Combobox.Options className="outline outline-[1px] outline-zinc-400 absolute z-10 mt-2 p-2 max-h-60 w-full overflow-auto rounded-2xl bg-secondary text-base shadow-lg ring-opacity-5 focus:outline-none sm:text-sm">
             {localOptions.map((option) => (
@@ -60,6 +64,13 @@ const Select: React.FC<{
               >
                 {({ active, selected }) => (
                   <>
+                  {option.avatar && (
+                      <img
+                        src={option.avatar.url}
+                        alt="Avatar"
+                        className="h-8 w-8 mr-2 rounded-full"
+                      />
+                    )}
                     <span
                       className={classNames(
                         "block truncate",
