@@ -1,5 +1,9 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
+import otpGenerator from "otp-generator";
+import mailService from "./../../../services/mailer.js"
+import otp from "./../../../templates/mail/otp.js"
+
 import { UserLoginType, UserRolesEnum } from "../../../constants.js";
 import { User } from "../../../models/apps/auth/user.models.js";
 import { ApiError } from "../../../utils/ApiError.js";
@@ -162,6 +166,50 @@ const loginUser = asyncHandler(async (req, res) => {
       )
     );
 });
+
+const sendOTP = asyncHandler(async (req,res) => {
+  const { userId } = req;
+  const new_otp = otpGenerator.generate(4, {
+    digits: true,
+    specialChars: false,
+    lowerCaseAlphabets: false, 
+    upperCaseAlphabets: false
+  });
+
+  const otp_expiry_time = Date.now() + 10 * 60 * 1000; // otp validation : 10 Mins after otp is sent
+
+  const user = await User.findByIdAndUpdate(userId, {
+    otp_expiry_time: otp_expiry_time,
+    otp_send_time: new Date(),
+    otp : new_otp.toString()
+  });
+
+  // user.otp = new_otp.toString();
+
+  await user.save({ new: true, validateModifiedOnly: true });
+
+  console.log("new_otp",new_otp);
+
+  // TODO send mail
+  mailService.sendEmail({
+    from: "packwolf2024@gmail.com",
+    // to: user.email,
+    to: "rajesh.truematrix@gmail.com",
+    // to: "otp@truematrix.ai",
+    subject: "Verification OTP",
+    html: otp(user.name, new_otp),
+    attachments: [],
+  });
+
+  res.status(200).json({
+    status: "success",
+    message: "OTP Sent Successfully!",
+    // email: req?.body?.email,
+    email: user.email,
+    otp_send_time: user.otp_send_time,
+  });
+
+})
 
 const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
