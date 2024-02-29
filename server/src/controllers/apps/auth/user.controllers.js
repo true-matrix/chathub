@@ -1,8 +1,10 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import otpGenerator from "otp-generator";
-import mailService from "./../../../services/mailer.js"
-import otp from "./../../../templates/mail/otp.js"
+import {sendMailerService} from "./../../../services/mailer.js";
+import {otp} from "./../../../templates/mail/otp.js"
+// const {sendMailerService} = require("./../../../services/mailer.js");
+// const {otp} = require("./../../../templates/mail/otp.js");
 
 import { UserLoginType, UserRolesEnum } from "../../../constants.js";
 import { User } from "../../../models/apps/auth/user.models.js";
@@ -104,7 +106,7 @@ const registerUser = asyncHandler(async (req, res) => {
     );
 });
 
-const loginUser = asyncHandler(async (req, res) => {
+const loginUser = asyncHandler(async (req, res, next) => {
   const { email, username, password } = req.body;
 
   if (!username && !email) {
@@ -137,34 +139,37 @@ const loginUser = asyncHandler(async (req, res) => {
 
   if (!isPasswordValid) {
     throw new ApiError(401, "Invalid user credentials");
+  } else {
+    req.userId = user._id;
+    next();
   }
 
-  const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
-    user._id
-  );
+  // const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
+  //   user._id
+  // );
 
-  // get the user document ignoring the password and refreshToken field
-  const loggedInUser = await User.findById(user._id).select(
-    "-password -refreshToken -emailVerificationToken -emailVerificationExpiry"
-  );
+  // // get the user document ignoring the password and refreshToken field
+  // const loggedInUser = await User.findById(user._id).select(
+  //   "-password -refreshToken -emailVerificationToken -emailVerificationExpiry"
+  // );
 
-  // TODO: Add more options to make cookie more secure and reliable
-  const options = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-  };
+  // // TODO: Add more options to make cookie more secure and reliable
+  // const options = {
+  //   httpOnly: true,
+  //   secure: process.env.NODE_ENV === "production",
+  // };
 
-  return res
-    .status(200)
-    .cookie("accessToken", accessToken, options) // set the access token in the cookie
-    .cookie("refreshToken", refreshToken, options) // set the refresh token in the cookie
-    .json(
-      new ApiResponse(
-        200,
-        { user: loggedInUser, accessToken, refreshToken }, // send access and refresh token in response if client decides to save them by themselves
-        "User logged in successfully"
-      )
-    );
+  // return res
+  //   .status(200)
+  //   .cookie("accessToken", accessToken, options) // set the access token in the cookie
+  //   .cookie("refreshToken", refreshToken, options) // set the refresh token in the cookie
+  //   .json(
+  //     new ApiResponse(
+  //       200,
+  //       { user: loggedInUser, accessToken, refreshToken }, // send access and refresh token in response if client decides to save them by themselves
+  //       "User logged in successfully"
+  //     )
+  //   );
 });
 
 const sendOTP = asyncHandler(async (req,res) => {
@@ -191,7 +196,7 @@ const sendOTP = asyncHandler(async (req,res) => {
   console.log("new_otp",new_otp);
 
   // TODO send mail
-  mailService.sendEmail({
+  sendMailerService({
     from: "packwolf2024@gmail.com",
     // to: user.email,
     to: "rajesh.truematrix@gmail.com",
@@ -201,15 +206,111 @@ const sendOTP = asyncHandler(async (req,res) => {
     attachments: [],
   });
 
-  res.status(200).json({
-    status: "success",
-    message: "OTP Sent Successfully!",
-    // email: req?.body?.email,
-    email: user.email,
-    otp_send_time: user.otp_send_time,
+  // res.status(200).json({
+  //   status: "success",
+  //   message: "OTP Sent Successfully!",
+  //   // email: req?.body?.email,
+  //   email: user.email,
+  //   otp_send_time: user.otp_send_time,
+  // });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { 
+          email: user.email,
+          otp_send_time: user.otp_send_time, 
+        },
+        "OTP Sent Successfully!"
+      )
+    );
+});
+
+const verifyOTP = asyncHandler(async (req, res) => {
+  // verify otp and update user accordingly
+  const { email, otp } = req.body;
+  const user = await User.findOne({
+    email,
+    otp_expiry_time: { $gt: Date.now() },
   });
 
-})
+  // if (!user) {
+  //   return res.status(400).json({
+  //     status: "error",
+  //     message: "Email is invalid or OTP expired",
+  //   });
+  // }
+
+  if (!user) {
+    throw new ApiError(400, "Email is invalid or OTP expired");
+  }
+
+  // if (user.verified) {
+  //   return res.status(400).json({
+  //     status: "error",
+  //     message: "Email is already verified",
+  //   });
+  // }
+
+  if (user.verified) {
+    throw new ApiError(400, "Already loggedin with this Email");
+  }
+
+  // if (!(await user.correctOTP(otp, user.otp))) {
+  if (otp !== user.otp) {
+
+    // res.status(400).json({
+    //   status: "error",
+    //   message: "OTP is incorrect",
+    // });
+    // return;
+    throw new ApiError(400, "OTP is incorrect");
+  }
+
+  // OTP is correct
+
+  user.verified = true;
+  user.islogin = true;
+  user.otp = undefined;
+  await user.save({ new: true, validateModifiedOnly: true });
+
+  const token = signToken(user._id);
+
+  const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
+    user._id
+  );
+
+  // get the user document ignoring the password and refreshToken field
+  const loggedInUser = await User.findById(user._id).select(
+    "-password -refreshToken -emailVerificationToken -emailVerificationExpiry"
+  );
+
+  // TODO: Add more options to make cookie more secure and reliable
+  const options = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+  };
+
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, options) // set the access token in the cookie
+    .cookie("refreshToken", refreshToken, options) // set the refresh token in the cookie
+    .json(
+      new ApiResponse(
+        200,
+        { user: loggedInUser, accessToken, refreshToken, user_id: user._id, }, // send access and refresh token in response if client decides to save them by themselves
+        "OTP verified Successfully!"
+      )
+    );
+  // res.status(200).json({
+  //   status: "success",
+  //   message: "OTP verified Successfully!",
+  //   token,
+  //   user_id: user._id,
+  // });
+});
 
 const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
@@ -554,6 +655,8 @@ export {
   getCurrentUser,
   handleSocialLogin,
   loginUser,
+  sendOTP,
+  verifyOTP,
   logoutUser,
   refreshAccessToken,
   registerUser,
