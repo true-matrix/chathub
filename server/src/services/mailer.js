@@ -1,5 +1,5 @@
-require('dotenv').config();
-const nodemailer = require('nodemailer');
+// require('dotenv').config();
+import nodemailer from 'nodemailer'
 
 const transporter = nodemailer.createTransport({
   service: 'gmail', // Use the email service provider (e.g., 'gmail' for Gmail)
@@ -38,7 +38,7 @@ const sendSGMail = async ({
   }
 };
  
-exports.sendEmail = async (args) => {
+export const sendMailerService = async (args) => {
   if (!process.env.NODE_ENV === "development") {
     return Promise.resolve();
   } else {
