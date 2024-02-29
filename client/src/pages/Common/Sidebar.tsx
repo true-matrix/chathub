@@ -112,7 +112,7 @@ const Sidebar = () => {
                             <Link to={'/settings'} className="dropdown-item d-flex align-items-center justify-content-between">Settings <img src={setting} /> </Link>
                             {/* <Link to={'/'} className="dropdown-item d-flex align-items-center justify-content-between">Change Password <i className="bx bx-lock-open text-muted ms-1"></i></Link> */}
                             <div className="dropdown-divider"></div>
-                            <div><Logout /></div>
+                            <div className='dropdown-item'><Logout /></div>
                         </div>
                         </Popup>
                 </li>

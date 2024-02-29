@@ -213,6 +213,7 @@ a.dropdown-item,div.dropdown-item .custom-pointer{
   padding: 6px 6px 6px 10px;
   margin-bottom: 3px;
   border-radius: 6px;
+  outline: none;
 }
 
 a.dropdown-item:hover , div.dropdown-item .custom-pointer:hover{
