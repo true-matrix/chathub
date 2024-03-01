@@ -11,6 +11,15 @@ const PublicRoute: React.FC<{ children: ReactNode }> = ({ children }) => {
   // If there is a valid token and user ID, navigate the user to the chat page
   if (token && user?._id) return <Navigate to="/chat" replace />;
 
+  if (token && user?._id) {
+    if (user?.verified) {
+      return <Navigate to="/chat" replace />;
+    } else {
+      return <Navigate to="/verify-otp" replace />;
+    }
+  }
+  // return <Navigate to="/verify-otp" replace />;
+
   // If no token or user ID exists, render the child components as they are
   return children;
 };

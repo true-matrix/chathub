@@ -9,11 +9,12 @@ import PublicRoute from "./components/PublicRoute";
 import ContactsPage from "./pages/contacts";
 import ProfilePage from "./pages/profile";
 import SettingsPage from "./pages/settings";
+import VerifyOtp from "./pages/Otp/VerifyOtp";
 
 // Main App component
 const App = () => {
   // Extracting 'token' and 'user' from the authentication context
-  const { token, user } = useAuth();
+  const { token, user, otp } = useAuth();
 
   return (
     <Routes>
@@ -22,12 +23,21 @@ const App = () => {
         path="/"
         element={
           token && user?._id ? (
-            <Navigate to="/chat" />
+            user?.verified ? (<Navigate to="/chat" />) : (<Navigate to="/verify-otp" />)
           ) : (
             <Navigate to="/login" />
           )
         }
       ></Route>
+      {/* Public login route: Accessible by everyone */}
+      <Route
+        path="/verify-otp"
+        element={
+          <PrivateRoute>
+            <VerifyOtp />
+          </PrivateRoute>
+        }
+      />
 
       {/* Private chat route: Can only be accessed by authenticated users */}
       <Route
@@ -75,6 +85,8 @@ const App = () => {
           </PublicRoute>
         }
       />
+
+      
 
       {/* Public register route: Accessible by everyone */}
       <Route

@@ -8,6 +8,8 @@ import {
   getCurrentUser,
   handleSocialLogin,
   loginUser,
+  sendOTP,
+  verifyOTP,
   logoutUser,
   refreshAccessToken,
   registerUser,
@@ -22,12 +24,14 @@ import {
 } from "../../../middlewares/auth.middlewares.js";
 import "../../../passport/index.js"; // import the passport config
 import {
+  sendOtpValidator,
   userAssignRoleValidator,
   userChangeCurrentPasswordValidator,
   userForgotPasswordValidator,
   userLoginValidator,
   userRegisterValidator,
   userResetForgottenPasswordValidator,
+  verifyOtpValidator,
 } from "../../../validators/apps/auth/user.validators.js";
 import { validate } from "../../../validators/validate.js";
 import { upload } from "../../../middlewares/multer.middlewares.js";
@@ -38,6 +42,8 @@ const router = Router();
 // Unsecured route
 router.route("/register").post(userRegisterValidator(), validate, registerUser);
 router.route("/login").post(userLoginValidator(), validate, loginUser);
+router.route("/send-otp").post(sendOtpValidator(), validate, sendOTP);
+router.route("/verify-otp").post(verifyOtpValidator(), validate, verifyOTP);
 router.route("/refresh-token").post(refreshAccessToken);
 router.route("/verify-email/:verificationToken").get(verifyEmail);
 

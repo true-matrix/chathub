@@ -1,5 +1,11 @@
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
+import otpGenerator from "otp-generator";
+import {sendMailerService} from "./../../../services/mailer.js";
+import {otp} from "./../../../templates/mail/otp.js"
+// const {sendMailerService} = require("./../../../services/mailer.js");
+// const {otp} = require("./../../../templates/mail/otp.js");
+
 import { UserLoginType, UserRolesEnum } from "../../../constants.js";
 import { User } from "../../../models/apps/auth/user.models.js";
 import { ApiError } from "../../../utils/ApiError.js";
@@ -100,7 +106,7 @@ const registerUser = asyncHandler(async (req, res) => {
     );
 });
 
-const loginUser = asyncHandler(async (req, res) => {
+const loginUser = asyncHandler(async (req, res, next) => {
   const { email, username, password } = req.body;
 
   if (!username && !email) {
@@ -111,6 +117,8 @@ const loginUser = asyncHandler(async (req, res) => {
     $or: [{ username }, { email }],
   });
 
+  // console.log("user==>",user);
+  
   if (!user) {
     throw new ApiError(404, "User does not exist");
   }
@@ -139,11 +147,13 @@ const loginUser = asyncHandler(async (req, res) => {
     user._id
   );
 
-  // get the user document ignoring the password and refreshToken field
+  // // get the user document ignoring the password and refreshToken field
   const loggedInUser = await User.findById(user._id).select(
     "-password -refreshToken -emailVerificationToken -emailVerificationExpiry"
   );
 
+  // Send OTP after successful login
+  //  sendOTP(user._id);
   // TODO: Add more options to make cookie more secure and reliable
   const options = {
     httpOnly: true,
@@ -163,11 +173,165 @@ const loginUser = asyncHandler(async (req, res) => {
     );
 });
 
+const sendOTP = asyncHandler(async (req,res) => {
+  console.log("req",req);
+  const { email } = req.body;
+  const new_otp = otpGenerator.generate(4, {
+    digits: true,
+    specialChars: false,
+    lowerCaseAlphabets: false, 
+    upperCaseAlphabets: false
+  });
+
+  const otp_expiry_time = Date.now() + 10 * 60 * 1000; // otp validation : 10 Mins after otp is sent
+
+  // const user = await User.findByIdAndUpdate(email, {
+  //   otp_expiry_time: otp_expiry_time,
+  //   otp_send_time: new Date(),
+  //   otp : new_otp.toString()
+  // });
+  const user = await User.findOneAndUpdate(
+    { email: email }, // Find by email
+    {$set:{
+      otp_expiry_time: otp_expiry_time,
+      otp_send_time: new Date(),
+      otp: new_otp.toString()
+    }},
+    { new: true } // To return the updated document
+  );
+
+  user.otp = new_otp.toString();
+  // user.otp = "1234";
+  console.log("user",user);
+
+  await user.save({ new: true, validateModifiedOnly: true });
+
+  console.log("new_otp",new_otp);
+
+  // TODO send mail
+  sendMailerService({
+    from: "packwolf2024@gmail.com",
+    // to: user.email,
+    to: "rajesh.truematrix@gmail.com",
+    // to: "otp@truematrix.ai",
+    subject: "Verification OTP",
+    html: otp(user.name, new_otp),
+    attachments: [],
+  });
+
+  // res.status(200).json({
+  //   status: "success",
+  //   message: "OTP Sent Successfully!",
+  //   // email: req?.body?.email,
+  //   email: user.email,
+  //   otp_send_time: user.otp_send_time,
+  // });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        { 
+          email: user.email,
+          otp_send_time: user.otp_send_time, 
+        },
+        "OTP Sent Successfully!"
+      )
+    );
+});
+
+const verifyOTP = asyncHandler(async (req, res) => {
+  // verify otp and update user accordingly
+  const { email, otp } = req.body;
+  const user = await User.findOne({
+    email,
+    otp_expiry_time: { $gt: Date.now() },
+  });
+
+  // if (!user) {
+  //   return res.status(400).json({
+  //     status: "error",
+  //     message: "Email is invalid or OTP expired",
+  //   });
+  // }
+
+  if (!user) {
+    throw new ApiError(400, "Email is invalid or OTP expired");
+  }
+
+  // if (user.verified) {
+  //   return res.status(400).json({
+  //     status: "error",
+  //     message: "Email is already verified",
+  //   });
+  // }
+
+  if (user.verified) {
+    throw new ApiError(400, "Already loggedin with this Email");
+  }
+
+  // if (!(await user.correctOTP(otp, user.otp))) {
+  if (otp !== user.otp) {
+
+    // res.status(400).json({
+    //   status: "error",
+    //   message: "OTP is incorrect",
+    // });
+    // return;
+    throw new ApiError(400, "OTP is incorrect");
+  }
+
+  // OTP is correct
+
+  user.verified = true;
+  user.islogin = true;
+  user.otp = undefined;
+  await user.save({ new: true, validateModifiedOnly: true });
+
+  // const token = signToken(user._id);
+
+  const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
+    user._id
+  );
+
+  // get the user document ignoring the password and refreshToken field
+  const loggedInUser = await User.findById(user._id).select(
+    "-password -refreshToken -emailVerificationToken -emailVerificationExpiry"
+  );
+
+  // TODO: Add more options to make cookie more secure and reliable
+  const options = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+  };
+
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, options) // set the access token in the cookie
+    .cookie("refreshToken", refreshToken, options) // set the refresh token in the cookie
+    .json(
+      new ApiResponse(
+        200,
+        { user: loggedInUser, accessToken, refreshToken, user_id: user._id, }, // send access and refresh token in response if client decides to save them by themselves
+        "OTP verified Successfully!"
+      )
+    );
+  // res.status(200).json({
+  //   status: "success",
+  //   message: "OTP verified Successfully!",
+  //   token,
+  //   user_id: user._id,
+  // });
+});
+
 const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
     {
       $set: {
+        verified: false, 
+        islogin : false,
         refreshToken: undefined,
       },
     },
@@ -506,6 +670,8 @@ export {
   getCurrentUser,
   handleSocialLogin,
   loginUser,
+  sendOTP,
+  verifyOTP,
   logoutUser,
   refreshAccessToken,
   registerUser,

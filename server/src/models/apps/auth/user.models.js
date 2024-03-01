@@ -15,6 +15,16 @@ import { SocialProfile } from "../social-media/profile.models.js";
 
 const userSchema = new Schema(
   {
+    name: {
+      type: String,
+      required: [true, "Name is required"],
+    },
+    about: {
+      type: String,
+    },
+    phone: {
+      type: String,
+    },
     avatar: {
       type: {
         url: String,
@@ -27,18 +37,32 @@ const userSchema = new Schema(
     },
     username: {
       type: String,
-      required: true,
+      required: false,
       unique: true,
       lowercase: true,
       trim: true,
       index: true,
     },
+    // email: {
+    //   type: String,
+    //   required: true,
+    //   unique: true,
+    //   lowercase: true,
+    //   trim: true,
+    // },
     email: {
       type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-      trim: true,
+      required: [true, "Email is required"],
+      validate: {
+        validator: function (email) {
+          return String(email)
+            .toLowerCase()
+            .match(
+              /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            );
+        },
+        message: (props) => `Email (${props.value}) is invalid!`,
+      },
     },
     role: {
       type: String,
@@ -46,9 +70,70 @@ const userSchema = new Schema(
       default: UserRolesEnum.USER,
       required: true,
     },
+    gender: {
+      type: String,
+    },
+    userRole: {
+      type: String,
+    },
+    selectedSigma: {
+      type: String,
+    },
+    addedBy: {
+      type: String,
+    },
+    addedByUserRole: {
+      type: String,
+    },
+    aiStatus: {
+      // active inactive status
+      type: String,
+      default: "active"
+    },
     password: {
       type: String,
       required: [true, "Password is required"],
+    },
+    passwordChangedAt: {
+      // unselect
+      type: Date,
+    },
+    passwordResetToken: {
+      // unselect
+      type: String,
+    },
+    passwordResetExpires: {
+      // unselect
+      type: Date,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now(),
+    },
+    updatedAt: {
+      // unselect
+      type: Date,
+    },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
+    islogin: {
+      type: Boolean,
+      default: false,
+    },
+    otp: {
+      type: String,
+    },
+    otp_expiry_time: {
+      type: Date,
+    },
+    otp_send_time: {
+      type: Date,
+    },
+    status: {
+      type: String,
+      enum: ["Online", "Offline"]
     },
     loginType: {
       type: String,

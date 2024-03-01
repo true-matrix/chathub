@@ -309,3 +309,7 @@ transition-duration: .3s;
 .login-page .w-2\/3 .auth-img img{
   max-width: 200%;
 }
+
+.error-msg{
+  color: red;
+}
