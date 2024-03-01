@@ -1,6 +1,6 @@
 // Importing required modules and components from the react-router-dom and other files.
 import { Routes, Route, Navigate } from "react-router-dom";
-import LoginPage from "./pages/loginPage";
+import Login from "./pages/login";
 import Register from "./pages/register";
 import ChatPage from "./pages/chat";
 import { useAuth } from "./context/AuthContext";
@@ -71,7 +71,7 @@ const App = () => {
         path="/login"
         element={
           <PublicRoute>
-            <LoginPage />
+            <Login />
           </PublicRoute>
         }
       />

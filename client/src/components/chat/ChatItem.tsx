@@ -85,7 +85,7 @@ const ChatItem: React.FC<{
                     setOpenGroupInfo(true);
                   }}
                   role="button"
-                  className="p-4 w-full rounded-lg inline-flex items-center hover:bg-secondary"
+                  className="p-4 w-full rounded-lg inline-flex items-center hover:bg-secondary hover:text-white"
                 >
                   <InformationCircleIcon className="h-4 w-4 mr-2" /> About group
                 </p>

@@ -7,14 +7,9 @@ const Select: React.FC<{
   options: {
     value: string;
     label: string;
-    avatar: {
-      url: string;
-      localPath: string;
-      _id: string;
-    };
   }[];
   value: string;
-  onChange: (value: { value: string; label: string, avatar: any }) => void;
+  onChange: (value: { value: string; label: string }) => void;
   placeholder: string;
 }> = ({ options, value, placeholder, onChange }) => {
   const [localOptions, setLocalOptions] = useState<typeof options>([]);
@@ -30,11 +25,11 @@ const Select: React.FC<{
       value={options.find((o) => o.value === value)}
       onChange={(val: any) => onChange(val)}
     >
-      <div className="relative mt-2">
+      <div className="relative">
         <Combobox.Button className="w-full">
           <Combobox.Input
             placeholder={placeholder}
-            className="block w-full rounded-xl border-0 py-4 px-5 bg-secondary outline outline-[1px] outline-zinc-400 text-white font-light placeholder:text-white/70 focus:ring-[1px] focus:ring-white"
+            className="block w-full rounded-xl border-0 py-3 px-5 bg-white outline outline-[1px] outline-zinc-400 text-dark font-light placeholder:text-dark/70 focus:ring-[1px] focus:ring-white"
             onChange={(e) => {
               setLocalOptions(
                 options.filter((op) => op.label.includes(e.target.value))
@@ -50,7 +45,7 @@ const Select: React.FC<{
           />
         </Combobox.Button>
         {localOptions.length > 0 && (
-          <Combobox.Options className="outline outline-[1px] outline-zinc-400 absolute z-10 mt-2 p-2 max-h-60 w-full overflow-auto rounded-2xl bg-secondary text-base shadow-lg ring-opacity-5 focus:outline-none sm:text-sm">
+          <Combobox.Options className="outline outline-[1px] outline-zinc-400 absolute z-10 mt-2 p-2 max-h-60 w-full overflow-auto rounded-2xl bg-white text-dark shadow-lg ring-opacity-5 focus:outline-none sm:text-sm">
             {localOptions.map((option) => (
               <Combobox.Option
                 key={option.value}
@@ -58,19 +53,12 @@ const Select: React.FC<{
                 className={({ active }) =>
                   classNames(
                     "cursor-pointer relative rounded-2xl select-none py-4 pl-3 pr-9",
-                    active ? "bg-dark text-white" : "text-white"
+                    active ? "bg-light text-dark" : "text-dark"
                   )
                 }
               >
                 {({ active, selected }) => (
                   <>
-                  {option.avatar && (
-                      <img
-                        src={option.avatar.url}
-                        alt="Avatar"
-                        className="h-8 w-8 mr-2 rounded-full"
-                      />
-                    )}
                     <span
                       className={classNames(
                         "block truncate",

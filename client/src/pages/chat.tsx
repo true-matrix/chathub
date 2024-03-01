@@ -5,11 +5,11 @@ import {
 } from "@heroicons/react/20/solid";
 /// <reference lib="node" />
 import { useEffect, useRef, useState } from "react";
-import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import Popup from 'reactjs-popup';
+// import { Link, NavLink, useNavigate } from 'react-router-dom';
+// import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+// import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
-import { Logout } from './Auth/Logout';
+// import { Logout } from './Auth/Logout';
 import { getChatMessages, getUserChats, sendMessage } from "../api";
 import AddChatModal from "../components/chat/AddChatModal";
 import ChatItem from "../components/chat/ChatItem";
@@ -18,15 +18,16 @@ import Typing from "../components/chat/Typing";
 import Input from "../components/Input";
 import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
+import nochat from "../assets/images/main-image.png"
 // import USER_IMG from '../assets/images/users/user.png';
-import logo from '../assets/images/wolflogo.svg'
+// import logo from '../assets/images/wolflogo.svg'
 
-import chat from '../assets/images/chat.svg'
-import profile from '../assets/images/user-profile.svg'
-import setting from '../assets/images/user-setting.svg'
-import dashboard from '../assets/images/dashboard.svg'
+// import chat from '../assets/images/chat.svg'
+// import profile from '../assets/images/user-profile.svg'
+// import setting from '../assets/images/user-setting.svg'
+// import dashboard from '../assets/images/dashboard.svg'
 // import logout from '../assets/images/logout.svg'
-import user_image from '../assets/images/users/avatar-1.jpg'
+// import user_image from '../assets/images/users/avatar-1.jpg'
 
 import {
   ChatListItemInterface,
@@ -57,7 +58,7 @@ const ChatPage = () => {
   // Import the 'useAuth' and 'useSocket' hooks from their respective contexts
   const { user } = useAuth();
   const { socket } = useSocket();
-  const { activeButton, setActiveButton } = useGlobal();
+  const { activeButton } = useGlobal();
 
   // Create a reference using 'useRef' to hold the currently selected chat.
   // 'useRef' is used here because it ensures that the 'currentChat' value within socket event callbacks
@@ -313,20 +314,20 @@ const ChatPage = () => {
 
 
   // Function to handle button click
-  const handleButtonClick = (buttonId : any) => {  
-    // if(buttonId !== "chat") {
-    //     setActiveButton(buttonId === activeButton ? "chat" : buttonId);
-    // }
-    if(buttonId === "chat"){
-        setActiveButton(buttonId);
-    }
-    if(buttonId === "contacts" || buttonId === "profile" || buttonId === "settings"){
-      setActiveButton(buttonId);
-    }
-    else {
-        setActiveButton("chat")
-    }
-  };
+  // const handleButtonClick = (buttonId : any) => {  
+  //   // if(buttonId !== "chat") {
+  //   //     setActiveButton(buttonId === activeButton ? "chat" : buttonId);
+  //   // }
+  //   if(buttonId === "chat"){
+  //       setActiveButton(buttonId);
+  //   }
+  //   if(buttonId === "contacts" || buttonId === "profile" || buttonId === "settings"){
+  //     setActiveButton(buttonId);
+  //   }
+  //   else {
+  //       setActiveButton("chat")
+  //   }
+  // };
 
 
   useEffect(() => {
@@ -634,8 +635,9 @@ const ChatPage = () => {
               </div>
             </>
           ) : (
-            <div className="w-full h-full flex justify-center items-center">
-              No chat selected
+            <div className="w-full h-full flex flex-col justify-center items-center p-5"> 
+              <img src={nochat} alt="" />
+              <p>Start Your Chat Journey With WolfPack</p>
             </div>
           )}
         </div>}

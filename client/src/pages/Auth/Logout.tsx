@@ -1,16 +1,16 @@
-import React, { FC, useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 // import { useStoreActions, useStoreState, useStoreDispatch } from '@store';
 import { ConfirmAlert } from "../../components/ConfirmAlert";
 import { confirmAlert } from 'react-confirm-alert';
 import 'react-confirm-alert/src/react-confirm-alert.css';
-import { useLocation } from "react-router-dom";
+// import { useLocation } from "react-router-dom";
 import logout_img from '../../assets/images/logout.svg'
-import { requestHandler } from "../../utils";
+// import { requestHandler } from "../../utils";
 import { useAuth } from "../../context/AuthContext";
 
 export const Logout = () => {
     const { logout } = useAuth();
-    const [loadingLogout, setLoadingLogout] = useState(false)
+    // const [loadingLogout, setLoadingLogout] = useState(false)
     const onYes = useCallback(async() => {
         // await dispatch(setIsAdmin(false))
         // await dispatch(setIsAdminView(false))

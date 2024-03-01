@@ -122,6 +122,12 @@ background: #1d813e;
   background-color: hsla(0,0%,45%,.071);
 }
 
+.bg-light{
+  background-color:  #ebebeb; 
+}
+.max-w-2xl {
+  max-width: 450px;
+}
 .active.bg-success-light{
   background: rgba(198,230,208,.651);
   border-color:#DAEFE0 !important ;
@@ -262,4 +268,44 @@ cursor: pointer;
 .logout-poppup-modal-container .confirmFooter button.logout:hover{
   background-color: rgb(172, 0, 0);
 transition-duration: .3s;
+}
+
+
+.login{
+  max-width: 500px;
+  width: 90%;
+}
+
+.login-page .w-1\/3{
+  width:450px;
+}
+
+.login-page .w-1\/3{
+  text-align: center;
+  display: block;
+}
+.login-page .logo img{  
+  max-width: 200px;
+  width: 100%; 
+  margin-left: 48px;
+  margin-top: 48px;
+}
+.login-page .w-2\/3 { 
+    width: calc(100% - 450px);
+    z-index: 1;
+    padding: 24px;
+    background: #4aac68; 
+}
+ 
+
+.login-page .w-2\/3 .auth-img {
+  position: absolute;
+  max-width: 400px;
+  left: -470px;
+  bottom: 0;
+  z-index: 2;
+}
+
+.login-page .w-2\/3 .auth-img img{
+  max-width: 200%;
 }

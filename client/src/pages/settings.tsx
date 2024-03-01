@@ -2,7 +2,7 @@ import { useGlobal } from "../context/GlobalContext";
 import Sidebar from "./Common/Sidebar"
 
 const SettingsPage = () => {
-  const { activeButton, setActiveButton } = useGlobal();
+  const { activeButton } = useGlobal();
  
   return (
     <>

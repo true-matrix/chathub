@@ -22,6 +22,7 @@ import { requestHandler } from "../../utils";
 import Button from "../Button";
 import Input from "../Input";
 import Select from "../Select";
+import delete_icon from "../../assets/images/remove-user.svg";
 
 const GroupChatDetailsModal: React.FC<{
   open: boolean;
@@ -224,13 +225,13 @@ const GroupChatDetailsModal: React.FC<{
                 leaveTo="translate-x-full"
               >
                 <Dialog.Panel className="pointer-events-auto w-screen max-w-2xl">
-                  <div className="flex h-full flex-col overflow-y-scroll bg-secondary py-6 shadow-xl">
+                  <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
                     <div className="px-4 sm:px-6">
                       <div className="flex items-start justify-between">
                         <div className="ml-3 flex h-7 items-center">
                           <button
                             type="button"
-                            className="relative rounded-md bg-secondary text-zinc-400 hover:text-zinc-500 focus:outline-none"
+                            className="relative rounded-md  text-zinc-400 hover:text-zinc-500 focus:outline-none"
                             onClick={handleClose}
                           >
                             <span className="absolute -inset-2.5" />
@@ -246,7 +247,7 @@ const GroupChatDetailsModal: React.FC<{
                           {groupDetails?.participants.slice(0, 3).map((p) => {
                             return (
                               <img
-                                className="w-24 h-24 -ml-16 rounded-full outline outline-4 outline-secondary"
+                                className="w-24 h-24 -ml-16 rounded-full outline outline-4 outline-white"
                                 key={p._id}
                                 src={p.avatar.url}
                                 alt="avatar"
@@ -298,25 +299,24 @@ const GroupChatDetailsModal: React.FC<{
                             Group · {groupDetails?.participants.length}{" "}
                             participants
                           </p>
-                        </div>
-                        <hr className="border-[0.1px] border-zinc-600 my-5 w-full" />
-                        <div className="w-full">
+                        </div> 
+                        <div className="w-full mt-6">
                           <p className="inline-flex items-center">
                             <UserGroupIcon className="h-6 w-6 mr-2" />{" "}
                             {groupDetails?.participants.length} Participants
                           </p>
-                          <div className="w-full">
+                          <div className="w-full my-6">
                             {groupDetails?.participants?.map((part) => {
                               return (
                                 <React.Fragment key={part._id}>
-                                  <div className="flex justify-between items-center w-full py-4">
+                                  <div className="flex justify-between items-center w-full py-2">
                                     <div className="flex justify-start items-start gap-3 w-full">
                                       <img
                                         className="h-12 w-12 rounded-full"
                                         src={part.avatar.url}
                                       />
                                       <div>
-                                        <p className="text-white font-semibold text-sm inline-flex items-center w-full">
+                                        <p className="text-dark font-semibold text-sm inline-flex items-center w-full">
                                           {part.username}{" "}
                                           {part._id === groupDetails.admin ? (
                                             <span className="ml-2 text-[10px] px-4 bg-success/10 border-[0.1px] border-success rounded-full text-success">
@@ -331,7 +331,7 @@ const GroupChatDetailsModal: React.FC<{
                                     </div>
                                     {groupDetails.admin === user?._id ? (
                                       <div>
-                                        <Button
+                                        <Button title="Remove User" className="shadow-none bg-transparent hover:bg-transparent opacity-40 hover:opacity-90 hover:shadow-none"
                                           onClick={() => {
                                             const ok = confirm(
                                               "Are you sure you want to remove " +
@@ -345,17 +345,17 @@ const GroupChatDetailsModal: React.FC<{
                                           size="small"
                                           severity="danger"
                                         >
-                                          Remove
+                                          <img src={delete_icon}  />
                                         </Button>
                                       </div>
                                     ) : null}
                                   </div>
-                                  <hr className="border-[0.1px] border-zinc-600 my-1 w-full" />
+                                  <hr className=" border-zinc-200 my-1 w-full" />
                                 </React.Fragment>
                               );
                             })}
                             {groupDetails?.admin === user?._id ? (
-                              <div className="w-full my-5 flex flex-col justify-center items-center gap-4">
+                              <div className="w-full my-6 flex flex-col justify-center items-center gap-2 ">
                                 {!addingParticipant ? (
                                   <Button
                                     onClick={() => setAddingParticipant(true)}
@@ -366,7 +366,7 @@ const GroupChatDetailsModal: React.FC<{
                                     Add participant
                                   </Button>
                                 ) : (
-                                  <div className="w-full flex justify-start items-center gap-2">
+                                  <div className="w-full flex justify-start items-center gap-3">
                                     <Select
                                       placeholder="Select a user to add..."
                                       value={participantToBeAdded}

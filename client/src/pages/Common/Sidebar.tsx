@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react'
+// import React, { useEffect } from 'react'
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { Logout } from '../Auth/Logout';
 
 import logo from '../../assets/images/wolflogo.svg'
@@ -14,20 +14,20 @@ import { useGlobal } from '../../context/GlobalContext';
 
 const Sidebar = () => {
   const { activeButton, setActiveButton } = useGlobal();
-  const handleButtonClick = (buttonId : string) => {  
-    // if(buttonId !== "chat") {
-    //     setActiveButton(buttonId === activeButton ? "chat" : buttonId);
-    // }
-    if(buttonId === "chat"){
-        setActiveButton(buttonId);
-    }
-    if(buttonId === "contacts" || buttonId === "profile" || buttonId === "settings"){
-      setActiveButton(buttonId);
-    }
-    else {
-        setActiveButton("chat")
-    }
-  };
+  // const handleButtonClick = (buttonId : string) => {  
+  //   // if(buttonId !== "chat") {
+  //   //     setActiveButton(buttonId === activeButton ? "chat" : buttonId);
+  //   // }
+  //   if(buttonId === "chat"){
+  //       setActiveButton(buttonId);
+  //   }
+  //   if(buttonId === "contacts" || buttonId === "profile" || buttonId === "settings"){
+  //     setActiveButton(buttonId);
+  //   }
+  //   else {
+  //       setActiveButton("chat")
+  //   }
+  // };
   const handleContextMenu = (e : any) => {
     e.preventDefault();
   };
