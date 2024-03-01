@@ -19,7 +19,7 @@ const AddChatModal: React.FC<{
   onSuccess: (chat: ChatListItemInterface) => void;
 }> = ({ open, onClose, onSuccess }) => {
   // State to store the list of users, initialized as an empty array
-  const [users, setUsers] = useState<UserInterface[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
   // State to store the name of a group, initialized as an empty string
   const [groupName, setGroupName] = useState("");
   // State to determine if the chat is a group chat, initialized as false

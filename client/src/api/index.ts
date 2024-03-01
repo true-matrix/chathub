@@ -28,6 +28,14 @@ const loginUser = (data: { email: string; password: string }) => {
   return apiClient.post("/users/login", data);
 };
 
+const loginUserOtp = (data: { email: string; otp: string }) => {
+  return apiClient.post("/users/send-otp", data);
+};
+
+const verifyUserOtp = (data: { email: string; otp: string }) => {
+  return apiClient.post("/users/verify-otp", data);
+};
+
 const registerUser = (data: {
   email: string;
   password: string;
@@ -107,6 +115,8 @@ export {
   getGroupInfo,
   getUserChats,
   loginUser,
+  loginUserOtp,
+  verifyUserOtp,
   logoutUser,
   registerUser,
   removeParticipantFromGroup,

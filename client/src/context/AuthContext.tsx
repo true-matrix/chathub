@@ -1,15 +1,18 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser, logoutUser, registerUser } from "../api";
+import { loginUser, loginUserOtp, verifyUserOtp, logoutUser, registerUser } from "../api";
 import Loader from "../components/Loader";
 import { UserInterface } from "../interfaces/user";
 import { LocalStorage, requestHandler } from "../utils";
 
 // Create a context to manage authentication-related data and functions
 const AuthContext = createContext<{
-  user: UserInterface | null;
+  user: any | null;
   token: string | null;
+  otp: string | any;
   login: (data: { email: string; password: string }) => Promise<void>;
+  sendOtp: (data: { email: string; otp: string }) => Promise<void>;
+  verifyOtp: (data: { email: string; otp: string }) => Promise<void>;
   register: (data: {
     email: string;
     username: string;
@@ -19,7 +22,10 @@ const AuthContext = createContext<{
 }>({
   user: null,
   token: null,
+  otp: null,
   login: async () => {},
+  sendOtp: async () => {},
+  verifyOtp: async () => {},
   register: async () => {},
   logout: async () => {},
 });
@@ -32,7 +38,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [user, setUser] = useState<UserInterface | null>(null);
+  const [user, setUser] = useState<any | null>(null);
+  const [otp, setOtp] = useState<any | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
   const navigate = useNavigate();
@@ -48,12 +55,60 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setToken(data.accessToken);
         LocalStorage.set("user", data.user);
         LocalStorage.set("token", data.accessToken);
-        navigate("/chat"); // Redirect to the chat page after successful login
+        if(res.success === true){
+          sendOtp({email: data.user.email, otp: data.user.otp})
+        } else {
+          navigate("/login")
+        }
+        // navigate("/chat"); // Redirect to the chat page after successful login
       },
       alert // Display error alerts on request failure
     );
   };
 
+  // Function to handle send OTP
+  const sendOtp = async (data: { email: string; otp: string }) => {
+      await requestHandler(
+        async () => await loginUserOtp(data),
+        setIsLoading,
+        (res) => {
+          const { data } = res;
+        //   setOtp(data);
+        // LocalStorage.set("otp", data);
+          // setToken(data.accessToken);
+          // LocalStorage.set("user", data.user);
+          // LocalStorage.set("token", data.accessToken);
+          // navigate("/chat"); // Redirect to the chat page after successful login
+        if(res.success === true){
+          navigate("/verify-otp");
+        }
+
+        },
+        alert // Display error alerts on request failure
+      );
+    };
+
+// Function to handle verify OTP
+  const verifyOtp = async (data: { email: string; otp: string }) => {
+    await requestHandler(
+      async () => await verifyUserOtp(data),
+      setIsLoading,
+      (res) => {
+        const { data } = res;
+        setOtp(data);
+      LocalStorage.set("otp", data);
+        // setToken(data.accessToken);
+        // LocalStorage.set("user", data.user);
+        // LocalStorage.set("token", data.accessToken);
+        // navigate("/chat"); // Redirect to the chat page after successful login
+      if(res.success === true){
+        navigate("/chat");
+      }
+
+      },
+      alert // Display error alerts on request failure
+    );
+  };
   // Function to handle user registration
   const register = async (data: {
     email: string;
@@ -100,7 +155,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Provide authentication-related data and functions through the context
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, token }}>
+    <AuthContext.Provider value={{ user, otp, login, sendOtp, verifyOtp, register, logout, token }}>
       {isLoading ? <Loader /> : children} {/* Display a loader while loading */}
     </AuthContext.Provider>
   );

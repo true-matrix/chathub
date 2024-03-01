@@ -33,6 +33,20 @@ const userLoginValidator = () => {
   ];
 };
 
+const sendOtpValidator = () => {
+  return [
+    body("email").optional(),
+    body("otp").optional(),
+  ];
+};
+
+const verifyOtpValidator = () => {
+  return [
+    body("email").optional(),
+    body("otp").notEmpty().withMessage("OTP is required"),
+  ];
+};
+
 const userChangeCurrentPasswordValidator = () => {
   return [
     body("oldPassword").notEmpty().withMessage("Old password is required"),
@@ -67,6 +81,8 @@ export {
   userChangeCurrentPasswordValidator,
   userForgotPasswordValidator,
   userLoginValidator,
+  sendOtpValidator,
+  verifyOtpValidator,
   userRegisterValidator,
   userResetForgottenPasswordValidator,
   userAssignRoleValidator

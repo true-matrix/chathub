@@ -7,11 +7,6 @@ const Select: React.FC<{
   options: {
     value: string;
     label: string;
-    avatar: {
-      url: string;
-      localPath: string;
-      _id: string;
-    };
   }[];
   value: string;
   onChange: (value: { value: string; label: string, avatar: any }) => void;
@@ -64,13 +59,6 @@ const Select: React.FC<{
               >
                 {({ active, selected }) => (
                   <>
-                  {option.avatar && (
-                      <img
-                        src={option.avatar.url}
-                        alt="Avatar"
-                        className="h-8 w-8 mr-2 rounded-full"
-                      />
-                    )}
                     <span
                       className={classNames(
                         "block truncate",

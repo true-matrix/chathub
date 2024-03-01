@@ -45,7 +45,7 @@ const GroupChatDetailsModal: React.FC<{
     useState<ChatListItemInterface | null>(null);
 
   // State to manage a list of users, initially set as an empty array
-  const [users, setUsers] = useState<UserInterface[]>([]);
+  const [users, setUsers] = useState<any[]>([]);
 
   // Function to handle the update of the group name.
   const handleGroupNameUpdate = async () => {
@@ -370,7 +370,7 @@ const GroupChatDetailsModal: React.FC<{
                                     <Select
                                       placeholder="Select a user to add..."
                                       value={participantToBeAdded}
-                                      options={users.map((user) => ({
+                                      options={users.map((user : any) => ({
                                         label: user.username,
                                         value: user._id,
                                       }))}

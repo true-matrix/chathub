@@ -19,7 +19,7 @@ const Button: React.FC<
             ? "bg-secondary hover:bg-secondary/80 disabled:bg-secondary/50 outline outline-[1px] outline-zinc-400"
             : severity === "danger"
             ? "bg-danger hover:bg-danger/80 disabled:bg-danger/50"
-            : "bg-primary hover:bg-primary/80 disabled:bg-primary/50",
+            : "bg-success hover:bg-success/80 disabled:bg-success/50",
           size === "small" ? "text-sm px-3 py-1.5" : "text-base px-4 py-3",
           props.className || ""
         )}
