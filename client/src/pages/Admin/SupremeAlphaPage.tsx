@@ -7,10 +7,11 @@ import ReactPaginate from 'react-paginate';
 import IMG_1 from '../../assets/images/users/avatar-7.jpg'
 import IMG_2 from '../../assets/images/users/avatar-8.jpg'
 import IMG_3 from '../../assets/images/users/avatar-9.jpg'
-import { getAvailableUsers, getUserById } from "../../api";
+import { addUser, getAvailableUsers, getAllSupremeAlphas, getUserById, updateUser } from "../../api";
 import { requestHandler } from "../../utils";
 import { ErrorMessage, Field, Formik, useFormik } from 'formik';
 import * as Yup from 'yup';
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { confirmAlert } from "react-confirm-alert";
 import { ConfirmAlert } from "../../components/ConfirmAlert";
@@ -24,11 +25,13 @@ interface CreateUserFormValues {
     addedBy:string | null;
     gender: string;
     aiStatus: string; // active inactive status
+    role: string; // active inactive status
   }
 
 
 const SupremeALphaPage = () => {
     const { tabIndex } = useGlobal();
+    const navigate = useNavigate();
     const {user} = useAuth()
     const [currentPage, setCurrentPage] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
@@ -37,6 +40,7 @@ const SupremeALphaPage = () => {
     const [users, setUsers] = useState<any[]>([]);
     const [selectedUser, setSelectedUser] = useState<any[]>([]);
     const [selectedId, setSelectedId] = useState<any>("");
+    const [isLoading, setIsLoading] = useState(false);
     const initValues : CreateUserFormValues = {
         name: '',
         email:'',
@@ -46,6 +50,7 @@ const SupremeALphaPage = () => {
         addedBy: user._id,
         aiStatus: 'active', // active inactive status
         gender: '',
+        role: 'USER'
 
         // name: selectedUser[0]?.name || '',
         // email: selectedUser[0]?.email || '',
@@ -71,7 +76,7 @@ const SupremeALphaPage = () => {
     const getUsers = useCallback( async () => {
         requestHandler(
         // Call to get the list of available users.
-        async () => await getAvailableUsers(),
+        async () => await getAllSupremeAlphas(),
         null,
         // On successful retrieval, set the users' state.
         (res) => {
@@ -160,42 +165,68 @@ const SupremeALphaPage = () => {
         }, []);
 
     const handleSubmit = async(values:any, { setSubmitting }:any) => {
-    
-            console.log("vvv=>",values);
-            
             if (values?._id) {
               if (values._id) {
-            console.log("update v=>",values);
-
-                // await onUpdateUser({ url: `user/updateuser/${values._id}`, payload: values });
+                await requestHandler(
+                  async () => await updateUser(values._id, {
+                    name: values.name,
+                    // email: values.email,
+                    phone: values.phone, 
+                    gender: values.gender,
+                  }),
+                  setIsLoading,
+                  () => {
+                    alert("User updated successfully");
+                    getUsers();
+                    navigate("/dashboard"); // Redirect to the login page after successful registration
+                  },
+                  alert // Display error alerts on request failure
+                );
               }
             } else{
-            console.log("added v=>",values);
-
-            // await onAddUser({ url : `auth/adduser`, payload : values})
+              await requestHandler(
+                async () => await addUser({
+                  name: values.name,
+                  email: values.email,
+                  password: values.password,
+                  phone: values.phone, 
+                  userRole: values.userRole,
+                  addedBy: values.addedBy, 
+                  aiStatus: values.aiStatus, 
+                  gender: values.gender,
+                  role: values.role,
+                }),
+                setIsLoading,
+                () => {
+                  alert("Account created successfully! Go ahead and login.");
+                  getUsers();
+                  navigate("/dashboard"); // Redirect to the login page after successful registration
+                },
+                alert // Display error alerts on request failure
+              );
             }
 
             setCreateUserModalOpen(false);
             setSubmitting(false);
           };
 
-          const handlePageClick = ({ selected } : any) => {
+    const handlePageClick = ({ selected } : any) => {
             setCurrentPage(selected);
           };
         
-          const handleSearch = (e : any) => {
+    const handleSearch = (e : any) => {
             const query = e.target.value;
             setSearchQuery(query);
             setCurrentPage(0); // Reset to the first page when performing a new search
           };
         
-          const filteredData = users?.filter((user) =>
+    const filteredData = users?.filter((user) =>
             Object.values(user).some((value : any) =>
               value.toString().toLowerCase().includes(searchQuery.toLowerCase())
             )
           );
         
-          const tableFields = [
+    const tableFields = [
           //   { key: "image", value: "Image" },
             { key: "name", value: "Name" },
           //   { key: "email", value: "Email" },
@@ -243,7 +274,7 @@ const SupremeALphaPage = () => {
                   onBlur={handleBlur}
                   value={values.email}
                 /> */}
-                <Field type="email" name="email" className="form-control" />
+                <Field type="email" name="email" className="form-control" disabled={isEditing ? true : false}/>
                  <ErrorMessage name="email" component="div" className="text-danger" />
               </div>
               <>{!isEditing && <><div className="mb-4">
@@ -344,7 +375,7 @@ const SupremeALphaPage = () => {
                         <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                             <img className="w-10 h-10 rounded-full" src={user.avatar.url} alt="img"/>
                             <div className="ps-3">
-                                <div className="text-base font-semibold">{user.username}</div>
+                                <div className="text-base font-semibold">{user.username || user.name}</div>
                                 <div className="font-normal text-gray-500">{user.email}</div>
                             </div>  
                         </th>
