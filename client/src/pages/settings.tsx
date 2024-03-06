@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { useGlobal } from "../context/GlobalContext";
 import Sidebar from "./Common/Sidebar"
+import { useAuth } from "../context/AuthContext";
 
 const SettingsPage = () => {
   const { activeButton } = useGlobal();
+  const {user} = useAuth();
+  
   return (
     <>
     <div className="w-full justify-between items-stretch h-screen flex flex-shrink-0 overflow-hidden"> 
@@ -11,7 +14,31 @@ const SettingsPage = () => {
       <Sidebar/>
        {/* Profile Sidebar */}
        {activeButton === "settings" && <div className="w-1/3 relative ring-white overflow-y-auto px-0">
-       <div className="container mx-auto my-60">
+       <div className="container p-4">
+          <div>
+            <div className="bg-white relative shadow rounded-lg mx-auto">
+              <div className="flex justify-center">
+                <img src="https://tecdn.b-cdn.net/img/new/avatars/2.webp" alt="" className="rounded-full mx-auto w-32 h-32 shadow-md border-4 border-white transition duration-200 transform hover:scale-110"/>
+              </div>
+              <div className="mt-5">
+                <h1 className="font-bold text-center text-3xl text-gray-900">{user?.username || (user.name ? user.name: `Shakir Ali`)}</h1>
+                <p className="text-center text-sm text-gray-400 font-medium">{user?.userRole}</p>
+                <div className="w-full">
+                  <div className="mt-5 w-full flex flex-col items-center overflow-hidden text-sm">
+                    <a href="#" className="w-full border-t border-gray-100 text-gray-600 py-4 pl-6 pr-3 w-full block hover:bg-gray-100 transition duration-150">
+                      <img src="https://avatars0.githubusercontent.com/u/35900628?v=4" alt="" className="rounded-full h-6 shadow-md inline-block mr-2"/>{user.email} 
+                    </a>
+                    <a href="#" className="w-full border-t border-gray-100 text-gray-600 py-4 pl-6 pr-3 w-full block hover:bg-gray-100 transition duration-150">
+                      <img src="https://avatars0.githubusercontent.com/u/35900628?v=4" alt="" className="rounded-full h-6 shadow-md inline-block mr-2"/>9876543210 
+                      {/* <span className="text-gray-500 text-xs">49 min ago</span> */}
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+       {/* <div className="container mx-auto my-60">
         <div>
 
             <div className="bg-white relative shadow rounded-lg w-5/6 md:w-5/6  lg:w-4/6 xl:w-3/6 mx-auto">
@@ -76,7 +103,7 @@ const SettingsPage = () => {
             </div>
 
         </div>
-    </div>
+    </div> */}
       </div>}
 
       {/* Settings */}
