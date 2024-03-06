@@ -7,6 +7,7 @@ import {
   deleteOneOnOneChat,
   getAllChats,
   getGroupChatDetails,
+  getUserById,
   leaveGroupChat,
   removeParticipantFromGroupChat,
   renameGroupChat,
@@ -27,6 +28,7 @@ router.use(verifyJWT);
 router.route("/").get(getAllChats);
 
 router.route("/users").get(searchAvailableUsers);
+router.route("/users/:userId").get(getUserById);
 
 router
   .route("/c/:receiverId")

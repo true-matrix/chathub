@@ -10,6 +10,7 @@ import ContactsPage from "./pages/contacts";
 import ProfilePage from "./pages/profile";
 import SettingsPage from "./pages/settings";
 import VerifyOtp from "./pages/Otp/VerifyOtp";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
 
 // Main App component
 const App = () => {
@@ -74,7 +75,16 @@ const App = () => {
                     <SettingsPage />
                   </PrivateRoute>
                 }
-              />    
+              />  
+
+     <Route
+                path="/dashboard"
+                element={
+                  <PrivateRoute>
+                    <AdminDashboard />
+                  </PrivateRoute>
+                }
+              />            
 
       {/* Public login route: Accessible by everyone */}
       <Route

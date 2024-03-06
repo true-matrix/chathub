@@ -132,6 +132,32 @@ const searchAvailableUsers = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, users, "Users fetched successfully"));
 });
 
+const getUserById = asyncHandler(async (req, res) => {
+  const userId = req.params.userId;
+
+  // Perform validation or error handling for userId if needed
+
+  // const user = await User.findById(userId);
+  const user = await User.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(req.params.userId),
+      },
+    },
+    // Omit the $project stage to retrieve all fields
+  ]);
+
+  if (!user || user.length === 0) {
+    throw new ApiError(404, "User not found");
+  }
+
+  // const { avatar, username, email } = user;
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user[0], "User fetched successfully"));
+});
+
 const createOrGetAOneOnOneChat = asyncHandler(async (req, res) => {
   const { receiverId } = req.params;
 
@@ -649,4 +675,5 @@ export {
   removeParticipantFromGroupChat,
   renameGroupChat,
   searchAvailableUsers,
+  getUserById,
 };

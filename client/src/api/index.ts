@@ -52,6 +52,10 @@ const getAvailableUsers = () => {
   return apiClient.get("/chat-app/chats/users");
 };
 
+const getUserById = (userId: string) => {
+  return apiClient.get(`/chat-app/chats/users/${userId}`);
+};
+
 const getUserChats = () => {
   return apiClient.get(`/chat-app/chats`);
 };
@@ -111,6 +115,7 @@ export {
   deleteGroup,
   deleteOneOnOneChat,
   getAvailableUsers,
+  getUserById,
   getChatMessages,
   getGroupInfo,
   getUserChats,

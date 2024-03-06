@@ -13,7 +13,7 @@ import user_image from '../../assets/images/users/avatar-1.jpg'
 import { useGlobal } from '../../context/GlobalContext';
 
 const Sidebar = () => {
-  const { activeButton, setActiveButton } = useGlobal();
+  const { activeButton, setActiveButton, setTabIndex } = useGlobal();
   // const handleButtonClick = (buttonId : string) => {  
   //   // if(buttonId !== "chat") {
   //   //     setActiveButton(buttonId === activeButton ? "chat" : buttonId);
@@ -28,6 +28,11 @@ const Sidebar = () => {
   //       setActiveButton("chat")
   //   }
   // };
+  
+  const handleDashboardButton = () => {
+    setActiveButton('dashboard');
+    setTabIndex(0);
+  }
   const handleContextMenu = (e : any) => {
     e.preventDefault();
   };
@@ -79,9 +84,12 @@ const Sidebar = () => {
                 </li>
 
                 <li className="nav-item mt-auto">
-                  <a className="nav-link" href="#" onContextMenu={handleContextMenu}>
+                <NavLink to="/dashboard" className={activeButton === 'dashboard' ? 'nav-link active' : 'nav-link'} onClick={() => handleDashboardButton()} onContextMenu={handleContextMenu} id="pills-user-tab" data-bs-toggle="pill" role="tab">
+                                <img src={dashboard} />
+                 </NavLink>
+                  {/* <a className="nav-link" href="#" onContextMenu={handleContextMenu}>
                     <img src={dashboard} /> 
-                  </a>
+                  </a> */}
                 </li>
                 <li className="nav-item dropdown profile-user-dropdown">
                   {/* <button className="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-describedby="popup-78477">
