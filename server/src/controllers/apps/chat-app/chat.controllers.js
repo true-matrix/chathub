@@ -304,6 +304,131 @@ const createAGroupChat = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, payload, "Group chat created successfully"));
 });
 
+const addUser = asyncHandler(async (req, res) => {
+  const { name, email, password, phone, userRole, addedBy, aiStatus, gender, role } = req.body;
+
+  const existedUser = await User.findOne({ email : email });
+
+  if (existedUser) {
+    throw new ApiError(409, "User with email already exists", []);
+  }
+  const user = await User.create({
+    name,
+    email,
+    password,
+    phone, 
+    userRole, 
+    addedBy, 
+    aiStatus, 
+    gender,
+    role: role || UserRolesEnum.USER,
+  });
+
+  /**
+   * unHashedToken: unHashed token is something we will send to the user's mail
+   * hashedToken: we will keep record of hashedToken to validate the unHashedToken in verify email controller
+   * tokenExpiry: Expiry to be checked before validating the incoming token
+   */
+  // const { unHashedToken, hashedToken, tokenExpiry } =
+  //   user.generateTemporaryToken();
+
+  /**
+   * assign hashedToken and tokenExpiry in DB till user clicks on email verification link
+   * The email verification is handled by {@link verifyEmail}
+   */
+  // user.emailVerificationToken = hashedToken;
+  // user.emailVerificationExpiry = tokenExpiry;
+  // await user.save({ validateBeforeSave: false });
+
+  // await sendEmail({
+  //   email: user?.email,
+  //   subject: "Please verify your email",
+  //   mailgenContent: emailVerificationMailgenContent(
+  //     user.username,
+  //     `${req.protocol}://${req.get(
+  //       "host"
+  //     )}/api/v1/users/verify-email/${unHashedToken}`
+  //   ),
+  // });
+
+  // const createdUser = await User.findById(user._id).select(
+  //   "-password -refreshToken -emailVerificationToken -emailVerificationExpiry"
+  // );
+
+  // if (!createdUser) {
+  //   throw new ApiError(500, "Something went wrong while registering the user");
+  // }
+
+  if (!user) {
+    throw new ApiError(500, "Internal server error");
+  }
+  return res
+    .status(201)
+    .json(
+      new ApiResponse(
+        200,
+        { user: user },
+        "User added successfully"
+      )
+    );
+});
+
+const updateUser = asyncHandler(async (req, res) => {
+  const { userId } = req.params; // Assuming you have the user ID in the request parameters
+  const data = req.body;
+  // Validate if the user with the given ID exists
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  // Update user fields based on the request body
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      user[key] = data[key];
+    }
+  }
+
+  // Save the updated user to the database
+  await user.save({ validateBeforeSave: true }); // Set validateBeforeSave based on your needs
+
+  // You can also send an email, update tokens, or perform additional actions if needed
+
+  // Respond with the updated user
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      { user: user },
+      "User updated successfully"
+    )
+  );
+});
+
+const getAllSupremeAlpha = asyncHandler(async (req, res) => {
+  const users = await User.aggregate([
+    {
+      $match: {
+        _id: {
+          $ne: req.user._id, // avoid logged in user
+        },
+        userRole: 'supremeAlpha', // filter by userRol
+      },
+    },
+    // {
+    //   $project: {
+    //     avatar: 1,
+    //     name: 1,
+    //     email: 1,
+    //   },
+    // },
+  ]);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, users, "Supreme Alphas fetched successfully"));
+});
+
 const getGroupChatDetails = asyncHandler(async (req, res) => {
   const { chatId } = req.params;
   const groupChat = await Chat.aggregate([
@@ -676,4 +801,7 @@ export {
   renameGroupChat,
   searchAvailableUsers,
   getUserById,
+  addUser,
+  updateUser,
+  getAllSupremeAlpha
 };
