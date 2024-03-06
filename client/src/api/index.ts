@@ -44,6 +44,29 @@ const registerUser = (data: {
   return apiClient.post("/users/register", data);
 };
 
+const addUser = (data: {
+    name: string;
+    email: string;
+    password: string;
+    phone: string; 
+    userRole: string;
+    addedBy: string; 
+    aiStatus: string; 
+    gender: string;
+    role: string;
+}) => {
+  return apiClient.post("/chat-app/chats/adduser", data);
+};
+
+const updateUser = (userId: string, data: {
+  name: string;
+  // email: string;
+  phone: string; 
+  gender: string;
+}) => {
+  return apiClient.patch(`/chat-app/chats/updateuser/${userId}`, data);
+};
+
 const logoutUser = () => {
   return apiClient.post("/users/logout");
 };
@@ -54,6 +77,10 @@ const getAvailableUsers = () => {
 
 const getUserById = (userId: string) => {
   return apiClient.get(`/chat-app/chats/users/${userId}`);
+};
+
+const getAllSupremeAlphas = () => {
+  return apiClient.get("/chat-app/chats/all-supreme-alphas");
 };
 
 const getUserChats = () => {
@@ -127,4 +154,7 @@ export {
   removeParticipantFromGroup,
   sendMessage,
   updateGroupName,
+  addUser,
+  updateUser,
+  getAllSupremeAlphas
 };
