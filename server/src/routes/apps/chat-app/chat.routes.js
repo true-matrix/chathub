@@ -1,17 +1,20 @@
 import { Router } from "express";
 import {
   addNewParticipantInGroupChat,
+  addUser,
   createAGroupChat,
   createOrGetAOneOnOneChat,
   deleteGroupChat,
   deleteOneOnOneChat,
   getAllChats,
+  getAllSupremeAlpha,
   getGroupChatDetails,
   getUserById,
   leaveGroupChat,
   removeParticipantFromGroupChat,
   renameGroupChat,
   searchAvailableUsers,
+  updateUser,
 } from "../../../controllers/apps/chat-app/chat.controllers.js";
 import { verifyJWT } from "../../../middlewares/auth.middlewares.js";
 import {
@@ -29,6 +32,11 @@ router.route("/").get(getAllChats);
 
 router.route("/users").get(searchAvailableUsers);
 router.route("/users/:userId").get(getUserById);
+
+router.route("/adduser").post(validate,addUser);
+router.route("/updateuser/:userId").patch(validate,updateUser);
+router.route("/all-supreme-alphas").get(getAllSupremeAlpha);
+
 
 router
   .route("/c/:receiverId")
