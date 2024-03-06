@@ -11,9 +11,12 @@ import setting from '../../assets/images/user-setting.svg'
 import dashboard from '../../assets/images/dashboard.svg'
 import user_image from '../../assets/images/users/avatar-1.jpg'
 import { useGlobal } from '../../context/GlobalContext';
+import { useAuth } from '../../context/AuthContext';
 
 const Sidebar = () => {
   const { activeButton, setActiveButton, setTabIndex } = useGlobal();
+  const {user} = useAuth();
+
   // const handleButtonClick = (buttonId : string) => {  
   //   // if(buttonId !== "chat") {
   //   //     setActiveButton(buttonId === activeButton ? "chat" : buttonId);
@@ -83,15 +86,13 @@ const Sidebar = () => {
                  </NavLink>
                 </li>
 
-                <li className="nav-item mt-auto">
+                {user?.userRole === "admin" && <li className="nav-item mt-auto">
                 <NavLink to="/dashboard" className={activeButton === 'dashboard' ? 'nav-link active' : 'nav-link'} onClick={() => handleDashboardButton()} onContextMenu={handleContextMenu} id="pills-user-tab" data-bs-toggle="pill" role="tab">
                                 <img src={dashboard} />
                  </NavLink>
-                  {/* <a className="nav-link" href="#" onContextMenu={handleContextMenu}>
-                    <img src={dashboard} /> 
-                  </a> */}
-                </li>
-                <li className="nav-item dropdown profile-user-dropdown">
+                </li>}
+
+                <li className="nav-item dropdown profile-user-dropdown mt-auto">
                   {/* <button className="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-describedby="popup-78477">
                     <img src={user_image} alt="" className="profile-user rounded-full"/>
                   </button> */}
