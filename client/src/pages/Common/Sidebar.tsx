@@ -79,8 +79,8 @@ const Sidebar = () => {
                                 <img crossOrigin="anonymous" src={user_image} alt="" className="profile-user rounded-full border-2"/>
                             </button>} position="top left" closeOnDocumentClick>
                         <div className='user-image-poppup'>
-                            <Link to={'/profile'} className="dropdown-item d-flex align-items-center justify-content-between" onContextMenu={handleContextMenu}>Profile <img src={profile} /> </Link >
-                            <Link to={'/settings'} className="dropdown-item d-flex align-items-center justify-content-between" onContextMenu={handleContextMenu}>Settings <img src={setting} /> </Link>
+                            {/* <Link to={'/profile'} className="dropdown-item d-flex align-items-center justify-content-between" onContextMenu={handleContextMenu}>Profile <img src={profile} /> </Link > */}
+                            {/* <Link to={'/settings'} className="dropdown-item d-flex align-items-center justify-content-between" onContextMenu={handleContextMenu}>Settings <img src={setting} /> </Link> */}
                             {/* <Link to={'/'} className="dropdown-item d-flex align-items-center justify-content-between">Change Password <i className="bx bx-lock-open text-muted ms-1"></i></Link> */}
                             <div className="dropdown-divider"></div>
                             <div className='dropdown-item'><Logout /></div>
