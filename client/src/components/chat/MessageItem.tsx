@@ -119,7 +119,8 @@ const MessageItem: React.FC<{
             {message.attachments?.length > 0 ? (
               <PaperClipIcon className="h-4 w-4 mr-2 " />
             ) : null}
-            {moment(message.updatedAt).add("TIME_ZONE", "hours").fromNow(true)}{" "}
+            {/* {moment(message.updatedAt).add("TIME_ZONE, "hours").fromNow(true)}{" "} */}
+            {moment(message.updatedAt).subtract("TIME_ZONE", "hours").fromNow(true)}{" "}
             ago
           </p>
         </div>

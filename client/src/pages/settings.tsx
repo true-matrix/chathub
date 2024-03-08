@@ -6,6 +6,19 @@ import { useAuth } from "../context/AuthContext";
 const SettingsPage = () => {
   const { activeButton } = useGlobal();
   const {user} = useAuth();
+
+  const showUserRole = (userRole : string) => {
+    switch (userRole) {
+      case 'admin':
+        return 'Lycaon'
+      case 'supremeAlpha':
+        return 'Supreme Alpha'
+      case 'alpha':
+        return 'alpha'
+      default:
+        return 'omega'
+    }
+  }
   
   return (
     <>
@@ -22,14 +35,14 @@ const SettingsPage = () => {
               </div>
               <div className="mt-5">
                 <h1 className="font-bold text-center text-3xl text-gray-900">{user?.username || (user.name ? user.name: `Shakir Ali`)}</h1>
-                <p className="text-center text-sm text-gray-400 font-medium">{user?.userRole}</p>
+                <p className="text-center text-sm text-gray-400 font-medium">{showUserRole(user?.userRole)}</p>
                 <div className="w-full">
                   <div className="mt-5 w-full flex flex-col items-center overflow-hidden text-sm">
                     <a href="#" className="w-full border-t border-gray-100 text-gray-600 py-4 pl-6 pr-3 w-full block hover:bg-gray-100 transition duration-150">
                       <img src="https://avatars0.githubusercontent.com/u/35900628?v=4" alt="" className="rounded-full h-6 shadow-md inline-block mr-2"/>{user.email} 
                     </a>
                     <a href="#" className="w-full border-t border-gray-100 text-gray-600 py-4 pl-6 pr-3 w-full block hover:bg-gray-100 transition duration-150">
-                      <img src="https://avatars0.githubusercontent.com/u/35900628?v=4" alt="" className="rounded-full h-6 shadow-md inline-block mr-2"/>9876543210 
+                      <img src="https://avatars0.githubusercontent.com/u/35900628?v=4" alt="" className="rounded-full h-6 shadow-md inline-block mr-2"/>{user.phone ? user.phone : '9876543210'} 
                       {/* <span className="text-gray-500 text-xs">49 min ago</span> */}
                     </a>
                   </div>

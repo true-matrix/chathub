@@ -1,13 +1,8 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useGlobal } from "../../context/GlobalContext";
-import Sidebar from "../Common/Sidebar";
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import ReactPaginate from 'react-paginate';
-import IMG_1 from '../../assets/images/users/avatar-7.jpg'
-import IMG_2 from '../../assets/images/users/avatar-8.jpg'
-import IMG_3 from '../../assets/images/users/avatar-9.jpg'
-import { addUser, getAvailableUsers, getAllSupremeAlphas, getUserById, updateUser } from "../../api";
+import { addUser, getAvailableUsers, getAllSupremeAlphas, getUserById, updateUser, deleteUser } from "../../api";
 import { requestHandler } from "../../utils";
 import { ErrorMessage, Field, Formik, useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -15,8 +10,10 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { confirmAlert } from "react-confirm-alert";
 import { ConfirmAlert } from "../../components/ConfirmAlert";
+import { generateUniqueId } from "../../commonhelper";
 
 interface CreateUserFormValues {
+    username: string;
     name: string;
     email: string;
     password: string;
@@ -30,7 +27,6 @@ interface CreateUserFormValues {
 
 
 const SupremeALphaPage = () => {
-    const { tabIndex } = useGlobal();
     const navigate = useNavigate();
     const {user} = useAuth()
     const [currentPage, setCurrentPage] = useState(0);
@@ -41,7 +37,10 @@ const SupremeALphaPage = () => {
     const [selectedUser, setSelectedUser] = useState<any[]>([]);
     const [selectedId, setSelectedId] = useState<any>("");
     const [isLoading, setIsLoading] = useState(false);
+    let uid = generateUniqueId();
+
     const initValues : CreateUserFormValues = {
+        username: uid,
         name: '',
         email:'',
         password: '',
@@ -148,9 +147,17 @@ const SupremeALphaPage = () => {
     //       }
     //     }
     //   }, [selectedUser, selectedId,isEditing]);
-      const onYes = useCallback((id:string) => {
-        // onDeleteUser({ url : `auth/${id}`})
-        // onAllUsers({ url : `user/get-all-supreme-alphas`})
+      const onYes = useCallback(async (id:string) => {
+        await requestHandler(
+          async () => await deleteUser(id),
+          setIsLoading,
+          () => {
+            alert("User deleted successfully!");
+            getUsers();
+            navigate("/dashboard"); // Redirect to the login page after successful registration
+          },
+          alert // Display error alerts on request failure
+        );
         console.log('delete=>',id);
         
     }, []);
@@ -186,6 +193,7 @@ const SupremeALphaPage = () => {
             } else{
               await requestHandler(
                 async () => await addUser({
+                  username: values.username,
                   name: values.name,
                   email: values.email,
                   password: values.password,
@@ -246,10 +254,11 @@ const SupremeALphaPage = () => {
           <div className="absolute inset-0 bg-gray-800 opacity-75"></div>
           <Formik initialValues={formInititalState} onSubmit={handleSubmit} validationSchema={validationSchema} enableReinitialize >
         {(formik) => {
-              const { handleSubmit } = formik;
+              const { values, handleSubmit } = formik;
               return (
           <div className="relative bg-white p-8 rounded-md">
             <h2 className="text-2xl mb-4">{!isEditing ?  'Add New Supreme Alpha' : 'Update Supreme Alpha'}</h2>
+            {/* {JSON.stringify(values)} */}
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label htmlFor="name">Name:</label>
@@ -375,11 +384,11 @@ const SupremeALphaPage = () => {
                         <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                             <img className="w-10 h-10 rounded-full" src={user.avatar.url} alt="img"/>
                             <div className="ps-3">
-                                <div className="text-base font-semibold">{user.username || user.name}</div>
+                                <div className="text-base font-semibold">{user.name || user.username }</div>
                                 <div className="font-normal text-gray-500">{user.email}</div>
                             </div>  
                         </th>
-                        <td>9876543210</td>
+                        <td>{user.phone ? user.phone : '9876543210'}</td>
                         <td>inactive</td>
                         <td>
                           <button className="bg-blue-500 text-white px-2 py-1 mr-2" onClick={()=>handleUpdateUser(user._id)}  >Edit</button>

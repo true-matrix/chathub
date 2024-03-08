@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser, loginUserOtp, verifyUserOtp, logoutUser, registerUser } from "../api";
+import { loginUser, loginUserOtp, verifyUserOtp, logoutUser } from "../api";
 import Loader from "../components/Loader";
 import { UserInterface } from "../interfaces/user";
 import { LocalStorage, requestHandler } from "../utils";
@@ -13,11 +13,6 @@ const AuthContext = createContext<{
   login: (data: { email: string; password: string }) => Promise<void>;
   sendOtp: (data: { email: string; otp: string }) => Promise<void>;
   verifyOtp: (data: { email: string; otp: string }) => Promise<void>;
-  register: (data: {
-    email: string;
-    username: string;
-    password: string;
-  }) => Promise<void>;
   logout: () => Promise<void>;
 }>({
   user: null,
@@ -26,7 +21,6 @@ const AuthContext = createContext<{
   login: async () => {},
   sendOtp: async () => {},
   verifyOtp: async () => {},
-  register: async () => {},
   logout: async () => {},
 });
 
@@ -72,7 +66,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         async () => await loginUserOtp(data),
         setIsLoading,
         (res) => {
-          const { data } = res;
         //   setOtp(data);
         // LocalStorage.set("otp", data);
           // setToken(data.accessToken);
@@ -109,22 +102,6 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       alert // Display error alerts on request failure
     );
   };
-  // Function to handle user registration
-  const register = async (data: {
-    email: string;
-    username: string;
-    password: string;
-  }) => {
-    await requestHandler(
-      async () => await registerUser(data),
-      setIsLoading,
-      () => {
-        alert("Account created successfully! Go ahead and login.");
-        navigate("/login"); // Redirect to the login page after successful registration
-      },
-      alert // Display error alerts on request failure
-    );
-  };
 
   // Function to handle user logout
   const logout = async () => {
@@ -155,7 +132,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Provide authentication-related data and functions through the context
   return (
-    <AuthContext.Provider value={{ user, otp, login, sendOtp, verifyOtp, register, logout, token }}>
+    <AuthContext.Provider value={{ user, otp, login, sendOtp, verifyOtp, logout, token }}>
       {isLoading ? <Loader /> : children} {/* Display a loader while loading */}
     </AuthContext.Provider>
   );

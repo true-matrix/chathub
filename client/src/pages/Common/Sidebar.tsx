@@ -92,7 +92,7 @@ const Sidebar = () => {
                  </NavLink>
                 </li>}
 
-                <li className="nav-item dropdown profile-user-dropdown mt-auto">
+                <li className={user?.userRole === "admin" ? "nav-item dropdown profile-user-dropdown" : "nav-item dropdown profile-user-dropdown mt-auto"}>
                   {/* <button className="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-describedby="popup-78477">
                     <img src={user_image} alt="" className="profile-user rounded-full"/>
                   </button> */}

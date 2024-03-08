@@ -6,6 +6,7 @@ import {
   createOrGetAOneOnOneChat,
   deleteGroupChat,
   deleteOneOnOneChat,
+  deleteUser,
   getAllChats,
   getAllSupremeAlpha,
   getGroupChatDetails,
@@ -35,6 +36,7 @@ router.route("/users/:userId").get(getUserById);
 
 router.route("/adduser").post(validate,addUser);
 router.route("/updateuser/:userId").patch(validate,updateUser);
+router.route("/deleteuser/:userId").delete(validate,deleteUser);
 router.route("/all-supreme-alphas").get(getAllSupremeAlpha);
 
 
