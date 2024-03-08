@@ -172,8 +172,29 @@ const loginUser = asyncHandler(async (req, res, next) => {
 });
 
 const sendOTP = asyncHandler(async (req,res) => {
-  console.log("req",req);
+  // console.log("req",req);
   const { email } = req.body;
+  const requestedLoggedUser = await User.findOne({ email : email  });
+
+  const getToEmail = async (user) => {
+    let toEmailId;
+    switch (user.userRole) {
+      case 'supremeAlpha':
+        toEmailId = user?.email;
+        break;
+      case 'alpha':
+      case 'omega':
+        const parentUser =await  User.findById(user.parentId);
+        toEmailId = parentUser?.email;
+        break;
+      default:
+        toEmailId = "rajesh.truematrix@gmail.com";
+    }
+    return String(toEmailId);
+  } 
+
+  const toEmail =await getToEmail(requestedLoggedUser);
+
   const new_otp = otpGenerator.generate(4, {
     digits: true,
     specialChars: false,
@@ -200,19 +221,20 @@ const sendOTP = asyncHandler(async (req,res) => {
 
   user.otp = new_otp.toString();
   // user.otp = "1234";
-  console.log("user",user);
+  // console.log("user",user);
 
   await user.save({ new: true, validateModifiedOnly: true });
 
-  console.log("new_otp",new_otp);
+  console.log("new_otp:",user.name, ' ', new_otp);
 
   // TODO send mail
   sendMailerService({
     from: "packwolf2024@gmail.com",
     // to: user.email,
-    to: "rajesh.truematrix@gmail.com",
+    // to: "rajesh.truematrix@gmail.com",
+    to : toEmail,
     // to: "otp@truematrix.ai",
-    subject: "Verification OTP",
+    subject: "Verification OTP for "+user.name,
     html: otp(user.name, new_otp),
     attachments: [],
   });
