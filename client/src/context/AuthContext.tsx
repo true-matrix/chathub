@@ -47,8 +47,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         const { data } = res;
         setUser(data.user);
         setToken(data.accessToken);
-        LocalStorage.set("user", data.user);
-        LocalStorage.set("token", data.accessToken);
+        // LocalStorage.set("user", data.user);
+        // LocalStorage.set("token", data.accessToken);
         if(res.success === true){
           sendOtp({email: data.user.email, otp: data.user.otp})
         } else {
@@ -89,12 +89,17 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       (res) => {
         const { data } = res;
         setOtp(data);
-      LocalStorage.set("otp", data);
+      // LocalStorage.set("otp", data);
         // setToken(data.accessToken);
         // LocalStorage.set("user", data.user);
         // LocalStorage.set("token", data.accessToken);
         // navigate("/chat"); // Redirect to the chat page after successful login
       if(res.success === true){
+        LocalStorage.set("otp", data);
+        setUser(data.user);
+        setToken(data.accessToken);
+        LocalStorage.set("user", data.user);
+        LocalStorage.set("token", data.accessToken);
         navigate("/chat");
       }
 
