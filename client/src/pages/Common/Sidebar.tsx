@@ -55,58 +55,37 @@ const Sidebar = () => {
                   {/* <a className={activeButton === 'chat' ? 'nav-link active' : 'nav-link'} onClick={() => setActiveButton('chat')} href="/chat">
                     <img src={chat} />
                   </a> */}
-                  <NavLink to="/chat" className={activeButton === 'chat' ? 'nav-link active' : 'nav-link'} onClick={() => setActiveButton('chat')} onContextMenu={handleContextMenu} id="pills-user-tab" data-bs-toggle="pill" role="tab">
+                  <NavLink to="/chat" className={activeButton === 'chat' ? 'nav-link active' : 'nav-link'} onClick={() => setActiveButton('chat')} onContextMenu={handleContextMenu}  data-bs-toggle="pill" role="tab">
                                 <img src={chat} />
                   </NavLink>
-                </li> 
-                <li className="nav-item">
-                {/* <a className={activeButton === 'profile' ? 'nav-link active' : 'nav-link'} onClick={() => handleButtonClick('profile')} href="/profile">
-                    <img src={profile} />
-                  </a> */}
-                  {/* <OverlayTrigger 
-                            delay={{ hide: 150, show: 100 }} 
-                            overlay={(props) => ( 
-                            <Tooltip {...props}> 
-                                Profile 
-                            </Tooltip> 
-                            )} 
-                            placement="right" 
-                            > */}
-                                <NavLink to="/profile" className={activeButton === 'profile' ? 'nav-link active' : 'nav-link'} onClick={() => setActiveButton('profile')} onContextMenu={handleContextMenu} id="pills-user-tab" data-bs-toggle="pill" role="tab">
-                                <img src={profile} />
-                                </NavLink>
-                  {/* </OverlayTrigger>  */}
-                </li>
+                </li>  
                 <li className="nav-item">
                   {/* <a className="nav-link" href="/settings">
                      <img src={setting} /> 
                   </a> */}
-                  <NavLink to="/settings" className={activeButton === 'settings' ? 'nav-link active' : 'nav-link'} onClick={() => setActiveButton('settings')} onContextMenu={handleContextMenu} id="pills-user-tab" data-bs-toggle="pill" role="tab">
-                                <img src={setting} />
+                  <NavLink to="/settings" className={activeButton === 'settings' ? 'nav-link active' : 'nav-link'} onClick={() => setActiveButton('settings')} onContextMenu={handleContextMenu}  data-bs-toggle="pill" role="tab">
+                                <img src={profile} />
                  </NavLink>
                 </li>
 
-                {user?.userRole === "admin" && <li className="nav-item mt-auto">
-                <NavLink to="/dashboard" className={activeButton === 'dashboard' ? 'nav-link active' : 'nav-link'} onClick={() => handleDashboardButton()} onContextMenu={handleContextMenu} id="pills-user-tab" data-bs-toggle="pill" role="tab">
+                {user?.userRole === "admin" && <li className="nav-item">
+                <NavLink to="/dashboard" className={activeButton === 'dashboard' ? 'nav-link active' : 'nav-link'} onClick={() => handleDashboardButton()} onContextMenu={handleContextMenu}  data-bs-toggle="pill" role="tab">
                                 <img src={dashboard} />
                  </NavLink>
                 </li>}
 
-                <li className="nav-item dropdown profile-user-dropdown mt-auto">
-                  {/* <button className="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-describedby="popup-78477">
-                    <img src={user_image} alt="" className="profile-user rounded-full"/>
-                  </button> */}
-                  <Popup trigger={<button className="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-describedby="popup-78477">
-                                <img crossOrigin="anonymous" src={user_image} alt="" className="profile-user rounded-full"/>
+                <li className="nav-item dropdown profile-user-dropdown mt-auto"> 
+                  <Popup trigger={<button className="nav-link dropdown-toggle bg-white rounded-full" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-describedby="popup-78477">
+                                <img crossOrigin="anonymous" src={user_image} alt="" className="profile-user rounded-full border-2"/>
                             </button>} position="top left" closeOnDocumentClick>
-                        <div>
+                        <div className='user-image-poppup'>
                             <Link to={'/profile'} className="dropdown-item d-flex align-items-center justify-content-between" onContextMenu={handleContextMenu}>Profile <img src={profile} /> </Link >
                             <Link to={'/settings'} className="dropdown-item d-flex align-items-center justify-content-between" onContextMenu={handleContextMenu}>Settings <img src={setting} /> </Link>
                             {/* <Link to={'/'} className="dropdown-item d-flex align-items-center justify-content-between">Change Password <i className="bx bx-lock-open text-muted ms-1"></i></Link> */}
                             <div className="dropdown-divider"></div>
                             <div className='dropdown-item'><Logout /></div>
                         </div>
-                        </Popup>
+                  </Popup>
                 </li>
               </ul>
             </div>
