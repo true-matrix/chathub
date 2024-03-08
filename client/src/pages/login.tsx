@@ -111,12 +111,12 @@ const handlePasswordHide = () => {
               </Button>
 
               {/* Link to the registration page */}
-              <small className="text-zinc-300 pl-12">
+              {/* <small className="text-zinc-300 pl-12">
                 Don&apos;t have an account?{" "}
                 <a className="text-primary hover:underline" href="/register">
                   Register
                 </a>
-              </small>
+              </small> */}
             </form>
             </div>
             <div className="auth-img">
