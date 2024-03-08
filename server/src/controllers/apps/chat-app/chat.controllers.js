@@ -692,6 +692,112 @@ const getAllOmega = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, users, "Omegas fetched successfully"));
 });
 
+///************************************OTP******************************************///
+//show otp as per hierarchy
+const getAllOTPs = asyncHandler(async (req, res) => {
+  let users;
+  if (req.user.userRole === 'alpha') {
+    users = await User.aggregate([
+      {
+        $match: {
+          $or: [
+            { $and: [{ parentId: (req.user._id).toString(), userRole: 'omega' }] },
+          ],
+        },
+      },
+    ]);
+  } else if(req.user.userRole === 'supremeAlpha'){
+    users = await User.aggregate([
+      {
+        $match: {
+          $or: [
+            { addedBy: new mongoose.Types.ObjectId(req.user._id)},
+            { parentId: (req.user.parentId) },
+          ],
+          _id: {
+            $ne: new mongoose.Types.ObjectId(req.user._id), // avoid logged in user
+          },
+        },
+      },
+    ]);
+  } else if(req.user.userRole === 'admin'){
+    users = await User.aggregate([
+      {
+        $match: {
+          userRole: 'supremeAlpha',
+        },
+      },
+    ]);
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, users, "Omegas fetched successfully"));
+});
+///************************************Contacts******************************************///
+//Get all Contacts / Get all available users
+const getAllContacts = asyncHandler(async (req, res) => {
+  let users;
+  if (req.user.userRole === 'omega') {
+    users = await User.aggregate([
+      {
+        $match: {
+          $or: [
+            {  _id: new mongoose.Types.ObjectId(req.user.addedBy)  },
+            { $and: [{  _id: new mongoose.Types.ObjectId(req.user.parentId), userRole: 'supremeAlpha' }]},
+            { $and: [{  parentId: (req.user.parentId).toString(), userRole: 'alpha' }]},
+          ],
+          _id: {
+            $ne: new mongoose.Types.ObjectId(req.user._id), // avoid logged in user
+          },
+        },
+      },
+    ]);
+  } else if (req.user.userRole === 'alpha') {
+    users = await User.aggregate([
+      {
+        $match: {
+          $or: [
+            {  _id: new mongoose.Types.ObjectId(req.user.addedBy)  },
+            {  _id: new mongoose.Types.ObjectId(req.user.parentId)  },
+            {  parentId: (req.user.parentId).toString()  },
+          ],
+          _id: {
+            $ne: new mongoose.Types.ObjectId(req.user._id), // avoid logged in user
+          },
+        },
+      },
+    ]);
+  } else if(req.user.userRole === 'supremeAlpha'){
+    users = await User.aggregate([
+      {
+        $match: {
+          $or: [
+            { addedBy: new mongoose.Types.ObjectId(req.user._id)},
+            { parentId: (req.user.parentId) },
+          ],
+          _id: {
+            $ne: new mongoose.Types.ObjectId(req.user._id), // avoid logged in user
+          },
+        },
+      },
+    ]);
+  } else if(req.user.userRole === 'admin'){
+    users = await User.aggregate([
+      {
+        $match: {
+          userRole: 'supremeAlpha',
+        },
+      },
+    ]);
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, users, "Omegas fetched successfully"));
+});
+
+
 // *****************************************************************************************************************************************//
 
 const getGroupChatDetails = asyncHandler(async (req, res) => {
@@ -1077,5 +1183,7 @@ export {
   addOmega,
   updateOmega,
   deleteOmega,
-  getAllOmega
+  getAllOmega,
+  getAllOTPs,
+  getAllContacts
 };

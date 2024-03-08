@@ -8,6 +8,7 @@ import dashboard from '../../assets/images/dashboard.svg'
 import { useAuth } from "../../context/AuthContext";
 import AlphaPage from "./AlphaPage";
 import OmegaPage from "./OmegaPage";
+import OtpPage from "./OtpPage";
 
 
 const AdminDashboard = () => {
@@ -43,7 +44,7 @@ const AdminDashboard = () => {
                 <OmegaPage/>
             </TabPanel>}
             <TabPanel>
-              <h2>Otp Page</h2>
+              <OtpPage/>
             </TabPanel>
         </Tabs>
         </div>

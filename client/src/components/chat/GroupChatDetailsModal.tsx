@@ -10,6 +10,7 @@ import React, { Fragment, useEffect, useState } from "react";
 import {
   addParticipantToGroup,
   deleteGroup,
+  getAllContacts,
   getAvailableUsers,
   getGroupInfo,
   removeParticipantFromGroup,
@@ -74,7 +75,9 @@ const GroupChatDetailsModal: React.FC<{
   const getUsers = async () => {
     requestHandler(
       // Call to get the list of available users.
-      async () => await getAvailableUsers(),
+      // async () => await getAvailableUsers(),
+      async () => await getAllContacts(),
+
       null,
       // On successful retrieval, set the users' state.
       (res) => {
@@ -270,7 +273,7 @@ const GroupChatDetailsModal: React.FC<{
                                 }
                               />
                               <Button
-                                severity="primary"
+                                severity="success"
                                 onClick={handleGroupNameUpdate}
                               >
                                 Save
@@ -360,7 +363,7 @@ const GroupChatDetailsModal: React.FC<{
                                   <Button
                                     onClick={() => setAddingParticipant(true)}
                                     fullWidth
-                                    severity="primary"
+                                    severity="success"
                                   >
                                     <UserPlusIcon className="w-5 h-5 mr-1" />{" "}
                                     Add participant

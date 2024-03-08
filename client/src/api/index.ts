@@ -149,7 +149,15 @@ const updateOmega = (userId: string, data: {
 const getAllOmegas = () => {
   return apiClient.get("/chat-app/chats/all-omegas");
 };
+// ****************************************************OTP API********************************************************************************//
+const getAllOTPs = () => {
+  return apiClient.get("/chat-app/chats/otps");
+};
 
+// ****************************************************Contacts API********************************************************************************//
+const getAllContacts = () => {
+  return apiClient.get("/chat-app/chats/contacts");
+};
 // ********************************************************************************************************************************************//
 
 const logoutUser = () => {
@@ -245,5 +253,7 @@ export {
   addOmega,
   deleteOmega,
   updateOmega,
-  getAllOmegas
+  getAllOmegas,
+  getAllOTPs,
+  getAllContacts
 };

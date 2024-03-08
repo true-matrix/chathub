@@ -5,7 +5,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/20/solid";
 import { Fragment, useEffect, useState } from "react";
-import { createGroupChat, createUserChat, getAvailableUsers } from "../../api";
+import { createGroupChat, createUserChat, getAllContacts, getAvailableUsers } from "../../api";
 import { ChatListItemInterface } from "../../interfaces/chat";
 import { UserInterface } from "../../interfaces/user";
 import { classNames, requestHandler } from "../../utils";
@@ -36,7 +36,8 @@ const AddChatModal: React.FC<{
     // Handle the request to get available users
     requestHandler(
       // Callback to fetch available users
-      async () => await getAvailableUsers(),
+      // async () => await getAvailableUsers(),
+      async () => await getAllContacts(),
       null, // No loading setter callback provided
       // Success callback
       (res) => {

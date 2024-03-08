@@ -13,6 +13,8 @@ import {
   deleteUser,
   getAllAlpha,
   getAllChats,
+  getAllContacts,
+  getAllOTPs,
   getAllOmega,
   getAllSupremeAlpha,
   getGroupChatDetails,
@@ -60,6 +62,13 @@ router.route("/updateomega/:userId").patch(validate,updateOmega);
 router.route("/deleteomega/:userId").delete(validate,deleteOmega);
 router.route("/all-omegas").get(getAllOmega);
 
+// ****************************************************OTP routes********************************************************************************//
+router.route("/otps").get(getAllOTPs);
+
+// ****************************************************All Contacts********************************************************************************//
+router.route("/contacts").get(getAllContacts);
+
+// ****************************************************************************************************************************************//
 router
   .route("/c/:receiverId")
   .post(

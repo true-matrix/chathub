@@ -1,10 +1,9 @@
-import { useCallback, useContext, useEffect, useState } from "react";
-import { useGlobal } from "../../context/GlobalContext";
+import { useCallback, useEffect, useState } from "react";
 import 'react-tabs/style/react-tabs.css';
 import ReactPaginate from 'react-paginate';
 import { addOmega, getAllOmegas, getUserById, updateOmega, deleteOmega, getAllAlphas } from "../../api";
 import { requestHandler } from "../../utils";
-import { ErrorMessage, Field, Formik, useFormik } from 'formik';
+import { ErrorMessage, Field, Formik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
