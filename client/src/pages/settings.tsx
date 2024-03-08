@@ -40,8 +40,8 @@ const SettingsPage = () => {
                 <img src="https://tecdn.b-cdn.net/img/new/avatars/2.webp" alt="" className="rounded-full mx-auto w-32 h-32 shadow-md border-4 border-white transition duration-200 transform hover:scale-110"/>
               </div>
               <div className="mt-3">
-                <h1 className="font-bold text-center text-3xl text-gray-900">{user?.username || (user.name ? user.name: `Shakir Ali`)}</h1>
-                <p className="text-center text-sm text-gray-400 font-medium">{showUserRole(user?.userRole)}Xyz Department</p>
+                <h1 className="font-bold text-center text-3xl text-gray-900">{ user.name ? user.name: user?.username}</h1>
+                <p className="text-center text-sm text-gray-400 font-medium">{showUserRole(user?.userRole)}</p>
                 <div className="w-full">
                   <div className="mt-5 w-full flex flex-col items-center overflow-hidden text-sm">
                     <a href="#" className="w-full text-gray-600 py-2 pl-3 pr-3 w-full block">

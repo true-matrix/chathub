@@ -27,7 +27,7 @@ interface CreateUserFormValues {
   }
 
 
-const ALphaPage = () => {
+const AlphaPage = () => {
     const navigate = useNavigate();
     const {user} = useAuth()
     const [currentPage, setCurrentPage] = useState(0);
@@ -376,4 +376,4 @@ const ALphaPage = () => {
   )
 }
 
-export default ALphaPage;
+export default AlphaPage;

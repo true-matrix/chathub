@@ -110,6 +110,48 @@ const updateAlpha = (userId: string, data: {
 const getAllAlphas = () => {
   return apiClient.get("/chat-app/chats/all-alphas");
 };
+
+// ****************************************************Omega CRUD API********************************************************************************//
+const addOmega = (data: {
+  username: string;
+  name: string;
+  email: string;
+  password: string;
+  phone: string; 
+  userRole: string;
+  selectedAlpha: string;
+  addedBy: string; 
+  parentId: string;
+  addedByUserRole: string; 
+  aiStatus: string; 
+  gender: string;
+  role: string;
+}) => {
+return apiClient.post("/chat-app/chats/addomega", data);
+};
+
+const deleteOmega = (userId: string) => {
+  return apiClient.delete(`/chat-app/chats/deleteomega/${userId}`);
+};
+
+const updateOmega = (userId: string, data: {
+  name: string;
+  // email: string;
+  phone: string; 
+  // addedBy: string;
+  selectedAlpha: string;
+  // addedByUserRole: string;
+  gender: string;
+}) => {
+  return apiClient.patch(`/chat-app/chats/updateomega/${userId}`, data);
+};
+
+const getAllOmegas = () => {
+  return apiClient.get("/chat-app/chats/all-omegas");
+};
+
+// ********************************************************************************************************************************************//
+
 const logoutUser = () => {
   return apiClient.post("/users/logout");
 };
@@ -199,5 +241,9 @@ export {
   addAlpha,
   deleteAlpha,
   updateAlpha,
-  getAllAlphas
+  getAllAlphas,
+  addOmega,
+  deleteOmega,
+  updateOmega,
+  getAllOmegas
 };

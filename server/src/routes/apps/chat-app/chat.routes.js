@@ -2,15 +2,18 @@ import { Router } from "express";
 import {
   addAlpha,
   addNewParticipantInGroupChat,
+  addOmega,
   addUser,
   createAGroupChat,
   createOrGetAOneOnOneChat,
   deleteAlpha,
   deleteGroupChat,
+  deleteOmega,
   deleteOneOnOneChat,
   deleteUser,
   getAllAlpha,
   getAllChats,
+  getAllOmega,
   getAllSupremeAlpha,
   getGroupChatDetails,
   getUserById,
@@ -19,6 +22,7 @@ import {
   renameGroupChat,
   searchAvailableUsers,
   updateAlpha,
+  updateOmega,
   updateUser,
 } from "../../../controllers/apps/chat-app/chat.controllers.js";
 import { verifyJWT } from "../../../middlewares/auth.middlewares.js";
@@ -49,6 +53,12 @@ router.route("/addalpha").post(validate,addAlpha);
 router.route("/updatealpha/:userId").patch(validate,updateAlpha);
 router.route("/deletealpha/:userId").delete(validate,deleteAlpha);
 router.route("/all-alphas").get(getAllAlpha);
+
+// ****************************************************Alpha routes********************************************************************************//
+router.route("/addomega").post(validate,addOmega);
+router.route("/updateomega/:userId").patch(validate,updateOmega);
+router.route("/deleteomega/:userId").delete(validate,deleteOmega);
+router.route("/all-omegas").get(getAllOmega);
 
 router
   .route("/c/:receiverId")

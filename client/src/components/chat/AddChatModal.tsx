@@ -226,7 +226,7 @@ const AddChatModal: React.FC<{
                       value={isGroupChat ? "" : selectedUserId || ""}
                       options={users.map((user) => {
                         return {
-                          label: user.username,
+                          label: user.name,
                           value: user._id,
                           avatar: user.avatar,
                         };
@@ -268,7 +268,7 @@ const AddChatModal: React.FC<{
                                   src={participant.avatar.url}
                                 />
                                 <p className="text-dark">
-                                  {participant.username}
+                                  {participant.name}
                                 </p>
                                 <XCircleIcon
                                   role="button"

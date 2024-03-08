@@ -71,7 +71,7 @@ const userSchema = new Schema(
     userRole: {
       type: String,
     },
-    selectedSigma: {
+    selectedAlpha: {
       type: String,
     },
     addedBy: {

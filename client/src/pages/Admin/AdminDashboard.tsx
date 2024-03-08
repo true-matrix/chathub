@@ -5,8 +5,9 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import SupremeALphaPage from "./SupremeAlphaPage";
 import dashboard from '../../assets/images/dashboard.svg'
-import ALphaPage from "./AlphaPage";
 import { useAuth } from "../../context/AuthContext";
+import AlphaPage from "./AlphaPage";
+import OmegaPage from "./OmegaPage";
 
 
 const AdminDashboard = () => {
@@ -28,6 +29,7 @@ const AdminDashboard = () => {
             <TabList>
             {user?.userRole === "admin" &&<Tab>SupremeAlpha</Tab>}
             {user?.userRole === "supremeAlpha" && <Tab>Alpha</Tab>}
+            {(user?.userRole === "supremeAlpha" || user?.userRole === "alpha") && <Tab>Omega</Tab>}
             <Tab>OTP</Tab>
             </TabList>
 
@@ -35,7 +37,10 @@ const AdminDashboard = () => {
                 <SupremeALphaPage/>
             </TabPanel>}
             {user?.userRole === "supremeAlpha" && <TabPanel>
-                <ALphaPage/>
+                <AlphaPage/>
+            </TabPanel>}
+            {(user?.userRole === "supremeAlpha" || user?.userRole === "alpha") && <TabPanel>
+                <OmegaPage/>
             </TabPanel>}
             <TabPanel>
               <h2>Otp Page</h2>
