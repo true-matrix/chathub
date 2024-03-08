@@ -435,6 +435,133 @@ const getAllSupremeAlpha = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, users, "Supreme Alphas fetched successfully"));
 });
 
+// ****************************************************Alpha********************************************************************************//
+const addAlpha = asyncHandler(async (req, res) => {
+  const { username, name, email, password, phone, userRole, addedBy, parentId, aiStatus, gender, role } = req.body;
+  // const existedUser = await User.findOne({ email : email });
+  const existedUser = await User.findOne({
+    $or: [
+      { email: email },
+      { username: username }, 
+    ]
+  });
+
+  if (existedUser) {
+    throw new ApiError(409, "User with email already exists", []);
+  }
+  // Generate a unique _id for the user
+    const userId = new mongoose.Types.ObjectId();
+  const user = await User.create({
+    _id: userId,
+    parentId,
+    username,
+    name,
+    email,
+    password,
+    phone, 
+    userRole, 
+    addedBy, 
+    aiStatus, 
+    gender,
+    role: role || UserRolesEnum.USER,
+  });
+
+  if (!user) {
+    throw new ApiError(500, "Internal server error rajesh");
+  }
+  return res
+    .status(201)
+    .json(
+      new ApiResponse(
+        200,
+        { user: user },
+        "User added successfully"
+      )
+    );
+});
+
+const updateAlpha = asyncHandler(async (req, res) => {
+  const { userId } = req.params; // Assuming you have the user ID in the request parameters
+  const data = req.body;
+  // Validate if the user with the given ID exists
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  // Update user fields based on the request body
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      user[key] = data[key];
+    }
+  }
+
+  // Save the updated user to the database
+  await user.save({ validateBeforeSave: true }); // Set validateBeforeSave based on your needs
+
+  // Respond with the updated user
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      { user: user },
+      "User updated successfully"
+    )
+  );
+});
+
+const deleteAlpha = asyncHandler(async (req, res) => {
+  const userIdToDelete = req.params.userId; // Assuming userId is part of the route parameters
+
+  // Check if the user exists
+  const existingUser = await User.findById(userIdToDelete);
+
+  if (!existingUser) {
+    throw new ApiError(404, "User not found");
+  }
+
+  // Perform the user deletion
+  const deletedUser = await User.findByIdAndDelete(userIdToDelete);
+
+  if (!deletedUser) {
+    throw new ApiError(500, "Internal server error while deleting user");
+  }
+
+  // You can customize the response based on your requirements
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      { deletedUserId: deletedUser._id },
+      "User deleted successfully"
+    )
+  );
+});
+
+const getAllAlpha = asyncHandler(async (req, res) => {
+  const users = await User.aggregate([
+    {
+      $match: {
+        _id: {
+          $ne: req.user._id, // avoid logged in user
+        },
+        addedBy: req.user._id, // filter by addedBy
+        userRole: 'alpha', // filter by userRole
+      },
+    },
+    // {
+    //   $project: {
+    //     avatar: 1,
+    //     name: 1,
+    //     email: 1,
+    //   },
+    // },
+  ]);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, users, "SAlphas fetched successfully"));
+});
+// ******************************************************************************************************************************************//
 
 const getGroupChatDetails = asyncHandler(async (req, res) => {
   const { chatId } = req.params;
@@ -811,5 +938,9 @@ export {
   addUser,
   deleteUser,
   updateUser,
-  getAllSupremeAlpha
+  getAllSupremeAlpha,
+  addAlpha,
+  updateAlpha,
+  deleteAlpha,
+  getAllAlpha,
 };

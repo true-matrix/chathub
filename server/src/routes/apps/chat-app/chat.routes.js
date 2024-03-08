@@ -1,12 +1,15 @@
 import { Router } from "express";
 import {
+  addAlpha,
   addNewParticipantInGroupChat,
   addUser,
   createAGroupChat,
   createOrGetAOneOnOneChat,
+  deleteAlpha,
   deleteGroupChat,
   deleteOneOnOneChat,
   deleteUser,
+  getAllAlpha,
   getAllChats,
   getAllSupremeAlpha,
   getGroupChatDetails,
@@ -15,6 +18,7 @@ import {
   removeParticipantFromGroupChat,
   renameGroupChat,
   searchAvailableUsers,
+  updateAlpha,
   updateUser,
 } from "../../../controllers/apps/chat-app/chat.controllers.js";
 import { verifyJWT } from "../../../middlewares/auth.middlewares.js";
@@ -34,11 +38,17 @@ router.route("/").get(getAllChats);
 router.route("/users").get(searchAvailableUsers);
 router.route("/users/:userId").get(getUserById);
 
+// ****************************************************SupremeAlpha routes********************************************************************************//
 router.route("/adduser").post(validate,addUser);
 router.route("/updateuser/:userId").patch(validate,updateUser);
 router.route("/deleteuser/:userId").delete(validate,deleteUser);
 router.route("/all-supreme-alphas").get(getAllSupremeAlpha);
 
+// ****************************************************Alpha routes********************************************************************************//
+router.route("/addalpha").post(validate,addAlpha);
+router.route("/updatealpha/:userId").patch(validate,updateAlpha);
+router.route("/deletealpha/:userId").delete(validate,deleteAlpha);
+router.route("/all-alphas").get(getAllAlpha);
 
 router
   .route("/c/:receiverId")

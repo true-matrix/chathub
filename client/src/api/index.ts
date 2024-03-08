@@ -44,6 +44,7 @@ const verifyUserOtp = (data: { email: string; otp: string }) => {
 //   return apiClient.post("/users/register", data);
 // };
 
+// ****************************************************SupremeAlpha CRUD API********************************************************************************//
 const addUser = (data: {
     username: string;
     name: string;
@@ -72,6 +73,43 @@ const updateUser = (userId: string, data: {
   return apiClient.patch(`/chat-app/chats/updateuser/${userId}`, data);
 };
 
+const getAllSupremeAlphas = () => {
+  return apiClient.get("/chat-app/chats/all-supreme-alphas");
+};
+
+// ****************************************************Alpha CRUD API********************************************************************************//
+const addAlpha = (data: {
+  username: string;
+  name: string;
+  email: string;
+  password: string;
+  phone: string; 
+  userRole: string;
+  addedBy: string; 
+  parentId: string;
+  aiStatus: string; 
+  gender: string;
+  role: string;
+}) => {
+return apiClient.post("/chat-app/chats/addalpha", data);
+};
+
+const deleteAlpha = (userId: string) => {
+  return apiClient.delete(`/chat-app/chats/deletealpha/${userId}`);
+};
+
+const updateAlpha = (userId: string, data: {
+  name: string;
+  // email: string;
+  phone: string; 
+  gender: string;
+}) => {
+  return apiClient.patch(`/chat-app/chats/updatealpha/${userId}`, data);
+};
+
+const getAllAlphas = () => {
+  return apiClient.get("/chat-app/chats/all-alphas");
+};
 const logoutUser = () => {
   return apiClient.post("/users/logout");
 };
@@ -82,10 +120,6 @@ const getAvailableUsers = () => {
 
 const getUserById = (userId: string) => {
   return apiClient.get(`/chat-app/chats/users/${userId}`);
-};
-
-const getAllSupremeAlphas = () => {
-  return apiClient.get("/chat-app/chats/all-supreme-alphas");
 };
 
 const getUserChats = () => {
@@ -161,5 +195,9 @@ export {
   addUser,
   deleteUser,
   updateUser,
-  getAllSupremeAlphas
+  getAllSupremeAlphas,
+  addAlpha,
+  deleteAlpha,
+  updateAlpha,
+  getAllAlphas
 };

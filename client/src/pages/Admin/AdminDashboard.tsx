@@ -5,10 +5,14 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import SupremeALphaPage from "./SupremeAlphaPage";
 import dashboard from '../../assets/images/dashboard.svg'
+import ALphaPage from "./AlphaPage";
+import { useAuth } from "../../context/AuthContext";
 
 
 const AdminDashboard = () => {
   const { tabIndex, setTabIndex } = useGlobal();
+  const {user} = useAuth();
+
 
 //   const [tabIndex, setTabIndex] = useState(0);
  
@@ -22,17 +26,19 @@ const AdminDashboard = () => {
        
         <Tabs selectedIndex={tabIndex} onSelect={(index) => setTabIndex(index)}>
             <TabList>
-            <Tab>SupremeAlpha</Tab>
-            <Tab>Title 2</Tab>
+            {user?.userRole === "admin" &&<Tab>SupremeAlpha</Tab>}
+            {user?.userRole === "supremeAlpha" && <Tab>Alpha</Tab>}
+            <Tab>OTP</Tab>
             </TabList>
 
-            <TabPanel>
-                {/* <AdminDashboard/> */}
+            {user?.userRole === "admin" &&<TabPanel>
                 <SupremeALphaPage/>
-            {/* <h2>Any content 2</h2> */}
-            </TabPanel>
+            </TabPanel>}
+            {user?.userRole === "supremeAlpha" && <TabPanel>
+                <ALphaPage/>
+            </TabPanel>}
             <TabPanel>
-            <h2>Any content 2</h2>
+              <h2>Otp Page</h2>
             </TabPanel>
         </Tabs>
         </div>
