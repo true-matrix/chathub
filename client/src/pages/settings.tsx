@@ -7,7 +7,20 @@ import phone from '../assets/images/phone-alt.svg';
 
 const SettingsPage = () => {
   const { activeButton } = useGlobal();
-  const {user} = useAuth();  
+  const {user} = useAuth();
+
+  const showUserRole = (userRole : string) => {
+    switch (userRole) {
+      case 'admin':
+        return 'Lycaon'
+      case 'supremeAlpha':
+        return 'Supreme Alpha'
+      case 'alpha':
+        return 'alpha'
+      default:
+        return 'omega'
+    }
+  }
   
   return (
     <>
@@ -27,16 +40,15 @@ const SettingsPage = () => {
                 <img src="https://tecdn.b-cdn.net/img/new/avatars/2.webp" alt="" className="rounded-full mx-auto w-32 h-32 shadow-md border-4 border-white transition duration-200 transform hover:scale-110"/>
               </div>
               <div className="mt-3">
-                <h1 className="font-bold text-center text-2xl text-gray-900">{user?.username || (user.name ? user.name: `Shakir Ali`)}</h1>
-                <p className="text-center text-sm text-gray-400 font-medium">{user?.userRole} hello</p>
+                <h1 className="font-bold text-center text-3xl text-gray-900">{user?.username || (user.name ? user.name: `Shakir Ali`)}</h1>
+                <p className="text-center text-sm text-gray-400 font-medium">{showUserRole(user?.userRole)}Xyz Department</p>
                 <div className="w-full">
                   <div className="mt-5 w-full flex flex-col items-center overflow-hidden text-sm">
                     <a href="#" className="w-full text-gray-600 py-2 pl-3 pr-3 w-full block">
                       <img src={phone} alt="" className="h-4 inline-block mr-3"/>{user.email} 
                     </a>
                     <a href="#" className="w-full text-gray-600 py-2 pl-3 pr-3 w-full block">
-                      <img src={email} alt="" className="h-4 inline-block mr-3"/>9876543210 
-                      {/* <span className="text-gray-500 text-xs">49 min ago</span> */}
+                      <img src={email} alt="" className="h-4 inline-block mr-3"/>{user.phone ? user.phone : '9876543210'} 
                     </a>
                   </div>
                 </div>

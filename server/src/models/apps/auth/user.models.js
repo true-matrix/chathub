@@ -37,11 +37,6 @@ const userSchema = new Schema(
     },
     username: {
       type: String,
-      required: false,
-      unique: true,
-      lowercase: true,
-      trim: true,
-      index: true,
     },
     // email: {
     //   type: String,
@@ -83,6 +78,9 @@ const userSchema = new Schema(
       type: String,
     },
     addedByUserRole: {
+      type: String,
+    },
+    parentId: {
       type: String,
     },
     aiStatus: {

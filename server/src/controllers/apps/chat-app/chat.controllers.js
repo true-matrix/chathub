@@ -304,15 +304,26 @@ const createAGroupChat = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, payload, "Group chat created successfully"));
 });
 
+// ****************************************************Supreme Alpha********************************************************************************//
 const addUser = asyncHandler(async (req, res) => {
-  const { name, email, password, phone, userRole, addedBy, aiStatus, gender, role } = req.body;
-
-  const existedUser = await User.findOne({ email : email });
+  const { username, name, email, password, phone, userRole, addedBy, aiStatus, gender, role } = req.body;
+  // const existedUser = await User.findOne({ email : email });
+  const existedUser = await User.findOne({
+    $or: [
+      { email: email },
+      { username: username }, 
+    ]
+  });
 
   if (existedUser) {
     throw new ApiError(409, "User with email already exists", []);
   }
+  // Generate a unique _id for the user
+    const userId = new mongoose.Types.ObjectId();
   const user = await User.create({
+    _id: userId,
+    parentId: userId.toString(),
+    username,
     name,
     email,
     password,
@@ -323,44 +334,10 @@ const addUser = asyncHandler(async (req, res) => {
     gender,
     role: role || UserRolesEnum.USER,
   });
-
-  /**
-   * unHashedToken: unHashed token is something we will send to the user's mail
-   * hashedToken: we will keep record of hashedToken to validate the unHashedToken in verify email controller
-   * tokenExpiry: Expiry to be checked before validating the incoming token
-   */
-  // const { unHashedToken, hashedToken, tokenExpiry } =
-  //   user.generateTemporaryToken();
-
-  /**
-   * assign hashedToken and tokenExpiry in DB till user clicks on email verification link
-   * The email verification is handled by {@link verifyEmail}
-   */
-  // user.emailVerificationToken = hashedToken;
-  // user.emailVerificationExpiry = tokenExpiry;
-  // await user.save({ validateBeforeSave: false });
-
-  // await sendEmail({
-  //   email: user?.email,
-  //   subject: "Please verify your email",
-  //   mailgenContent: emailVerificationMailgenContent(
-  //     user.username,
-  //     `${req.protocol}://${req.get(
-  //       "host"
-  //     )}/api/v1/users/verify-email/${unHashedToken}`
-  //   ),
-  // });
-
-  // const createdUser = await User.findById(user._id).select(
-  //   "-password -refreshToken -emailVerificationToken -emailVerificationExpiry"
-  // );
-
-  // if (!createdUser) {
-  //   throw new ApiError(500, "Something went wrong while registering the user");
-  // }
+  // console.log('user',user);
 
   if (!user) {
-    throw new ApiError(500, "Internal server error");
+    throw new ApiError(500, "Internal server error rajesh");
   }
   return res
     .status(201)
@@ -405,6 +382,35 @@ const updateUser = asyncHandler(async (req, res) => {
   );
 });
 
+const deleteUser = asyncHandler(async (req, res) => {
+  const userIdToDelete = req.params.userId; // Assuming userId is part of the route parameters
+
+  // Check if the user exists
+  const existingUser = await User.findById(userIdToDelete);
+
+  if (!existingUser) {
+    throw new ApiError(404, "User not found");
+  }
+
+  // Additional checks if needed (e.g., if the requester has the authority to delete the user)
+
+  // Perform the user deletion
+  const deletedUser = await User.findByIdAndDelete(userIdToDelete);
+
+  if (!deletedUser) {
+    throw new ApiError(500, "Internal server error while deleting user");
+  }
+
+  // You can customize the response based on your requirements
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      { deletedUserId: deletedUser._id },
+      "User deleted successfully"
+    )
+  );
+});
+
 const getAllSupremeAlpha = asyncHandler(async (req, res) => {
   const users = await User.aggregate([
     {
@@ -428,6 +434,7 @@ const getAllSupremeAlpha = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, users, "Supreme Alphas fetched successfully"));
 });
+
 
 const getGroupChatDetails = asyncHandler(async (req, res) => {
   const { chatId } = req.params;
@@ -802,6 +809,7 @@ export {
   searchAvailableUsers,
   getUserById,
   addUser,
+  deleteUser,
   updateUser,
   getAllSupremeAlpha
 };

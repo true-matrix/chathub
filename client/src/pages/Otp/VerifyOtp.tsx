@@ -39,7 +39,7 @@ const VerifyOtp = () => {
         onSubmit: async (values) => {
           // Handle the form submission here
           await verifyOtp(values);
-        console.log("otp values=>",values);
+        // console.log("otp values=>",values);
         },
       });
 const handleResendOtp = () => {

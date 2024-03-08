@@ -12,7 +12,6 @@ import {
   verifyOTP,
   logoutUser,
   refreshAccessToken,
-  registerUser,
   resendEmailVerification,
   resetForgottenPassword,
   updateUserAvatar,
@@ -29,7 +28,6 @@ import {
   userChangeCurrentPasswordValidator,
   userForgotPasswordValidator,
   userLoginValidator,
-  userRegisterValidator,
   userResetForgottenPasswordValidator,
   verifyOtpValidator,
 } from "../../../validators/apps/auth/user.validators.js";
@@ -40,7 +38,7 @@ import { mongoIdPathVariableValidator } from "../../../validators/common/mongodb
 const router = Router();
 
 // Unsecured route
-router.route("/register").post(userRegisterValidator(), validate, registerUser);
+// router.route("/register").post(userRegisterValidator(), validate, registerUser);
 router.route("/login").post(userLoginValidator(), validate, loginUser);
 router.route("/send-otp").post(sendOtpValidator(), validate, sendOTP);
 router.route("/verify-otp").post(verifyOtpValidator(), validate, verifyOTP);

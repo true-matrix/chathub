@@ -36,15 +36,16 @@ const verifyUserOtp = (data: { email: string; otp: string }) => {
   return apiClient.post("/users/verify-otp", data);
 };
 
-const registerUser = (data: {
-  email: string;
-  password: string;
-  username: string;
-}) => {
-  return apiClient.post("/users/register", data);
-};
+// const registerUser = (data: {
+//   email: string;
+//   password: string;
+//   username: string;
+// }) => {
+//   return apiClient.post("/users/register", data);
+// };
 
 const addUser = (data: {
+    username: string;
     name: string;
     email: string;
     password: string;
@@ -56,6 +57,10 @@ const addUser = (data: {
     role: string;
 }) => {
   return apiClient.post("/chat-app/chats/adduser", data);
+};
+
+const deleteUser = (userId: string) => {
+  return apiClient.delete(`/chat-app/chats/deleteuser/${userId}`);
 };
 
 const updateUser = (userId: string, data: {
@@ -150,11 +155,11 @@ export {
   loginUserOtp,
   verifyUserOtp,
   logoutUser,
-  registerUser,
   removeParticipantFromGroup,
   sendMessage,
   updateGroupName,
   addUser,
+  deleteUser,
   updateUser,
   getAllSupremeAlphas
 };

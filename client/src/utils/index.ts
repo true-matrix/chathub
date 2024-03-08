@@ -47,7 +47,7 @@ export const isBrowser = typeof window !== "undefined";
 // It takes into consideration both group chats and individual chats.
 export const getChatObjectMetadata = (
   chat: ChatListItemInterface, // The chat item for which metadata is being generated.
-  loggedInUser: UserInterface // The currently logged-in user details.
+  loggedInUser: any // The currently logged-in user details.
 ) => {
   // Determine the content of the last message, if any.
   // If the last message contains only attachments, indicate their count.
