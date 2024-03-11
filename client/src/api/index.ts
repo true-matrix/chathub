@@ -46,16 +46,16 @@ const verifyUserOtp = (data: { email: string; otp: string }) => {
 
 // ****************************************************SupremeAlpha CRUD API********************************************************************************//
 const addUser = (data: {
-    username: string;
-    name: string;
-    email: string;
-    password: string;
-    phone: string; 
-    userRole: string;
-    addedBy: string; 
-    aiStatus: string; 
-    gender: string;
-    role: string;
+  username: string;
+  name: string;
+  email: string;
+  password: string;
+  phone: string;
+  userRole: string;
+  addedBy: string;
+  aiStatus: string;
+  gender: string;
+  role: string;
 }) => {
   return apiClient.post("/chat-app/chats/adduser", data);
 };
@@ -64,12 +64,15 @@ const deleteUser = (userId: string) => {
   return apiClient.delete(`/chat-app/chats/deleteuser/${userId}`);
 };
 
-const updateUser = (userId: string, data: {
-  name: string;
-  // email: string;
-  phone: string; 
-  gender: string;
-}) => {
+const updateUser = (
+  userId: string,
+  data: {
+    name: string;
+    // email: string;
+    phone: string;
+    gender: string;
+  }
+) => {
   return apiClient.patch(`/chat-app/chats/updateuser/${userId}`, data);
 };
 
@@ -83,27 +86,30 @@ const addAlpha = (data: {
   name: string;
   email: string;
   password: string;
-  phone: string; 
+  phone: string;
   userRole: string;
-  addedBy: string; 
+  addedBy: string;
   parentId: string;
-  aiStatus: string; 
+  aiStatus: string;
   gender: string;
   role: string;
 }) => {
-return apiClient.post("/chat-app/chats/addalpha", data);
+  return apiClient.post("/chat-app/chats/addalpha", data);
 };
 
 const deleteAlpha = (userId: string) => {
   return apiClient.delete(`/chat-app/chats/deletealpha/${userId}`);
 };
 
-const updateAlpha = (userId: string, data: {
-  name: string;
-  // email: string;
-  phone: string; 
-  gender: string;
-}) => {
+const updateAlpha = (
+  userId: string,
+  data: {
+    name: string;
+    // email: string;
+    phone: string;
+    gender: string;
+  }
+) => {
   return apiClient.patch(`/chat-app/chats/updatealpha/${userId}`, data);
 };
 
@@ -117,32 +123,35 @@ const addOmega = (data: {
   name: string;
   email: string;
   password: string;
-  phone: string; 
+  phone: string;
   userRole: string;
   selectedAlpha: string;
-  addedBy: string; 
+  addedBy: string;
   parentId: string;
-  addedByUserRole: string; 
-  aiStatus: string; 
+  addedByUserRole: string;
+  aiStatus: string;
   gender: string;
   role: string;
 }) => {
-return apiClient.post("/chat-app/chats/addomega", data);
+  return apiClient.post("/chat-app/chats/addomega", data);
 };
 
 const deleteOmega = (userId: string) => {
   return apiClient.delete(`/chat-app/chats/deleteomega/${userId}`);
 };
 
-const updateOmega = (userId: string, data: {
-  name: string;
-  // email: string;
-  phone: string; 
-  // addedBy: string;
-  selectedAlpha: string;
-  // addedByUserRole: string;
-  gender: string;
-}) => {
+const updateOmega = (
+  userId: string,
+  data: {
+    name: string;
+    // email: string;
+    phone: string;
+    // addedBy: string;
+    selectedAlpha: string;
+    // addedByUserRole: string;
+    gender: string;
+  }
+) => {
   return apiClient.patch(`/chat-app/chats/updateomega/${userId}`, data);
 };
 
@@ -157,6 +166,19 @@ const getAllOTPs = () => {
 // ****************************************************Contacts API********************************************************************************//
 const getAllContacts = () => {
   return apiClient.get("/chat-app/chats/contacts");
+};
+
+// ****************************************************Update Profile API(Self Profile)********************************************************************************//
+const updateProfile = (
+  userId: string,
+  data: {
+    name: string;
+    // email: string;
+    phone: string;
+    gender: string;
+  }
+) => {
+  return apiClient.patch(`/chat-app/chats/updateprofile/${userId}`, data);
 };
 // ********************************************************************************************************************************************//
 
@@ -255,5 +277,6 @@ export {
   updateOmega,
   getAllOmegas,
   getAllOTPs,
-  getAllContacts
+  getAllContacts,
+  updateProfile,
 };

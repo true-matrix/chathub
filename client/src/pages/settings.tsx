@@ -4,10 +4,26 @@ import { useAuth } from "../context/AuthContext";
 import rain from '../assets/videos/rain.webm';
 import email from '../assets/images/envelope.svg';
 import phone from '../assets/images/phone-alt.svg'; 
+import { ErrorMessage, Field, Formik, useFormik } from 'formik';
+import * as Yup from 'yup';
+import { useEffect, useState } from "react";
+import { LocalStorage, requestHandler } from "../utils";
+import { updateProfile } from "../api";
+import { useNavigate } from "react-router-dom";
 
+interface CreateUserFormValues {
+    id: string,
+    name: string;
+    email: string;
+    phone: string;
+    gender: string;
+}
+  
 const SettingsPage = () => {
+  const navigate = useNavigate();
   const { activeButton } = useGlobal();
-  const {user} = useAuth();
+  const { user } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   const showUserRole = (userRole : string) => {
     switch (userRole) {
@@ -16,11 +32,66 @@ const SettingsPage = () => {
       case 'supremeAlpha':
         return 'Supreme Alpha'
       case 'alpha':
-        return 'alpha'
+        return 'Alpha'
       default:
-        return 'omega'
+        return 'Omega'
     }
   }
+
+  const initValues: CreateUserFormValues = {
+        id: '',
+        name: '',
+        email:'',
+        phone: '',
+        gender: '',
+  };
+  const validationSchema = Yup.object().shape({
+        name: Yup.string().required('Name is required'),
+        email: Yup.string().email('Invalid email address').required('Email is required'),
+        phone: Yup.string().matches(/^\d{10}$/, 'Invalid phone number').required('Phone number is required'),
+        gender: Yup.string().required('Gender is required'),
+  });
+  const [formInititalState, setFormInitState] = useState(initValues);
+
+  useEffect(() => {
+    setFormInitState((prevState) => ({
+      ...prevState,
+            id: user._id,
+            name: user.name || '',
+            email: user.email || '',
+            phone: user.phone || '',
+            gender: user.gender || '',
+          }));
+  }, [])
+  
+      const handleSubmit = async(values:any, { setSubmitting }:any) => {
+        if (values?.id) {
+              console.log('profile values==>',values);
+              
+                await requestHandler(
+                  async () => await updateProfile(values.id, {
+                    name: values.name,
+                    // email: values.email,
+                    phone: values.phone, 
+                    gender: values.gender,
+                  }),
+                  setIsLoading,
+                  () => {
+                    alert("User updated successfully");
+
+                    user.name = values.name;
+                    user.phone = values.phone;
+                    user.gender = values.gender;
+                    LocalStorage.set("user", user);
+
+                    navigate("/settings"); // Redirect to the login page after successful registration
+                  },
+                  alert // Display error alerts on request failure
+                );
+            } 
+            setSubmitting(false);
+          };
+  
   
   return (
     <>
@@ -96,27 +167,55 @@ const SettingsPage = () => {
         </div>
          
       <div className="space-y-1">
-        <div className="rounded-xl border bg-white"> 
-          <div className="flex flex-col space-y-3 px-3 py-8 sm:px-10">
-            <label className="block">
-              <p className="text-sm">Name</p>
-              <input className="w-full rounded-md border py-2 px-2 bg-gray-50 outline-none ring-blue-600 focus:ring-1" type="text" value="Shakir Ali" />
-            </label>
-            <label className="block">
-              <p className="text-sm">Email</p>
-              <input className="w-full rounded-md border py-2 px-2 bg-gray-50 outline-none ring-blue-600 focus:ring-1" type="email" value="shakir.ali@company.com" />
-            </label>
-            <label className="block">
-              <p className="text-sm">Team</p>
-              <select className="w-full rounded-md border py-2 px-2 bg-gray-50 outline-none ring-blue-600 focus:ring-1" name="team" value="UI/UX Design">
-                <option value="UI/UX Design">UI/UX Design</option>
-                <option value="UI/UX Design">Marketing</option>
-                <option value="UI/UX Design">Engineering</option>
-              </select>
-            </label>
-            <button className="mt-4 mr-auto rounded-lg bg-blue-600 px-10 py-2 text-white">Save</button>
-          </div>
-        </div>
+        <Formik initialValues={formInititalState} onSubmit={handleSubmit} validationSchema={validationSchema} enableReinitialize >
+        {(formik) => {
+              const { values, handleSubmit, isValid, dirty, setFieldValue } = formik;
+              return (
+            <div className="rounded-xl border bg-white"> 
+              {JSON.stringify(values?.id)}
+            <form onSubmit={handleSubmit}>
+                    <div className="flex flex-col space-y-3 px-3 py-8 sm:px-10">
+                      {/* <label htmlFor="image" className="block"><p className="text-sm">Image:</p></label>
+                      <Field type="file" name="image" accept="image/*" onChange={(event:any) => setFieldValue('avatar', event.currentTarget.files[0])} className="form-control" />
+                      <ErrorMessage name="image" component="div" className="text-danger" /> */}
+
+                      <label htmlFor="name" className="block"><p className="text-sm">Name:</p></label>
+                      <Field type="text" name="name" className="form-control w-full rounded-md border py-2 px-2 bg-gray-50 outline-none ring-blue-600 focus:ring-1" />
+                      <ErrorMessage name="name" component="div" className="text-danger" />
+                      
+                      <label htmlFor="email" className="block"><p className="text-sm">Email:</p></label>
+                      <Field type="email" name="email" disabled={true} className="form-control w-full rounded-md border py-2 px-2 bg-gray-100 outline-none ring-blue-600 focus:ring-1" />
+                      <ErrorMessage name="email" component="div" className="text-danger" />
+                      
+                      <label htmlFor="phone" className="block"><p className="text-sm">Phone:</p></label>
+                      <Field type="text" name="phone" className="form-control w-full rounded-md border py-2 px-2 bg-gray-50 outline-none ring-blue-600 focus:ring-1" />
+                      <ErrorMessage name="phone" component="div" className="text-danger" />
+                  
+                      <label htmlFor="gender" className="block"><p className="text-sm">Gender:</p></label>
+                      <div>
+                          <label>
+                          <Field type="radio" name="gender" value="male" />
+                          Male
+                          </label>
+                          <label className="ml-4">
+                          <Field type="radio" name="gender" value="female" />
+                          Female
+                          </label>
+                      </div>
+                      <ErrorMessage name="gender" component="div" className="text-danger" />
+                      <button type="submit" className={`mt-4 ml-auto rounded-lg bg-blue-600 px-10 py-2 text-white ${
+                !(dirty && isValid) && 'opacity-50 cursor-not-allowed'
+              }`}
+              disabled={!(dirty && isValid)}
+                      >
+                        Update
+                      </button>
+                </div>
+              </form>
+              
+            </div>
+                )}}
+        </Formik>
       </div>
         </div>
       </div>
