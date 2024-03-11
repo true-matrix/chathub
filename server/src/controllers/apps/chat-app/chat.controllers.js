@@ -7,7 +7,7 @@ import { emitSocketEvent } from "../../../socket/index.js";
 import { ApiError } from "../../../utils/ApiError.js";
 import { ApiResponse } from "../../../utils/ApiResponse.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
-import { removeLocalFile } from "../../../utils/helpers.js";
+import { removeLocalFile, getStaticFilePath, getLocalPath } from "../../../utils/helpers.js";
 
 /**
  * @description Utility function which returns the pipeline stages to structure the chat schema with common lookups
@@ -830,6 +830,49 @@ const updateProfile = asyncHandler(async (req, res) => {
   );
 });
 
+const updateProfileImage = asyncHandler(async (req, res) => {
+  console.log('req.user',req.user);
+  console.log('req.file', req.file);
+  if (!req.file?.filename) {
+    throw new ApiError(400, "Profile image is required");
+  }
+  
+  
+  const profileImageUrl = getStaticFilePath(req, req.file?.filename);
+  const profileImageLocalPath = getLocalPath(req.file?.filename);
+
+  const user = await User.findOne({
+    _id: req.user._id,
+  });
+
+  let updatedProfile = await User.findOneAndUpdate(
+    {
+      _id: req.user._id,
+    },
+    {
+      $set: {
+        // set the newly uploaded image
+        avatar: {
+          url: profileImageUrl ,
+          localPath: profileImageLocalPath ,
+        },
+      },
+    },
+    { new: true }
+  );
+
+  // remove the old  image
+  removeLocalFile(user.avatar.localPath);
+
+  updatedProfile = await User(req.user._id, req);
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, updatedProfile, "Profile image updated successfully")
+    );
+}); 
+
 // *****************************************************************************************************************************************//
 
 const getGroupChatDetails = asyncHandler(async (req, res) => {
@@ -1218,5 +1261,6 @@ export {
   getAllOmega,
   getAllOTPs,
   getAllContacts,
-  updateProfile
+  updateProfile,
+  updateProfileImage
 };

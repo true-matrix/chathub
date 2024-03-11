@@ -26,9 +26,12 @@ import {
   updateAlpha,
   updateOmega,
   updateProfile,
+  updateProfileImage,
   updateUser,
 } from "../../../controllers/apps/chat-app/chat.controllers.js";
 import { verifyJWT } from "../../../middlewares/auth.middlewares.js";
+import { upload } from "../../../middlewares/multer.middlewares.js";
+
 import {
   createAGroupChatValidator,
   updateGroupChatNameValidator,
@@ -70,7 +73,10 @@ router.route("/otps").get(getAllOTPs);
 router.route("/contacts").get(getAllContacts);
 
 // ****************************************************User Profile routes********************************************************************************//
-router.route("/updateprofile/:userId").patch(validate,updateProfile);
+router.route("/updateprofile/:userId").patch(validate, updateProfile);
+router
+  .route("/profileimage/:userId")
+  .patch(upload.single("avatar"), updateProfileImage);
 
 // ****************************************************************************************************************************************//
 router

@@ -76,6 +76,14 @@ const updateUser = (
   return apiClient.patch(`/chat-app/chats/updateuser/${userId}`, data);
 };
 
+const updateProfileImage = (userId: string, imageData: FormData) => {
+  return apiClient.patch(`/chat-app/chats/profileimage/${userId}`, imageData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
 const getAllSupremeAlphas = () => {
   return apiClient.get("/chat-app/chats/all-supreme-alphas");
 };
@@ -279,4 +287,5 @@ export {
   getAllOTPs,
   getAllContacts,
   updateProfile,
+  updateProfileImage,
 };

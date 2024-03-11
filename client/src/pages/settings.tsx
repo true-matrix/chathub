@@ -8,7 +8,7 @@ import { ErrorMessage, Field, Formik, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useEffect, useState } from "react";
 import { LocalStorage, requestHandler } from "../utils";
-import { updateProfile } from "../api";
+import { updateProfile, updateProfileImage } from "../api";
 import { useNavigate } from "react-router-dom";
 
 interface CreateUserFormValues {
@@ -24,6 +24,8 @@ const SettingsPage = () => {
   const { activeButton } = useGlobal();
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [isImageEditing, setIsImageEditing] = useState(false);
 
   const showUserRole = (userRole : string) => {
     switch (userRole) {
@@ -64,7 +66,7 @@ const SettingsPage = () => {
           }));
   }, [])
   
-      const handleSubmit = async(values:any, { setSubmitting }:any) => {
+  const handleSubmit = async(values:any, { setSubmitting }:any) => {
         if (values?.id) {
               console.log('profile values==>',values);
               
@@ -92,7 +94,113 @@ const SettingsPage = () => {
             setSubmitting(false);
           };
   
-  
+  // const handleFileChange = (e:any) => {
+  //   // Get the selected file from the input
+  //   const file = e.target.files[0];
+  //   // setSelectedFile(file);
+  //   setSelectedFile(file);
+  //   console.log('file',file);
+
+  //   // const file = e.target.files[0];
+  //   // if (file) {
+  //   //   const reader = new FileReader();
+
+  //   //   reader.onload = (e:any) => {
+  //   //     const dataUrl = e.target.result;
+  //   //     setSelectedFile(dataUrl);
+  //   //   };
+
+  //   //   reader.readAsDataURL(file);
+  //   // }
+
+  //   // const existingState = { ...userProfile };
+  //   // setFormInititalState({...existingState, avatar: file});
+  //   // setIsImageSelected(true)
+    
+  // };
+  // const handleFileChange = (e:any) => {
+  //   const file = e.target.files[0];
+
+  //   if (file) {
+  //     const reader = new FileReader();
+
+  //     reader.onload = (e:any) => {
+  //       setSelectedFile(e.target.result);
+  //     };
+
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
+
+  const handleFileChange = (e:any) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = (e : any) => {
+        setSelectedFile(e.target.result);
+        setIsImageEditing(true);
+        console.log("e.target.result",e.target.result)
+        console.log("file",file)
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleImageClick = () => {
+    if (!isImageEditing) {
+      document.getElementById('avatar')?.click();
+    }
+  };
+
+  // const handleSaveClick = () => {
+  //   // Add your save logic here
+  //   // This is just a placeholder, you might want to save the image to your server or perform other actions.
+  //   alert('Image saved!');
+  //   setIsImageEditing(false);
+  // };
+
+  const handleSaveClick = async () => {
+  if (selectedFile) {
+    const formData = new FormData();
+    formData.append('avatar', selectedFile);
+
+    try {
+      const response = await updateProfileImage(user._id, formData);
+
+      // Handle the response as needed
+      console.log(response.data);
+      setIsImageEditing(false);
+    } catch (error) {
+      // Handle errors
+      console.error('Error updating profile image:', error);
+    }
+  }
+};
+  // const handleSaveClick = async () => {
+  //   if (selectedFile) {
+  //     const formData = new FormData();
+  //     formData.append('profileImage', selectedFile);
+
+  //     try {
+  //       const response = await axios.post('/api/profileimage', formData, {
+  //         headers: {
+  //           'Content-Type': 'multipart/form-data',
+  //         },
+  //       });
+
+  //       // Handle the response as needed
+  //       console.log(response.data);
+  //       setIsImageEditing(false);
+  //     } catch (error) {
+  //       // Handle errors
+  //       console.error('Error updating profile image:', error);
+  //     }
+  //   }
+  // };
+
   return (
     <>
     <div className="w-full justify-between items-stretch h-screen flex flex-shrink-0 overflow-hidden"> 
@@ -136,16 +244,59 @@ const SettingsPage = () => {
         
         <div className="flex gap-4">
           <div className="upload-user-image flex items-center space-x-3 flex-shrink-0">
-            <img
+            {/* {selectedFile ? <img
+              src={selectedFile}
+              alt="Avatar"
+              className="w-12 h-12 rounded-full object-cover"
+            />:<img
               src="https://tecdn.b-cdn.net/img/new/avatars/2.webp"
               alt="Avatar"
               className="w-12 h-12 rounded-full object-cover"
-            />
-            <button 
-            >
-              Upload Image
-            </button>
+            />}
+               <div className="mt-4">
+        <label htmlFor="avatar" className="cursor-pointer bg-blue-500 text-white px-4 py-2 rounded">
+          Upload Avatar
+        </label>
+        <input
+          type="file"
+          id="avatar"
+          className="hidden"
+          accept="image/*"
+          onChange={handleFileChange}
+        />
+      </div> */}
+              <div className="cursor-pointer" onClick={handleImageClick}>
+        <img
+          src={selectedFile || 'https://tecdn.b-cdn.net/img/new/avatars/2.webp'}
+          alt="Avatar"
+          className="w-12 h-12 rounded-full object-cover"
+        />
+      </div>
+      {isImageEditing ? (
+        <div className="mt-4">
+          <button
+            onClick={handleSaveClick}
+            className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer"
+          >
+            Save Changes
+          </button>
+        </div>
+      ) : (
+        <div className="mt-4">
+          <label htmlFor="avatar" className="cursor-pointer bg-blue-500 text-white px-4 py-2 rounded">
+            Upload Image
+          </label>
+          <input
+            type="file"
+            id="avatar"
+            className="hidden"
+            accept="image/*"
+            onChange={handleFileChange}
+          />
+        </div>
+      )}
           </div>
+              
           {/* <div className="upload-user-image avatar-list flex items-center space-x-3 w-full overflow-hidden">
           <div className="arrow a-left"></div>
 
@@ -172,7 +323,7 @@ const SettingsPage = () => {
               const { values, handleSubmit, isValid, dirty, setFieldValue } = formik;
               return (
             <div className="rounded-xl border bg-white"> 
-              {JSON.stringify(values?.id)}
+              {/* {JSON.stringify(values?.id)} */}
             <form onSubmit={handleSubmit}>
                     <div className="flex flex-col space-y-3 px-3 py-8 sm:px-10">
                       {/* <label htmlFor="image" className="block"><p className="text-sm">Image:</p></label>
