@@ -68,7 +68,7 @@ const Sidebar = () => {
                  </NavLink>
                 </li>
 
-                {(user?.userRole === "admin" || user?.userRole === "supremeAlpha") && <li className="nav-item">
+                {(user?.userRole === "admin" || user?.userRole === "supremeAlpha" || user?.userRole === "alpha") && <li className="nav-item">
                 <NavLink to="/dashboard" className={activeButton === 'dashboard' ? 'nav-link active' : 'nav-link'} onClick={() => handleDashboardButton()} onContextMenu={handleContextMenu}  data-bs-toggle="pill" role="tab">
                                 <img src={dashboard} />
                  </NavLink>
