@@ -799,6 +799,36 @@ const getAllContacts = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, users, "Omegas fetched successfully"));
 });
 
+///************************************User Profile Update******************************************///
+const updateProfile = asyncHandler(async (req, res) => {
+  const { userId } = req.params; // Assuming you have the user ID in the request parameters
+  const data = req.body;
+  // Validate if the user with the given ID exists
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  // Update user fields based on the request body
+  for (const key in data) {
+    if (data.hasOwnProperty(key)) {
+      user[key] = data[key];
+    }
+  }
+
+  // Save the updated user to the database
+  await user.save({ validateBeforeSave: true }); // Set validateBeforeSave based on your needs
+
+  // Respond with the updated user
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      { user: user },
+      "User updated successfully"
+    )
+  );
+});
 
 // *****************************************************************************************************************************************//
 
@@ -1187,5 +1217,6 @@ export {
   deleteOmega,
   getAllOmega,
   getAllOTPs,
-  getAllContacts
+  getAllContacts,
+  updateProfile
 };

@@ -25,6 +25,7 @@ import {
   searchAvailableUsers,
   updateAlpha,
   updateOmega,
+  updateProfile,
   updateUser,
 } from "../../../controllers/apps/chat-app/chat.controllers.js";
 import { verifyJWT } from "../../../middlewares/auth.middlewares.js";
@@ -67,6 +68,9 @@ router.route("/otps").get(getAllOTPs);
 
 // ****************************************************All Contacts********************************************************************************//
 router.route("/contacts").get(getAllContacts);
+
+// ****************************************************User Profile routes********************************************************************************//
+router.route("/updateprofile/:userId").patch(validate,updateProfile);
 
 // ****************************************************************************************************************************************//
 router
