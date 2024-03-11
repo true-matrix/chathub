@@ -26,6 +26,7 @@ const SettingsPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [isImageEditing, setIsImageEditing] = useState(false);
+  const [imgFormData, setImgFormData] = useState(null);
 
   const showUserRole = (userRole : string) => {
     switch (userRole) {
@@ -138,15 +139,17 @@ const SettingsPage = () => {
     if (file) {
       const reader = new FileReader();
 
-      reader.onload = (e : any) => {
-        setSelectedFile(e.target.result);
+      reader.onload = (e: any) => {
+        const dataUrl = e.target.result;
+        setSelectedFile(dataUrl);
         setIsImageEditing(true);
-        console.log("e.target.result",e.target.result)
+        console.log("e.target.result",dataUrl)
         console.log("file",file)
       };
 
       reader.readAsDataURL(file);
     }
+    setImgFormData(file)
   };
 
   const handleImageClick = () => {
@@ -163,9 +166,11 @@ const SettingsPage = () => {
   // };
 
   const handleSaveClick = async () => {
-  if (selectedFile) {
-    const formData = new FormData();
-    formData.append('avatar', selectedFile);
+    if (selectedFile) {
+    console.log('imgFormData',imgFormData);
+    
+    const formData : any = new FormData();
+    formData.append('avatar', imgFormData);
 
     try {
       const response = await updateProfileImage(user._id, formData);

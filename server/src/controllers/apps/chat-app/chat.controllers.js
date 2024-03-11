@@ -831,8 +831,8 @@ const updateProfile = asyncHandler(async (req, res) => {
 });
 
 const updateProfileImage = asyncHandler(async (req, res) => {
-  console.log('req.user',req.user);
-  console.log('req.file', req.file);
+  // console.log('req.user',req.user);
+  // console.log('req.file', req.file);
   if (!req.file?.filename) {
     throw new ApiError(400, "Profile image is required");
   }
