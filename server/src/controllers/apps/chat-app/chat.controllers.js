@@ -668,7 +668,8 @@ const getAllOmega = asyncHandler(async (req, res) => {
       {
         $match: {
           $or: [
-            { $and: [{ addedBy: new mongoose.Types.ObjectId(req.user._id), userRole: 'omega' }] },
+            // { $and: [{ addedBy: new mongoose.Types.ObjectId(req.user._id), userRole: 'omega' }] },
+            { $and: [{ addedBy: (req.user._id).toString(), userRole: 'omega' }] },
             { $and: [{ selectedAlpha: (req.user._id).toString(), userRole: 'omega' }] },
           ],
         },
