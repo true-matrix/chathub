@@ -45,10 +45,10 @@ const SettingsPage = () => {
                 <div className="w-full">
                   <div className="mt-5 w-full flex flex-col items-center overflow-hidden text-sm">
                     <a href="#" className="w-full text-gray-600 py-2 pl-3 pr-3 w-full block">
-                      <img src={phone} alt="" className="h-4 inline-block mr-3"/>{user.email} 
+                      <img src={email} alt="" className="h-4 inline-block mr-3"/>{user.email} 
                     </a>
                     <a href="#" className="w-full text-gray-600 py-2 pl-3 pr-3 w-full block">
-                      <img src={email} alt="" className="h-4 inline-block mr-3"/>{user.phone ? user.phone : '9876543210'} 
+                      <img src={phone} alt="" className="h-4 inline-block mr-3"/>{user.phone ? user.phone : '9876543210'} 
                     </a>
                   </div>
                 </div>
@@ -75,7 +75,7 @@ const SettingsPage = () => {
               Upload Image
             </button>
           </div>
-          <div className="upload-user-image avatar-list flex items-center space-x-3 w-full overflow-hidden">
+          {/* <div className="upload-user-image avatar-list flex items-center space-x-3 w-full overflow-hidden">
           <div className="arrow a-left"></div>
 
             <img src="https://tecdn.b-cdn.net/img/new/avatars/2.webp" alt="Avatar" className="w-12 h-12 rounded-full object-cover" id="1"/> 
@@ -92,7 +92,7 @@ const SettingsPage = () => {
             <img src="https://tecdn.b-cdn.net/img/new/avatars/2.webp" alt="Avatar" className="w-12 h-12 rounded-full object-cover" id="12"/> 
 
             <div className="arrow a-right" ></div>
-          </div>
+          </div> */}
         </div>
          
       <div className="space-y-1">
