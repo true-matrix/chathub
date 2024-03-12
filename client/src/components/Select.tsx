@@ -8,6 +8,7 @@ const Select: React.FC<{
     value: string;
     label: string;
     imageSrc?: string;
+    userRole?: string;
   }[];
   value: string;
   onChange: (value: { value: string; label: string }) => void;
@@ -76,6 +77,11 @@ const Select: React.FC<{
                     >
                       {option.label}
                     </span>
+                    {option.userRole && (
+                        <span className="ml-2 text-sm text-gray-500">
+                          ({option.userRole})
+                        </span>
+                      )}
                     </div>
                     {selected && (
                       <span
