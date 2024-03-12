@@ -260,7 +260,14 @@ const ChatPage = () => {
     // Check if the received message belongs to the currently active chat
     if (message?.chat !== currentChat.current?._id) {
       // If not, update the list of unread messages
-      setUnreadMessages((prev) => [message, ...prev]);
+      // setUnreadMessages((prev) => [message, ...prev]);
+       // If not, update the list of unread messages
+    setUnreadMessages((prev) => {
+      const updatedUnreadMessages = [message, ...prev];
+      // Store the updated unread messages in local storage
+      LocalStorage.set("unreadMessages", updatedUnreadMessages);
+      return updatedUnreadMessages;
+    });
     } else {
       // If it belongs to the current chat, update the messages list for the active chat
       setMessages((prev) => [message, ...prev]);
@@ -346,6 +353,13 @@ const ChatPage = () => {
       // Fetch the messages for the current chat.
       getMessages();
     }
+
+
+     // Fetch unread messages from local storage and update the unread count
+  const _unreadMessages = LocalStorage.get("unreadMessages");
+  setUnreadMessages(_unreadMessages || []);
+
+
     // An empty dependency array ensures this useEffect runs only once, similar to componentDidMount.
   }, []);
 
@@ -408,7 +422,7 @@ const ChatPage = () => {
 
       <div className="w-full justify-between items-stretch h-screen flex flex-shrink-0 overflow-hidden"> 
       {/* Left Sidebar Tabs */}
-      <Sidebar data={dataFromParent}/>
+      <Sidebar/>
 
       
       

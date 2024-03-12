@@ -13,7 +13,7 @@ import user_image from '../../assets/images/users/avatar-1.jpg'
 import { useGlobal } from '../../context/GlobalContext';
 import { useAuth } from '../../context/AuthContext';
 
-const Sidebar = (props:any) => {
+const Sidebar = () => {
   const { activeButton, setActiveButton, setTabIndex } = useGlobal();
   const {user} = useAuth();
 
