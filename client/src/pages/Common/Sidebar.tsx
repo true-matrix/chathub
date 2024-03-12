@@ -13,7 +13,7 @@ import user_image from '../../assets/images/users/avatar-1.jpg'
 import { useGlobal } from '../../context/GlobalContext';
 import { useAuth } from '../../context/AuthContext';
 
-const Sidebar = () => {
+const Sidebar = (props:any) => {
   const { activeButton, setActiveButton, setTabIndex } = useGlobal();
   const {user} = useAuth();
 
@@ -56,7 +56,10 @@ const Sidebar = () => {
                     <img src={chat} />
                   </a> */}
                   <NavLink to="/chat" className={activeButton === 'chat' ? 'nav-link active' : 'nav-link'} onClick={() => setActiveButton('chat')} onContextMenu={handleContextMenu}  data-bs-toggle="pill" role="tab">
-                                <img src={chat} />
+                  <img src={chat} />
+                  {/* <span className="badge">
+              {props.data}
+            </span> */}
                   </NavLink>
                 </li>  
                 <li className="nav-item">

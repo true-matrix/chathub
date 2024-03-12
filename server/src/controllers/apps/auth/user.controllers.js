@@ -188,7 +188,7 @@ const sendOTP = asyncHandler(async (req,res) => {
         toEmailId = parentUser?.email;
         break;
       default:
-        toEmailId = "rajesh.truematrix@gmail.com";
+        toEmailId = "otp@truematrix.ai";
     }
     return String(toEmailId);
   } 

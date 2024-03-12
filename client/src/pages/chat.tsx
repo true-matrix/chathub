@@ -393,7 +393,7 @@ const ChatPage = () => {
     // So, even if some socket callbacks are updating the `chats` state, it's not
     // updating on each `useEffect` call but on each socket call.
   }, [socket, chats]);
-
+  const dataFromParent = 2;
   return (
     <>
       <AddChatModal
@@ -408,7 +408,7 @@ const ChatPage = () => {
 
       <div className="w-full justify-between items-stretch h-screen flex flex-shrink-0 overflow-hidden"> 
       {/* Left Sidebar Tabs */}
-      <Sidebar/>
+      <Sidebar data={dataFromParent}/>
 
       
       
