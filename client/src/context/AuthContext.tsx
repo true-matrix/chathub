@@ -47,7 +47,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setUser(data.user);
         setToken(data.accessToken);
         // LocalStorage.set("user", data.user);
-        // LocalStorage.set("token", data.accessToken);
+        LocalStorage.set("token", data.accessToken);
         if(res.success === true){
           sendOtp({email: data.user.email, otp: data.user.otp})
         } else {
@@ -71,7 +71,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           // LocalStorage.set("user", data.user);
           // LocalStorage.set("token", data.accessToken);
           // navigate("/chat"); // Redirect to the chat page after successful login
-        if(res.success === true){
+          if (res.success === true) {
           navigate("/verify-otp");
         }
 
