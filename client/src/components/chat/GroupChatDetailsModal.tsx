@@ -376,6 +376,7 @@ const GroupChatDetailsModal: React.FC<{
                                       options={users.map((user : any) => ({
                                         label: user.name,
                                         value: user._id,
+                                        imageSrc: user.avatar.url,
                                       }))}
                                       onChange={({ value }) => {
                                         setParticipantToBeAdded(value);

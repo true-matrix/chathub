@@ -7,6 +7,7 @@ const Select: React.FC<{
   options: {
     value: string;
     label: string;
+    imageSrc?: string;
   }[];
   value: string;
   onChange: (value: { value: string; label: string }) => void;
@@ -59,6 +60,14 @@ const Select: React.FC<{
               >
                 {({ active, selected }) => (
                   <>
+                    <div className="flex items-center">
+                    {option.imageSrc && (
+                        <img
+                          src={option.imageSrc}
+                          alt={option.label}
+                          className="h-6 w-6 mr-2 rounded-full"
+                        />
+                      )}
                     <span
                       className={classNames(
                         "block truncate",
@@ -67,7 +76,7 @@ const Select: React.FC<{
                     >
                       {option.label}
                     </span>
-
+                    </div>
                     {selected && (
                       <span
                         className={classNames(
