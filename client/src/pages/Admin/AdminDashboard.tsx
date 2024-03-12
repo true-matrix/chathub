@@ -1,10 +1,8 @@
-import { useState } from "react";
 import { useGlobal } from "../../context/GlobalContext";
 import Sidebar from "../Common/Sidebar";
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import SupremeALphaPage from "./SupremeAlphaPage";
-import dashboard from '../../assets/images/dashboard.svg'
 import { useAuth } from "../../context/AuthContext";
 import AlphaPage from "./AlphaPage";
 import OmegaPage from "./OmegaPage";

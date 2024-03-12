@@ -1,6 +1,5 @@
 // Importing necessary components and hooks
 import { LockClosedIcon } from "@heroicons/react/20/solid";
-import { useState } from "react";
 import Button from "../../components/Button";
 import Input from "../../components/Input";
 import { useAuth } from "../../context/AuthContext";

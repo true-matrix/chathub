@@ -5,9 +5,8 @@ import {
   XMarkIcon,
 } from "@heroicons/react/20/solid";
 import { Fragment, useEffect, useState } from "react";
-import { createGroupChat, createUserChat, getAllContacts, getAvailableUsers } from "../../api";
+import { createGroupChat, createUserChat, getAllContacts } from "../../api";
 import { ChatListItemInterface } from "../../interfaces/chat";
-import { UserInterface } from "../../interfaces/user";
 import { classNames, requestHandler } from "../../utils";
 import Button from "../Button";
 import Input from "../Input";

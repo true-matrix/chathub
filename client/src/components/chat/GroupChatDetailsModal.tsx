@@ -11,14 +11,12 @@ import {
   addParticipantToGroup,
   deleteGroup,
   getAllContacts,
-  getAvailableUsers,
   getGroupInfo,
   removeParticipantFromGroup,
   updateGroupName,
 } from "../../api";
 import { useAuth } from "../../context/AuthContext";
 import { ChatListItemInterface } from "../../interfaces/chat";
-import { UserInterface } from "../../interfaces/user";
 import { requestHandler } from "../../utils";
 import Button from "../Button";
 import Input from "../Input";

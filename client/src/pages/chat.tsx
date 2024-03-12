@@ -407,7 +407,6 @@ const ChatPage = () => {
     // So, even if some socket callbacks are updating the `chats` state, it's not
     // updating on each `useEffect` call but on each socket call.
   }, [socket, chats]);
-  const dataFromParent = 2;
   return (
     <>
       <AddChatModal

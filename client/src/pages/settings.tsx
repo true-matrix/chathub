@@ -55,6 +55,7 @@ const SettingsPage = () => {
         gender: Yup.string().required('Gender is required'),
   });
   const [formInititalState, setFormInitState] = useState(initValues);
+console.log(isLoading);
 
   useEffect(() => {
     setFormInitState((prevState) => ({
@@ -266,7 +267,7 @@ const SettingsPage = () => {
       <div className="space-y-1">
         <Formik initialValues={formInititalState} onSubmit={handleSubmit} validationSchema={validationSchema} enableReinitialize >
         {(formik) => {
-              const { values, handleSubmit, isValid, dirty, setFieldValue } = formik;
+              const { handleSubmit, isValid, dirty } = formik;
               return (
             <div className="rounded-xl border bg-white"> 
               {/* {JSON.stringify(values?.id)} */}

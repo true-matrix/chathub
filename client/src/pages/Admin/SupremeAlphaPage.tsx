@@ -1,10 +1,9 @@
-import { useCallback, useContext, useEffect, useState } from "react";
-import { useGlobal } from "../../context/GlobalContext";
+import { useCallback, useEffect, useState } from "react";
 import 'react-tabs/style/react-tabs.css';
 import ReactPaginate from 'react-paginate';
-import { addUser, getAvailableUsers, getAllSupremeAlphas, getUserById, updateUser, deleteUser } from "../../api";
+import { addUser, getAllSupremeAlphas, getUserById, updateUser, deleteUser } from "../../api";
 import { requestHandler } from "../../utils";
-import { ErrorMessage, Field, Formik, useFormik } from 'formik';
+import { ErrorMessage, Field, Formik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -70,7 +69,8 @@ const SupremeALphaPage = () => {
       });
     
       const [formInititalState, setFormInitState] = useState(initValues);
-
+  console.log(selectedId);
+  console.log(isLoading);
     // Function to retrieve available users.
     const getUsers = useCallback( async () => {
         requestHandler(
@@ -254,7 +254,7 @@ const SupremeALphaPage = () => {
           <div className="absolute inset-0 bg-gray-800 opacity-75"></div>
           <Formik initialValues={formInititalState} onSubmit={handleSubmit} validationSchema={validationSchema} enableReinitialize >
         {(formik) => {
-              const { values, handleSubmit } = formik;
+              const { handleSubmit } = formik;
               return (
           <div className="relative bg-white p-8 rounded-md">
             <h2 className="text-2xl mb-4">{!isEditing ?  'Add New Supreme Alpha' : 'Update Supreme Alpha'}</h2>

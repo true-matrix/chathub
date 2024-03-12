@@ -67,7 +67,8 @@ const OmegaPage = () => {
       });
     
       const [formInititalState, setFormInitState] = useState(initValues);
-
+  console.log(selectedId);
+  console.log(isLoading);
     // Function to retrieve available users.
     const getUsers = useCallback( async () => {
         requestHandler(

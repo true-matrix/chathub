@@ -14,7 +14,7 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 // Main App component
 const App = () => {
   // Extracting 'token' and 'user' from the authentication context
-  const { token, user, otp } = useAuth();
+  const { token, user } = useAuth();
 
   return (
     <Routes>

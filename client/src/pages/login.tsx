@@ -1,6 +1,5 @@
 // Importing necessary components and hooks
 import { LockClosedIcon } from "@heroicons/react/20/solid";
-import { useState } from "react";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import { useAuth } from "../context/AuthContext";
@@ -16,7 +15,7 @@ interface FormValues {
 // Component for the Login page
 const Login = () => {
   const { login } = useAuth();
-  const [isPasswordHide, setIsPasswordHide] = useState(false);
+  // const [isPasswordHide, setIsPasswordHide] = useState(false);
   // Accessing the login function from the AuthContext
   const formInititalState : FormValues = {
     email: '',
@@ -38,9 +37,9 @@ const Login = () => {
 
     },
   });
-const handlePasswordHide = () => {
-    setIsPasswordHide(!isPasswordHide)
-}
+// const handlePasswordHide = () => {
+//     setIsPasswordHide(!isPasswordHide)
+// }
 
   return (
     <div className="w-full justify-between items-stretch h-screen flex flex-shrink-0 overflow-hidden g-0 login-page" >
@@ -78,7 +77,7 @@ const handlePasswordHide = () => {
               {/* Input for entering the password */}
               <Input
                 placeholder="Password"
-                type={ isPasswordHide ? "text" : "password"}
+                type={"password"}
                 id="password"
                 name="password"
                 onChange={formik.handleChange}

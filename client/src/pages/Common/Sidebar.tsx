@@ -1,15 +1,13 @@
 // import React, { useEffect } from 'react'
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { Logout } from '../Auth/Logout';
 
 import logo from '../../assets/images/wolflogo.svg'
 import chat from '../../assets/images/chat.svg'
 import profile from '../../assets/images/user-profile.svg'
-import setting from '../../assets/images/user-setting.svg'
 import dashboard from '../../assets/images/dashboard.svg'
-import user_image from '../../assets/images/users/avatar-1.jpg'
 import { useGlobal } from '../../context/GlobalContext';
 import { useAuth } from '../../context/AuthContext';
 

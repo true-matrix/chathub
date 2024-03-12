@@ -3,7 +3,6 @@ import { LockClosedIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
 import Button from "../components/Button";
 import Input from "../components/Input";
-import { useAuth } from "../context/AuthContext";
 
 // Component for user registration
 const Register = () => {
@@ -15,7 +14,7 @@ const Register = () => {
   });
 
   // Access the register function from the authentication context
-  const { register } = useAuth();
+  // const { register } = useAuth();
 
   // Handle data change for input fields
   const handleDataChange =
@@ -28,7 +27,7 @@ const Register = () => {
     };
 
   // Handle user registration
-  const handleRegister = async () => await register(data);
+  // const handleRegister = async () => await register(data);
 
   return (
     // Register form UI
@@ -61,7 +60,7 @@ const Register = () => {
         <Button
           fullWidth
           disabled={Object.values(data).some((val) => !val)}
-          onClick={handleRegister}
+          // onClick={handleRegister}
         >
           Register
         </Button>
