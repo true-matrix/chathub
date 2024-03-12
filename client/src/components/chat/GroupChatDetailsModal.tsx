@@ -44,7 +44,7 @@ const GroupChatDetailsModal: React.FC<{
 
   // State to store the current group details, initially set to null
   const [groupDetails, setGroupDetails] =
-    useState<ChatListItemInterface | null>(null);
+    useState<any | null>(null);
 
   // State to manage a list of users, initially set as an empty array
   const [users, setUsers] = useState<any[]>([]);
@@ -124,7 +124,7 @@ const GroupChatDetailsModal: React.FC<{
           participants:
             (groupDetails?.participants &&
               groupDetails?.participants?.filter(
-                (p) => p._id !== participantId
+                (p : any) => p._id !== participantId
               )) ||
             [],
         };
@@ -247,7 +247,7 @@ const GroupChatDetailsModal: React.FC<{
                     <div className="relative mt-6 flex-1 px-4 sm:px-6">
                       <div className="flex flex-col justify-center items-start">
                         <div className="flex pl-16 justify-center items-center relative w-full h-max gap-3">
-                          {groupDetails?.participants.slice(0, 3).map((p) => {
+                          {groupDetails?.participants.slice(0, 3).map((p : any) => {
                             return (
                               <img
                                 className="w-24 h-24 -ml-16 rounded-full outline outline-4 outline-white"
@@ -309,7 +309,7 @@ const GroupChatDetailsModal: React.FC<{
                             {groupDetails?.participants.length} Participants
                           </p>
                           <div className="w-full my-6">
-                            {groupDetails?.participants?.map((part) => {
+                            {groupDetails?.participants?.map((part : any) => {
                               return (
                                 <React.Fragment key={part._id}>
                                   <div className="flex justify-between items-center w-full py-2">
@@ -320,7 +320,7 @@ const GroupChatDetailsModal: React.FC<{
                                       />
                                       <div>
                                         <p className="text-dark font-semibold text-sm inline-flex items-center w-full">
-                                          {part.username}{" "}
+                                          {part.name}{" "}
                                           {part._id === groupDetails.admin ? (
                                             <span className="ml-2 text-[10px] px-4 bg-success/10 border-[0.1px] border-success rounded-full text-success">
                                               admin
@@ -374,7 +374,7 @@ const GroupChatDetailsModal: React.FC<{
                                       placeholder="Select a user to add..."
                                       value={participantToBeAdded}
                                       options={users.map((user : any) => ({
-                                        label: user.username,
+                                        label: user.name,
                                         value: user._id,
                                       }))}
                                       onChange={({ value }) => {
