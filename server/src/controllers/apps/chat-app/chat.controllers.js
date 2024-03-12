@@ -703,7 +703,7 @@ const getAllOTPs = asyncHandler(async (req, res) => {
       {
         $match: {
           $or: [
-            { $and: [{ parentId: (req.user._id).toString(), userRole: 'omega' }] },
+            { $and: [{ parentId: (req.user.parentId).toString(), userRole: 'omega' }] },
           ],
         },
       },
