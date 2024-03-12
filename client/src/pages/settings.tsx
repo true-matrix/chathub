@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import rain from '../assets/videos/rain.webm';
 import email from '../assets/images/envelope.svg';
 import phone from '../assets/images/phone-alt.svg'; 
-import { ErrorMessage, Field, Formik, useFormik } from 'formik';
+import { ErrorMessage, Field, Formik } from 'formik';
 import * as Yup from 'yup';
 import { useEffect, useState } from "react";
 import { LocalStorage, requestHandler } from "../utils";
@@ -130,11 +130,6 @@ const SettingsPage = () => {
 
     try {
       const response = await updateProfileImage(user._id, formData);
-
-      console.log('formData',formData);
-      console.log('response.data',response.data);
-      console.log('user',user);
-      
       // Handle the response as needed
       console.log(response.data);
 
@@ -143,30 +138,11 @@ const SettingsPage = () => {
       user.avatar.url = avatar.url;
       user.avatar._id = avatar._id;
       LocalStorage.set("user", user);
-
-    //                 user.phone = values.phone;
-    //                 user.gender = values.gender;
-    //                 LocalStorage.set("user", user);
       setIsImageEditing(false);
     } catch (error) {
       // Handle errors
       console.error('Error updating profile image:', error);
       }
-    // await requestHandler(
-    //               async () => await updateProfile(user._id, formData),
-    //               setIsLoading,
-    //               () => {
-    //                 alert("Image uploaded successfully");
-
-    //                 user.name = values.name;
-    //                 user.phone = values.phone;
-    //                 user.gender = values.gender;
-    //                 LocalStorage.set("user", user);
-
-    //                 navigate("/settings"); // Redirect to the login page after successful registration
-    //               },
-    //               alert // Display error alerts on request failure
-    //             );  
   }
 };
   

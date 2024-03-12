@@ -831,20 +831,14 @@ const updateProfile = asyncHandler(async (req, res) => {
 });
 
 const updateProfileImage = asyncHandler(async (req, res) => {
-  console.log('req.user',req.user);
-  console.log('req.file', req.file);
   if (!req.file?.filename) {
     throw new ApiError(400, "Profile image is required");
   }
-  
-  
   const profileImageUrl = getStaticFilePath(req, req.file?.filename);
   const profileImageLocalPath = getLocalPath(req.file?.filename);
-
   const user = await User.findOne({
     _id: new mongoose.Types.ObjectId(req.user._id),
   });
-
   let updatedProfile = await User.findOneAndUpdate(
     {
       _id: new mongoose.Types.ObjectId(req.user._id),
@@ -860,15 +854,7 @@ const updateProfileImage = asyncHandler(async (req, res) => {
     },
     { new: true }
   );
-
-  // console.log('updatedProfile1',updatedProfile);
-  // console.log('user',user);
-  // remove the old  image
   removeLocalFile(user.avatar.localPath);
-
-  // updatedProfile = await User(req.user._id, req);
-  // console.log('updatedProfile2',updatedProfile);
-
   return res
     .status(200)
     .json(
