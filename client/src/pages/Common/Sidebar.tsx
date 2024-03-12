@@ -76,7 +76,7 @@ const Sidebar = () => {
 
                 <li className="nav-item dropdown profile-user-dropdown mt-auto"> 
                   <Popup trigger={<button className="nav-link dropdown-toggle bg-white rounded-full" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-describedby="popup-78477">
-                                <img crossOrigin="anonymous" src={user_image} alt="" className="profile-user rounded-full border-2"/>
+                                <img crossOrigin="anonymous" src={user?.avatar?.url} alt="" className="profile-user rounded-full border-2"/>
                             </button>} position="top left" closeOnDocumentClick>
                         <div className='user-image-poppup'>
                             {/* <Link to={'/profile'} className="dropdown-item d-flex align-items-center justify-content-between" onContextMenu={handleContextMenu}>Profile <img src={profile} /> </Link > */}
