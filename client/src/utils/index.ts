@@ -46,7 +46,7 @@ export const isBrowser = typeof window !== "undefined";
 // This utility function generates metadata for chat objects.
 // It takes into consideration both group chats and individual chats.
 export const getChatObjectMetadata = (
-  chat: ChatListItemInterface, // The chat item for which metadata is being generated.
+  chat: any, // The chat item for which metadata is being generated.
   loggedInUser: any // The currently logged-in user details.
 ) => {
   // Determine the content of the last message, if any.
@@ -75,12 +75,12 @@ export const getChatObjectMetadata = (
     // Case: Individual chat
     // Identify the participant other than the logged-in user.
     const participant = chat.participants.find(
-      (p) => p._id !== loggedInUser?._id
+      (p: any) => p._id !== loggedInUser?._id
     );
     // Return metadata specific to individual chats.
     return {
       avatar: participant?.avatar.url, // Participant's avatar URL.
-      title: participant?.username, // Participant's username serves as the title.
+      title: participant?.name, // Participant's username serves as the title.
       description: participant?.email, // Email address of the participant.
       lastMessage,
     };
