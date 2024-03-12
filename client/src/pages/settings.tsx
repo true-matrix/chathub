@@ -95,44 +95,6 @@ const SettingsPage = () => {
             setSubmitting(false);
           };
   
-  // const handleFileChange = (e:any) => {
-  //   // Get the selected file from the input
-  //   const file = e.target.files[0];
-  //   // setSelectedFile(file);
-  //   setSelectedFile(file);
-  //   console.log('file',file);
-
-  //   // const file = e.target.files[0];
-  //   // if (file) {
-  //   //   const reader = new FileReader();
-
-  //   //   reader.onload = (e:any) => {
-  //   //     const dataUrl = e.target.result;
-  //   //     setSelectedFile(dataUrl);
-  //   //   };
-
-  //   //   reader.readAsDataURL(file);
-  //   // }
-
-  //   // const existingState = { ...userProfile };
-  //   // setFormInititalState({...existingState, avatar: file});
-  //   // setIsImageSelected(true)
-    
-  // };
-  // const handleFileChange = (e:any) => {
-  //   const file = e.target.files[0];
-
-  //   if (file) {
-  //     const reader = new FileReader();
-
-  //     reader.onload = (e:any) => {
-  //       setSelectedFile(e.target.result);
-  //     };
-
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
-
   const handleFileChange = (e:any) => {
     const file = e.target.files[0];
 
@@ -158,12 +120,6 @@ const SettingsPage = () => {
     }
   };
 
-  // const handleSaveClick = () => {
-  //   // Add your save logic here
-  //   // This is just a placeholder, you might want to save the image to your server or perform other actions.
-  //   alert('Image saved!');
-  //   setIsImageEditing(false);
-  // };
 
   const handleSaveClick = async () => {
     if (selectedFile) {
@@ -175,37 +131,45 @@ const SettingsPage = () => {
     try {
       const response = await updateProfileImage(user._id, formData);
 
+      console.log('formData',formData);
+      console.log('response.data',response.data);
+      console.log('user',user);
+      
       // Handle the response as needed
       console.log(response.data);
+
+      const { avatar } = response.data.data;
+      user.avatar.localPath = avatar.localPath;
+      user.avatar.url = avatar.url;
+      user.avatar._id = avatar._id;
+      LocalStorage.set("user", user);
+
+    //                 user.phone = values.phone;
+    //                 user.gender = values.gender;
+    //                 LocalStorage.set("user", user);
       setIsImageEditing(false);
     } catch (error) {
       // Handle errors
       console.error('Error updating profile image:', error);
-    }
+      }
+    // await requestHandler(
+    //               async () => await updateProfile(user._id, formData),
+    //               setIsLoading,
+    //               () => {
+    //                 alert("Image uploaded successfully");
+
+    //                 user.name = values.name;
+    //                 user.phone = values.phone;
+    //                 user.gender = values.gender;
+    //                 LocalStorage.set("user", user);
+
+    //                 navigate("/settings"); // Redirect to the login page after successful registration
+    //               },
+    //               alert // Display error alerts on request failure
+    //             );  
   }
 };
-  // const handleSaveClick = async () => {
-  //   if (selectedFile) {
-  //     const formData = new FormData();
-  //     formData.append('profileImage', selectedFile);
-
-  //     try {
-  //       const response = await axios.post('/api/profileimage', formData, {
-  //         headers: {
-  //           'Content-Type': 'multipart/form-data',
-  //         },
-  //       });
-
-  //       // Handle the response as needed
-  //       console.log(response.data);
-  //       setIsImageEditing(false);
-  //     } catch (error) {
-  //       // Handle errors
-  //       console.error('Error updating profile image:', error);
-  //     }
-  //   }
-  // };
-
+  
   return (
     <>
     <div className="w-full justify-between items-stretch h-screen flex flex-shrink-0 overflow-hidden"> 
@@ -221,7 +185,8 @@ const SettingsPage = () => {
           <div>
             <div className="relative mx-auto">
               <div className="flex justify-center">
-                <img src="https://tecdn.b-cdn.net/img/new/avatars/2.webp" alt="" className="rounded-full mx-auto w-32 h-32 shadow-md border-4 border-white transition duration-200 transform hover:scale-110"/>
+                {/* <img src="https://tecdn.b-cdn.net/img/new/avatars/2.webp" alt="" className="rounded-full mx-auto w-32 h-32 shadow-md border-4 border-white transition duration-200 transform hover:scale-110"/> */}
+                <img src={user?.avatar?.url} alt="" className="rounded-full mx-auto w-32 h-32 shadow-md border-4 border-white transition duration-200 transform hover:scale-110"/>
               </div>
               <div className="mt-3">
                 <h1 className="font-bold text-center text-3xl text-gray-900">{ user.name ? user.name: user?.username}</h1>
@@ -272,7 +237,7 @@ const SettingsPage = () => {
       </div> */}
               <div className="cursor-pointer" onClick={handleImageClick}>
         <img
-          src={selectedFile || 'https://tecdn.b-cdn.net/img/new/avatars/2.webp'}
+          src={isImageEditing ? selectedFile : user.avatar.url}
           alt="Avatar"
           className="w-12 h-12 rounded-full object-cover"
         />
