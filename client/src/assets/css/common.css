@@ -431,3 +431,9 @@ position: relative;
   padding: 4px 8px;
   font-size: 12px;
 }
+
+aside.epr-main.EmojiPickerReact {
+  position: absolute;
+  bottom: 101px;
+  left: 10px;
+}

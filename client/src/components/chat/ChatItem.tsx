@@ -118,7 +118,7 @@ const ChatItem: React.FC<{
                       key={participant._id}
                       src={participant.avatar.url}
                       className={classNames(
-                        "w-9 h-9 border-[1px] border-white rounded-full absolute outline outline-1 outline-white group-hover:outline-white",
+                        "w-9 h-9 border-[1px] border-white rounded-full absolute outline outline-1 outline-white group-hover:outline-white object-cover",
                         i === 0
                           ? "left-0 z-[3]"
                           : i === 1
@@ -134,7 +134,7 @@ const ChatItem: React.FC<{
             ) : (
               <img
                 src={getChatObjectMetadata(chat, user!).avatar}
-                className="w-12 h-12 rounded-full"
+                className="w-12 h-12 rounded-full object-cover"
               />
             )}
           </div>
