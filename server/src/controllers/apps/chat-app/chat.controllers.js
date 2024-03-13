@@ -54,6 +54,7 @@ const chatCommonAggregation = () => {
               pipeline: [
                 {
                   $project: {
+                    name: 1,
                     username: 1,
                     avatar: 1,
                     email: 1,

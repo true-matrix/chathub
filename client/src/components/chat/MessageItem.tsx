@@ -56,11 +56,11 @@ const MessageItem: React.FC<{
               className={classNames(
                 "text-xs font-semibold mb-2",
                 ["text-success", "text-danger"][
-                  message.sender.username.length % 2
+                  message.sender.name.length % 2
                 ]
               )}
             >
-              {message.sender?.username}
+              {message.sender?.name}
             </p>
           ) : null}
 

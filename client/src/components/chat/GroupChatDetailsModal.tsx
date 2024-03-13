@@ -336,7 +336,7 @@ const GroupChatDetailsModal: React.FC<{
                                           onClick={() => {
                                             const ok = confirm(
                                               "Are you sure you want to remove " +
-                                                user.username +
+                                                user.name +
                                                 " ?"
                                             );
                                             if (ok) {

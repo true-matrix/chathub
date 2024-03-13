@@ -13,7 +13,7 @@ export interface ChatListItemInterface {
 
 export interface ChatMessageInterface {
   _id: string;
-  sender: Pick<UserInterface, "_id" | "avatar" | "email" | "username">;
+  sender: Pick<UserInterface, "_id" | "avatar" | "email" | "username" | "name">;
   content: string;
   chat: string;
   attachments: {
