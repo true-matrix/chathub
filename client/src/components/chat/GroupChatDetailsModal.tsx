@@ -297,7 +297,7 @@ const GroupChatDetailsModal: React.FC<{
                           )}
 
                           <p className="mt-2 text-zinc-400 text-sm">
-                            Group · {groupDetails?.participants.length}{" "}
+                            Pack · {groupDetails?.participants.length}{" "}
                             participants
                           </p>
                         </div> 
@@ -399,7 +399,7 @@ const GroupChatDetailsModal: React.FC<{
                                   severity="danger"
                                   onClick={() => {
                                     const ok = confirm(
-                                      "Are you sure you want to delete this group?"
+                                      "Are you sure you want to delete this pack?"
                                     );
                                     if (ok) {
                                       deleteGroupChat();
@@ -407,7 +407,7 @@ const GroupChatDetailsModal: React.FC<{
                                   }}
                                 >
                                   <TrashIcon className="w-5 h-5 mr-1" /> Delete
-                                  group
+                                  pack
                                 </Button>
                               </div>
                             ) : null}

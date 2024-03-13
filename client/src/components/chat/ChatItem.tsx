@@ -87,7 +87,7 @@ const ChatItem: React.FC<{
                   role="button"
                   className="p-4 w-full rounded-lg inline-flex items-center hover:bg-secondary hover:text-white"
                 >
-                  <InformationCircleIcon className="h-4 w-4 mr-2" /> About group
+                  <InformationCircleIcon className="h-4 w-4 mr-2" /> About pack
                 </p>
               ) : (
                 <p

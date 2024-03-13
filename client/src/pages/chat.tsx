@@ -460,7 +460,7 @@ const ChatPage = () => {
       {activeButton === "chat" && <div className="w-1/3 relative ring-white overflow-y-auto px-0">
           <div className="z-10 w-full sticky top-0 bg-white text-sm flex justify-between items-center gap-3 user-searchbar">
             <Input
-              placeholder="Search user or group... "
+              placeholder="Search user or pack... "
               value={localSearchQuery}
               onChange={(e) =>
                 setLocalSearchQuery(e.target.value.toLowerCase())

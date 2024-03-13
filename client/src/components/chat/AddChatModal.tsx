@@ -201,14 +201,14 @@ const AddChatModal: React.FC<{
                           isGroupChat ? "" : "opacity-40"
                         )}
                       >
-                        Is it a group chat?
+                        Is it a pack?
                       </span>{" "}
                     </Switch.Label>
                   </Switch.Group>
                   {isGroupChat ? (
                     <div className="my-5">
                       <Input
-                        placeholder={"Enter a group name..."}
+                        placeholder={"Enter a pack name..."}
                         value={groupName}
                         onChange={(e) => {
                           setGroupName(e.target.value);
@@ -220,7 +220,7 @@ const AddChatModal: React.FC<{
                     <Select
                       placeholder={
                         isGroupChat
-                          ? "Select group participants..."
+                          ? "Select pack participants..."
                           : "Select a user to chat..."
                       }
                       value={isGroupChat ? "" : selectedUserId || ""}
