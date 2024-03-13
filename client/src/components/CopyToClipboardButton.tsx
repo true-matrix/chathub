@@ -15,17 +15,10 @@ export const CopyToClipboardButton = ({ text }: any) => {
   };
 
   return (
-    <div onClick={handleCopyClick} className="flex items-center cursor-pointer">
-      <div className="relative">
-        <svg
-          className="copytext w-5 h-5"
-          viewBox="0 0 42 42"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          {/* Your SVG path here */}
-        </svg>
-        <div className="absolute inset-0 flex items-center justify-center">
+    <div onClick={handleCopyClick} className="flex items-center justify-center cursor-pointer">
+      <div className="relative"> 
+          {/* Your SVG path here */} 
+        <div className=" inset-0 flex items-center justify-center">
           <span className="text-black">
             {isCopied ? 'Copied!' : 'Copy OTP'}
           </span>

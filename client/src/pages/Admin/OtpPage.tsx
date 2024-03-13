@@ -80,7 +80,7 @@ const OtpPage = () => {
     <>
 
             <div className="flex justify-between items-center mb-4">
-                  <h2>Manage OTP</h2>
+                  <h2 className="text-xl font-semibold py-1">Manage OTP</h2>
             </div>
                 
                 {/* Search Bar */}
@@ -88,47 +88,57 @@ const OtpPage = () => {
                   <input
                     type="text"
                     placeholder="Search..."
-                    className="border p-2 w-full"
+                    className="border p-2 w-full rounded-lg text-md py-3 px-5 focus:outline-none"
                     value={searchQuery}
                     onChange={handleSearch}
                   />
                 </div>
 
                 {/* Table */}
-                <table className="table-fixed w-full">
-                  <thead style={{ backgroundColor: '#e2e8f0' }}>
-                    <tr>
-                      {tableFields.map(field => (
-                        <th key={field.key}>{field.value}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {users && getPaginatedData().map((user,index) => (
-                      <tr key={user._id} style={{ backgroundColor: index % 2 === 0 ? '#f7fafc' : 'white' }}>
-                        {/* <td><img className="w-10 h-10 rounded-full" src={user.image} alt=""/></td> */}
-                        <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                            <img className="w-10 h-10 rounded-full" src={user.avatar.url} alt="img"/>
-                            <div className="ps-3">
-                                <div className="text-base font-semibold">{user.name || user.username }</div>
-                                <div className="font-normal text-gray-500">{user.email}</div>
-                            </div>  
-                        </th>
-                        <td>{user.phone ? user.phone : '-'}</td>
-                        <td>
-                        {user?.otp_send_time ? <p className=" mb-0"> {getMonthDayYearTimeValue(user.otp_send_time)}</p> : <p>-</p>}
-                        </td>
-                        <td>
-                            <p className=" mb-0 fw-bold">{(user?.otp) ? (isCurrentTimeGreaterThanGivenTime(user?.otp_expiry_time) ? <span style={{ color: "grey" }}>Expired</span> : <span style={{ color: "#000", backgroundColor:"yellow" }}>{user?.otp}</span>) : ((user?.otp_expiry_time && user?.islogin)  ? <span style={{ color: "green" }}>Active</span> : ((user?.otp_expiry_time && user?.islogin === false) ? <span style={{ color: "red" }}>Terminate</span> : "-")) }</p>
-                        </td>
-                        <td className='text-center text-lg-start'>
-                        <CopyToClipboardButton text={(user?.otp) ? (isCurrentTimeGreaterThanGivenTime(user?.otp_expiry_time) ? "Expired" : user?.otp) : (user?.otp_expiry_time ? "Expired" : "-") } />
-
-                        </td>
+                <div className="table-container">
+                  <table className="table-fixed w-full">
+                    <thead>
+                      <tr>
+                        {tableFields.map(field => (
+                          <th key={field.key}>{field.value}</th>
+                        ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {users && getPaginatedData().map((user,index) => (
+                        <>
+                        <tr className="row"></tr>
+                        <tr key={user._id}>
+                          {/* <td><img className="w-10 h-10 rounded-full" src={user.image} alt=""/></td> */}
+                          <td scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white rounded-md bg-dark">
+                              <img className="w-14 h-14 rounded-full" src={user.avatar.url} alt="img"/>
+                              <div className="ps-3">
+                                  <div className="text-base font-semibold">{user.name || user.username }</div>
+                                  <div className="font-normal text-gray-500">{user.email}</div>
+                              </div>  
+                          </td>
+                          <td className="text-center">{user.phone ? user.phone : '-'}</td>
+                          <td className="text-center">
+                          {user?.otp_send_time ? <p className=" mb-0"> {getMonthDayYearTimeValue(user.otp_send_time)}</p> : <p>-</p>}
+                          </td>
+                          <td className="text-center">
+                              {/* <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <rect width="16" height="16" rx="8" fill="#28DD64"/>
+                              </svg> */}
+                              <p className=" mb-0 fw-bold">{(user?.otp) ? (isCurrentTimeGreaterThanGivenTime(user?.otp_expiry_time) ? <span style={{ color: "grey" }}>Expired</span> : 
+                              <span style={{ color: "#000", backgroundColor:"yellow" }}>{user?.otp}</span>) : ((user?.otp_expiry_time && user?.islogin)  ? <span style={{ color: "green" }}> 
+                              Active</span> : ((user?.otp_expiry_time && user?.islogin === false) ? <span style={{ color: "red" }}>Terminate</span> : "-")) }</p>
+                          </td>
+                          <td className='text-center text-lg'>
+                          <CopyToClipboardButton text={(user?.otp) ? (isCurrentTimeGreaterThanGivenTime(user?.otp_expiry_time) ? "Expired" : user?.otp) : (user?.otp_expiry_time ? "Expired" : "-") } />
+
+                          </td>
+                        </tr>
+                        </>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
 
                 {/* Pagination */}
                 <ReactPaginate

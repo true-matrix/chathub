@@ -22,7 +22,7 @@ const AdminDashboard = () => {
       {/* Left Sidebar Tabs */}
       <Sidebar/>
        {/* Dashboard Sidebar */}
-        <div className="w-full border-l-[0.1px] border-secondary chat-background">
+        <div className="w-full border-l-[0.1px] border-secondary chat-background p-5">
        
         <Tabs selectedIndex={tabIndex} onSelect={(index) => setTabIndex(index)}>
             <TabList>

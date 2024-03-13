@@ -257,7 +257,7 @@ const SupremeALphaPage = () => {
               const { handleSubmit } = formik;
               return (
           <div className="relative bg-white p-8 rounded-md">
-            <h2 className="text-2xl mb-4">{!isEditing ?  'Add New Supreme Alpha' : 'Update Supreme Alpha'}</h2>
+            <h2 className="text-2xl mb-4">{!isEditing ?  'manage supreme alpha' : 'Update Supreme Alpha'}</h2>
             {/* {JSON.stringify(values)} */}
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
@@ -352,53 +352,60 @@ const SupremeALphaPage = () => {
 
 
     <div className="flex justify-between items-center mb-4">
-                  <h2>Manage Supreme Alpha</h2>
-                  <button className="bg-green-500 text-white px-4 py-2" onClick={handleAddUser}>Add New Supreme Alpha</button>
+                  <h2 className="text-xl font-semibold">Manage Supreme Alpha</h2>
+                  <button className="rounded-md border-none bg-primary text-white text-md py-2 px-4 flex flex-shrink-0" onClick={handleAddUser}>Manage Supreme Alpha</button>
                 </div>
 
                 
                 {/* Search Bar */}
-                <div className="mb-4">
+                <div className="mb-4 mt-6">
                   <input
                     type="text"
                     placeholder="Search..."
-                    className="border p-2 w-full"
+                    className="border p-2 w-full rounded-lg text-md py-3 px-5 focus:outline-none"
                     value={searchQuery}
                     onChange={handleSearch}
                   />
                 </div>
 
                 {/* Table */}
-                <table className="table-fixed w-full">
-                  <thead style={{ backgroundColor: '#e2e8f0' }}>
-                    <tr>
-                      {tableFields.map(field => (
-                        <th key={field.key}>{field.value}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {currentData.map((user,index) => (
-                      <tr key={user._id} style={{ backgroundColor: index % 2 === 0 ? '#f7fafc' : 'white' }}>
-                        {/* <td><img className="w-10 h-10 rounded-full" src={user.image} alt=""/></td> */}
-                        <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                            <img className="w-10 h-10 rounded-full" src={user.avatar.url} alt="img"/>
-                            <div className="ps-3">
-                                <div className="text-base font-semibold">{user.name || user.username }</div>
-                                <div className="font-normal text-gray-500">{user.email}</div>
-                            </div>  
-                        </th>
-                        <td>{user.phone ? user.phone : '9876543210'}</td>
-                        <td>inactive</td>
-                        <td>
-                          <button className="bg-blue-500 text-white px-2 py-1 mr-2" onClick={()=>handleUpdateUser(user._id)}  >Edit</button>
-                          <button className="bg-red-500 text-white px-2 py-1" onClick={()=>handleDelete(user._id)}>Delete</button>
-                        </td>
+                <div className="table-container">
+                  <table className="table-fixed w-full">
+                    <thead>
+                      <tr>
+                        {tableFields.map(field => (
+                          <th key={field.key}>{field.value}</th>
+                        ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-
+                    </thead>
+                    <tbody>
+                      {currentData.map((user,index) => (
+                        <>
+                        <tr className="row"></tr>
+                        <tr key={user._id}>
+                          {/* <td><img className="w-10 h-10 rounded-full" src={user.image} alt=""/></td> */}
+                          <td scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+                              <img className="w-14 h-14 rounded-full" src={user.avatar.url} alt="img"/>
+                              <div className="ps-3">
+                                  <div className="text-base font-semibold">{user.name || user.username }</div>
+                                  <div className="font-normal text-gray-500">{user.email}</div>
+                              </div>  
+                          </td>
+                          <td className="text-center">{user.phone ? user.phone : '9876543210'}</td>
+                          <td className="text-center">inactive</td>
+                          <td className="text-center">
+                            <button className="focus:outline-none text-white bg-yellow-500 hover:bg-yellow-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2 me-2  dark:focus:ring-yellow-900" onClick={()=>handleUpdateUser(user._id)}  >Edit</button>
+                            <button className="focus:outline-none text-white bg-red-500 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 me-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900" onClick={()=>handleDelete(user._id)}>Delete</button>
+                          </td>
+                        </tr>  
+                        </>
+                      ))}
+                      
+                    </tbody>
+                  </table>
+                </div>
+                
+                        
                 {/* Pagination */}
                 <ReactPaginate
                     previousLabel={"Previous"}
