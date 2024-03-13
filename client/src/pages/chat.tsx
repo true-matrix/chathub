@@ -164,6 +164,7 @@ const ChatPage = () => {
 
   // Function to send a chat message
   const sendChatMessage = async () => {
+    setShowPicker(false);
     // If no current chat ID exists or there's no socket connection, exit the function
     if (!currentChat.current?._id || !socket) return;
 
@@ -194,6 +195,7 @@ const ChatPage = () => {
   };
 
   const handleOnMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setShowPicker(false);
     // Update the message state with the current input value
     setMessage(e.target.value);
 
@@ -431,6 +433,11 @@ const ChatPage = () => {
     };
   }, []);
 
+  const onEmojiClick = (emojiObject:any) => {
+    // console.log('Emoji clicked:', emojiObject);
+    setMessage((prevInput) => prevInput + emojiObject?.emoji);
+  };
+
   return (
     <>
       <AddChatModal
@@ -647,23 +654,23 @@ const ChatPage = () => {
                 />
                 <label
                   htmlFor="attachments"
-                  className="p-4 rounded-full bg-white hover:bg-primary cursor-pointer " 
+                  className="p-4 rounded-full bg-white hover:bg-primary cursor-pointer "
+                  onClick={() =>setShowPicker(false)}
                 >
                   <PaperClipIcon className="w-6 h-6" />
                 </label>
 
                 <button
-                  // htmlFor="emoji"
                   className="p-4 rounded-full bg-white hover:bg-primary cursor-pointer" 
-                  ref={emojiButtonRef} onClick={togglePicker}
+                  onClick={togglePicker}
                 >
                   <FaceSmileIcon className="w-6 h-6" />
                 </button>
                 {showPicker && (
-        <div>
-          <EmojiPicker onEmojiClick={(event, emojiObject) => console.log(emojiObject)} />
-        </div>
-      )}
+                <div>
+                  <EmojiPicker onEmojiClick={onEmojiClick} />
+                </div>
+              )}
 
                 <Input
                   placeholder="Message"
