@@ -1,4 +1,5 @@
 import {
+  FaceSmileIcon,
   PaperAirplaneIcon,
   PaperClipIcon,
   XCircleIcon,
@@ -28,6 +29,7 @@ import nochat from "../assets/images/main-image.png"
 // import dashboard from '../assets/images/dashboard.svg'
 // import logout from '../assets/images/logout.svg'
 // import user_image from '../assets/images/users/avatar-1.jpg'
+import EmojiPicker from 'emoji-picker-react';
 
 import {
   ChatListItemInterface,
@@ -60,6 +62,8 @@ const ChatPage = () => {
   const { socket } = useSocket();
   const { activeButton } = useGlobal();
 
+  const [showPicker, setShowPicker] = useState(false);
+  const emojiButtonRef : any = useRef();
   // Create a reference using 'useRef' to hold the currently selected chat.
   // 'useRef' is used here because it ensures that the 'currentChat' value within socket event callbacks
   // will always refer to the latest value, even if the component re-renders.
@@ -407,6 +411,26 @@ const ChatPage = () => {
     // So, even if some socket callbacks are updating the `chats` state, it's not
     // updating on each `useEffect` call but on each socket call.
   }, [socket, chats]);
+
+  // Emoji
+    const togglePicker = () => {
+    setShowPicker(prevState => !prevState);
+  };
+
+  const handleOutsideClick = (event:any) => {
+    if (emojiButtonRef.current && !emojiButtonRef.current.contains(event.target)) {
+      setShowPicker(false);
+    }
+  };
+
+  // Add event listener to handle clicks outside the emoji button and picker
+  useEffect(() => {
+    document.addEventListener('click', handleOutsideClick);
+    return () => {
+      document.removeEventListener('click', handleOutsideClick);
+    };
+  }, []);
+
   return (
     <>
       <AddChatModal
@@ -627,6 +651,19 @@ const ChatPage = () => {
                 >
                   <PaperClipIcon className="w-6 h-6" />
                 </label>
+
+                <button
+                  // htmlFor="emoji"
+                  className="p-4 rounded-full bg-white hover:bg-primary cursor-pointer" 
+                  ref={emojiButtonRef} onClick={togglePicker}
+                >
+                  <FaceSmileIcon className="w-6 h-6" />
+                </button>
+                {showPicker && (
+        <div>
+          <EmojiPicker onEmojiClick={(event, emojiObject) => console.log(emojiObject)} />
+        </div>
+      )}
 
                 <Input
                   placeholder="Message"
