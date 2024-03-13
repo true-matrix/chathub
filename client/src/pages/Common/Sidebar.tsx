@@ -76,9 +76,17 @@ const Sidebar = () => {
                 </li>}
 
                 <li className="nav-item dropdown profile-user-dropdown mt-auto"> 
-                  <Popup trigger={<button className="nav-link dropdown-toggle bg-white rounded-full" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-describedby="popup-78477">
-                                <img crossOrigin="anonymous" src={user?.avatar?.url} alt="" className="profile-user rounded-full border-2"/>
-                            </button>} position="top left" closeOnDocumentClick>
+                <Popup trigger={
+                  <button
+                    className="rounded-none border-none bg-primary text-white text-sm py-3 px-4 flex flex-shrink-0 truncate hover:truncate-none"
+                    title={user?.name}
+                    >
+                      {user?.name.length <= 6 ? user?.name : user?.name.slice(0, 5) + ".." }
+                  </button>
+                  // <button className="nav-link dropdown-toggle bg-white rounded-full" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-describedby="popup-78477">
+                  //               <img crossOrigin="anonymous" src={user?.avatar?.url} alt="" className="profile-user rounded-full border-2"/>
+                  // </button>
+                } position="top left" closeOnDocumentClick>
                         <div className='user-image-poppup'>
                             {/* <Link to={'/profile'} className="dropdown-item d-flex align-items-center justify-content-between" onContextMenu={handleContextMenu}>Profile <img src={profile} /> </Link > */}
                             {/* <Link to={'/settings'} className="dropdown-item d-flex align-items-center justify-content-between" onContextMenu={handleContextMenu}>Settings <img src={setting} /> </Link> */}
