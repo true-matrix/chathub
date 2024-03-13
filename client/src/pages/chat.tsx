@@ -61,7 +61,6 @@ const ChatPage = () => {
   const { user } = useAuth();
   const { socket } = useSocket();
   const { activeButton } = useGlobal();
-
   const [showPicker, setShowPicker] = useState(false);
   const emojiButtonRef : any = useRef();
   // Create a reference using 'useRef' to hold the currently selected chat.
