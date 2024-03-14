@@ -2,18 +2,18 @@ import moment from "moment";
 // import moment from "moment-timezone";
 
 export const generateUniqueId = () => {
-    const timestamp = new Date().getTime();
+  const timestamp = new Date().getTime();
 
-    // Generate a random number or string as a unique component
-    const randomComponent = Math.random().toString(36).substring(2, 8);
-  
-    // Combine the timestamp and random component to create a unique ID
-    const uniqueId = `${timestamp}-${randomComponent}`;
+  // Generate a random number or string as a unique component
+  const randomComponent = Math.random().toString(36).substring(2, 8);
+
+  // Combine the timestamp and random component to create a unique ID
+  const uniqueId = `${timestamp}-${randomComponent}`;
   return uniqueId;
 };
 
 // //If Current Time is greater than given time? // Output : true/false
-export const isCurrentTimeGreaterThanGivenTime = (date: string | any) =>{
+export const isCurrentTimeGreaterThanGivenTime = (date: string | any) => {
   // Parse the given time using moment
   const givenMoment = moment(date);
 
@@ -25,7 +25,7 @@ export const isCurrentTimeGreaterThanGivenTime = (date: string | any) =>{
   const currentUnixTimestamp = currentMoment.unix();
   // Compare the timestamps
   return currentUnixTimestamp > givenUnixTimestamp;
-}
+};
 
 // export const isCurrentTimeGreaterThanGivenTime = (date: string | any) => {
 //   // Parse the given time using moment and set the timezone to America/New_York
@@ -45,21 +45,71 @@ export const isCurrentTimeGreaterThanGivenTime = (date: string | any) =>{
 //   return currentUnixTimestamp > givenUnixTimestamp;
 // };
 
+// export const getMonthDayYearTimeValue = (date: string | any) => {
+//   if(date){
+//     return moment(date).local().format('MMMM DD, YYYY - hh:mm a');
+//   }
+// }
 
 export const getMonthDayYearTimeValue = (date: string | any) => {
-  if(date){
-    return moment(date).local().format('MMMM DD, YYYY - hh:mm a');
+  if (date) {
+    return moment(date).format("MMMM DD, YYYY - hh:mm a");
   }
-}
+};
+
+export const getRecentTime = (date: string | any) => {
+  const currentTime: any = new Date();
+  const messageTime: any = new Date(date);
+
+  const isToday = (someDate: any) => {
+    const today = new Date();
+    return (
+      someDate.getDate() === today.getDate() &&
+      someDate.getMonth() === today.getMonth() &&
+      someDate.getFullYear() === today.getFullYear()
+    );
+  };
+
+  const timeDiffSeconds = (currentTime - messageTime) / 1000;
+
+  let formattedTime;
+
+  if (timeDiffSeconds < 60) {
+    formattedTime = "a few seconds ago";
+  } else if (timeDiffSeconds >= 60 && timeDiffSeconds < 120) {
+    formattedTime = "1 minute ago";
+  } else if (isToday(messageTime)) {
+    const hours = messageTime.getHours();
+    const minutes = messageTime.getMinutes();
+    const ampm = hours >= 12 ? "pm" : "am";
+    const formattedHours = hours % 12 || 12;
+    formattedTime = `Today, ${formattedHours}:${minutes
+      .toString()
+      .padStart(2, "0")}${ampm}`;
+  } else {
+    const day = messageTime.getDate().toString().padStart(2, "0");
+    const month = messageTime.toLocaleString("default", { month: "short" });
+    const year = messageTime.getFullYear().toString().slice(-2);
+    const hours = messageTime.getHours();
+    const minutes = messageTime.getMinutes();
+    const ampm = hours >= 12 ? "pm" : "am";
+    const formattedHours = hours % 12 || 12;
+    formattedTime = `${day}-${month}-${year}, ${formattedHours}:${minutes
+      .toString()
+      .padStart(2, "0")}${ampm}`;
+  }
+
+  return formattedTime;
+};
 
 // export const getMonthDayYearTimeValue = (date: string | any) => {
 //   if(date) {
 //     // Assuming that the input date is in American timezone
 //     const americanDateTime = moment.tz(date, 'America/New_York');
-    
+
 //     // Convert the American timezone to Indian timezone
 //     const indianDateTime = americanDateTime.clone().tz('Asia/Kolkata');
-    
+
 //     // Modify the logic as needed, e.g., use 'MMMM DD, YYYY - HH:mm' for 24-hour format
 //     return indianDateTime.format('MMMM DD, YYYY - hh:mm a');
 //   }

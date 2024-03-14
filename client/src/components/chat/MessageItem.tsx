@@ -4,10 +4,10 @@ import {
   PaperClipIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
-import moment from "moment";
 import { useState } from "react";
 import { ChatMessageInterface } from "../../interfaces/chat";
 import { classNames } from "../../utils";
+import { getRecentTime } from "../../commonhelper";
 
 const MessageItem: React.FC<{
   isOwnMessage?: boolean;
@@ -120,8 +120,9 @@ const MessageItem: React.FC<{
               <PaperClipIcon className="h-4 w-4 mr-2 " />
             ) : null}
             {/* {moment(message.updatedAt).add("TIME_ZONE, "hours").fromNow(true)}{" "} */}
-            {moment(message.updatedAt).subtract("TIME_ZONE", "hours").fromNow(true)}{" "}
-            ago
+            {/* {moment(message.updatedAt).subtract("TIME_ZONE", "hours").fromNow(true)}{" "}
+            ago */}
+            {getRecentTime(message.updatedAt)}
           </p>
         </div>
       </div>
