@@ -111,26 +111,30 @@ const ChatItem: React.FC<{
           </button>
           <div className="flex justify-center items-center flex-shrink-0">
             {chat.isGroupChat ? (
-              <div className="w-12 relative h-12 flex-shrink-0 flex justify-start items-center flex-nowrap">
-                {chat.participants.slice(0, 3).map((participant, i) => {
-                  return (
-                    <img
-                      key={participant._id}
-                      src={participant.avatar.url}
-                      className={classNames(
-                        "w-9 h-9 border-[1px] border-white rounded-full absolute outline outline-1 outline-white group-hover:outline-white object-cover",
-                        i === 0
-                          ? "left-0 z-[3]"
-                          : i === 1
-                          ? "left-2.5 z-[2]"
-                          : i === 2
-                          ? "left-[18px] z-[1]"
-                          : ""
-                      )}
-                    />
-                  );
-                })}
-              </div>
+            <img
+                src={getChatObjectMetadata(chat, user!).avatar}
+                className="w-12 h-12 rounded-full object-cover"
+              />
+              // <div className="w-12 relative h-12 flex-shrink-0 flex justify-start items-center flex-nowrap">
+              //   {chat.participants.slice(0, 3).map((participant, i) => {
+              //     return (
+              //       <img
+              //         key={participant._id}
+              //         src={participant.avatar.url}
+              //         className={classNames(
+              //           "w-9 h-9 border-[1px] border-white rounded-full absolute outline outline-1 outline-white group-hover:outline-white object-cover",
+              //           i === 0
+              //             ? "left-0 z-[3]"
+              //             : i === 1
+              //             ? "left-2.5 z-[2]"
+              //             : i === 2
+              //             ? "left-[18px] z-[1]"
+              //             : ""
+              //         )}
+              //       />
+              //     );
+              //   })}
+              // </div>
             ) : (
               <img
                 src={getChatObjectMetadata(chat, user!).avatar}

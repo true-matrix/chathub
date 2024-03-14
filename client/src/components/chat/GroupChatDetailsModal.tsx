@@ -17,7 +17,7 @@ import {
 } from "../../api";
 import { useAuth } from "../../context/AuthContext";
 import { ChatListItemInterface } from "../../interfaces/chat";
-import { requestHandler } from "../../utils";
+import { getChatObjectMetadata, requestHandler } from "../../utils";
 import Button from "../Button";
 import Input from "../Input";
 import Select from "../Select";
@@ -244,7 +244,7 @@ const GroupChatDetailsModal: React.FC<{
                     </div>
                     <div className="relative mt-6 flex-1 px-4 sm:px-6">
                       <div className="flex flex-col justify-center items-start">
-                        <div className="flex pl-16 justify-center items-center relative w-full h-max gap-3">
+                        {/* <div className="flex pl-16 justify-center items-center relative w-full h-max gap-3">
                           {groupDetails?.participants.slice(0, 3).map((p : any) => {
                             return (
                               <img
@@ -259,7 +259,18 @@ const GroupChatDetailsModal: React.FC<{
                           groupDetails?.participants.length > 3 ? (
                             <p>+{groupDetails?.participants.length - 3}</p>
                           ) : null}
+                        </div> */}
+                        <div className="flex pl-16 justify-center items-center relative w-full h-max gap-3">
+                          <img
+                                className="w-24 h-24 -ml-16 rounded-xl outline outline-4 outline-white"
+                                src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjPGIbqtNtn1yzk1w1cGmCgFstHk-l2NvevRgw7J7kD3uOT4sjPpn-0CVb5gPGy47z3wtZWY4M5InE_n1zBlBE_PnkDXBydBhU8RCzwijKQYiSGGB1ZJ5umDWXCd4l9TpeiQcsJW2IjwXiOoQxg2M-FhknAF-RmkCOdqJgywWOLw62wSNSCzT1W6cAiZQ0n/s1600/multiwolf100.png"
+                                alt="avatar"
+                              />
                         </div>
+                        {/* <img
+                src={getChatObjectMetadata(groupDetails, user!).avatar}
+                className="w-12 h-12 rounded-full object-cover"
+              /> */}
                         <div className="w-full flex flex-col justify-center items-center text-center">
                           {renamingGroup ? (
                             <div className="w-full flex justify-center items-center mt-5 gap-2">

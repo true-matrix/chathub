@@ -31,7 +31,8 @@ const userSchema = new Schema(
         localPath: String,
       },
       default: {
-        url: `https://via.placeholder.com/200x200.png`,
+        // url: `https://via.placeholder.com/200x200.png`,
+        url: `https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhothlnJsd0wKXgKssTSTMC2k-yKd62p9z4i2L5iltSAiXPqPZRJJfTho6lusiNSwbfKISFwqjYVC1ampECERAt7tIfamtP9dqXRLJs6QUk8s9YZYbaUnamlFy6hHdtp_ag9bUJwMzanKI1VebqudP4BxClxq352jWzssLExZICezsEDmXo9NNolnHhDmtJ/w300-h320/www.jpg`,
         localPath: "",
       },
     },

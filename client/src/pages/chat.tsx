@@ -534,27 +534,33 @@ const ChatPage = () => {
                   {currentChat.current.isGroupChat ? (
                     // Group Chat Header
                     <div className="w-12 relative h-12 flex-shrink-0 flex justify-start items-center flex-nowrap">
-                      {currentChat.current.participants
-                        .slice(0, 3)
-                        .map((participant, i) => {
-                          return (
-                            <img
-                              key={participant._id}
-                              src={participant.avatar.url}
-                              className={classNames(
-                                "w-9 h-9 border-[1px] border-white rounded-full absolute outline outline-1 outline-white",
-                                i === 0
-                                  ? "left-0 z-30"
-                                  : i === 1
-                                  ? "left-2 z-20"
-                                  : i === 2
-                                  ? "left-4 z-10"
-                                  : ""
-                              )}
-                            />
-                          );
-                        })}
+                      <img
+                        src={getChatObjectMetadata(currentChat.current, user!).avatar}
+                        className="w-12 h-12 border-[1px] border-green rounded-full absolute outline outline-1 outline-white"
+                      />
                     </div>
+                    // <div className="w-12 relative h-12 flex-shrink-0 flex justify-start items-center flex-nowrap">
+                    //   {currentChat.current.participants
+                    //     .slice(0, 3)
+                    //     .map((participant, i) => {
+                    //       return (
+                    //         <img
+                    //           key={participant._id}
+                    //           src={participant.avatar.url}
+                    //           className={classNames(
+                    //             "w-9 h-9 border-[1px] border-white rounded-full absolute outline outline-1 outline-white",
+                    //             i === 0
+                    //               ? "left-0 z-30"
+                    //               : i === 1
+                    //               ? "left-2 z-20"
+                    //               : i === 2
+                    //               ? "left-4 z-10"
+                    //               : ""
+                    //           )}
+                    //         />
+                    //       );
+                    //     })}
+                    // </div>
                   ) : (
                     // Single Chat Header
                     <img
