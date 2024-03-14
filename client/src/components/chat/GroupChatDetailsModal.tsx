@@ -17,7 +17,7 @@ import {
 } from "../../api";
 import { useAuth } from "../../context/AuthContext";
 import { ChatListItemInterface } from "../../interfaces/chat";
-import { getChatObjectMetadata, requestHandler } from "../../utils";
+import { requestHandler } from "../../utils";
 import Button from "../Button";
 import Input from "../Input";
 import Select from "../Select";

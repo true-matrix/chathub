@@ -4,7 +4,6 @@ import {
   TrashIcon,
 } from "@heroicons/react/20/solid";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
-import moment from "moment";
 import React, { useState } from "react";
 import { deleteOneOnOneChat } from "../../api";
 import { useAuth } from "../../context/AuthContext";
