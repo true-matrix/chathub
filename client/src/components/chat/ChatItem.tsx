@@ -11,6 +11,7 @@ import { useAuth } from "../../context/AuthContext";
 import { ChatListItemInterface } from "../../interfaces/chat";
 import { classNames, getChatObjectMetadata, requestHandler } from "../../utils";
 import GroupChatDetailsModal from "./GroupChatDetailsModal";
+import { getRecentTime } from "../../commonhelper";
 
 const ChatItem: React.FC<{
   chat: ChatListItemInterface;
@@ -159,7 +160,8 @@ const ChatItem: React.FC<{
           <div className="flex text-white/50 h-full text-sm flex-col justify-between items-end">
             <small className="mb-2 inline-flex flex-shrink-0 w-max text-zinc-400">
               {/* {moment(chat.updatedAt).add("TIME_ZONE", "hours").fromNow(true)} */}
-              {moment(chat.updatedAt).subtract("TIME_ZONE", "hours").fromNow(true)}
+              {/* {moment(chat.updatedAt).subtract("TIME_ZONE", "hours").fromNow(true)} */}
+              {getRecentTime(chat.updatedAt)}
             </small>
 
             {/* Unread count will be > 0 when user is on another chat and there is new message in a chat which is not currently active on user's screen */}
