@@ -57,9 +57,62 @@ export const getMonthDayYearTimeValue = (date: string | any) => {
   }
 };
 
+// // For local test
+// export const getRecentTime = (date: string | any) => {
+//   // const currentTime: any = new Date();
+//   const messageTime: any = new Date(date);
+
+//   const isToday = (someDate: any) => {
+//     const today = new Date();
+//     return (
+//       someDate.getDate() === today.getDate() &&
+//       someDate.getMonth() === today.getMonth() &&
+//       someDate.getFullYear() === today.getFullYear()
+//     );
+//   };
+
+//   // const timeDiffSeconds = (currentTime - messageTime) / 1000;
+
+//   let formattedTime;
+
+//   // if (timeDiffSeconds < 60) {
+//   //   formattedTime = "a few seconds ago";
+//   // } else if (timeDiffSeconds >= 60 && timeDiffSeconds < 120) {
+//   //   formattedTime = "1 minute ago";
+//   // }
+//   if (isToday(messageTime)) {
+//     const hours = messageTime.getHours();
+//     const minutes = messageTime.getMinutes();
+//     const ampm = hours >= 12 ? "pm" : "am";
+//     const formattedHours = hours % 12 || 12;
+//     formattedTime = `Today, ${formattedHours}:${minutes
+//       .toString()
+//       .padStart(2, "0")}${ampm}`;
+//   } else {
+//     const day = messageTime.getDate().toString().padStart(2, "0");
+//     const month = messageTime.toLocaleString("default", { month: "short" });
+//     const year = messageTime.getFullYear().toString().slice(-2);
+//     const hours = messageTime.getHours();
+//     const minutes = messageTime.getMinutes();
+//     const ampm = hours >= 12 ? "pm" : "am";
+//     const formattedHours = hours % 12 || 12;
+//     formattedTime = `${day}-${month}-${year}, ${formattedHours}:${minutes
+//       .toString()
+//       .padStart(2, "0")}${ampm}`;
+//   }
+
+//   return formattedTime;
+// };
+
+//For live server => live server time is 13h30mins advance
 export const getRecentTime = (date: string | any) => {
-  // const currentTime: any = new Date();
   const messageTime: any = new Date(date);
+
+  // Offset for - 13h 30min
+  const offset = 13 * 60 * 60 * 1000 + 30 * 60 * 1000;
+
+  // Convert message time to Kolkata time
+  const kolkataTimestamp = new Date(messageTime.getTime() - offset);
 
   const isToday = (someDate: any) => {
     const today = new Date();
@@ -70,29 +123,24 @@ export const getRecentTime = (date: string | any) => {
     );
   };
 
-  // const timeDiffSeconds = (currentTime - messageTime) / 1000;
-
   let formattedTime;
 
-  // if (timeDiffSeconds < 60) {
-  //   formattedTime = "a few seconds ago";
-  // } else if (timeDiffSeconds >= 60 && timeDiffSeconds < 120) {
-  //   formattedTime = "1 minute ago";
-  // }
-  if (isToday(messageTime)) {
-    const hours = messageTime.getHours();
-    const minutes = messageTime.getMinutes();
+  if (isToday(kolkataTimestamp)) {
+    const hours = kolkataTimestamp.getHours();
+    const minutes = kolkataTimestamp.getMinutes();
     const ampm = hours >= 12 ? "pm" : "am";
     const formattedHours = hours % 12 || 12;
     formattedTime = `Today, ${formattedHours}:${minutes
       .toString()
       .padStart(2, "0")}${ampm}`;
   } else {
-    const day = messageTime.getDate().toString().padStart(2, "0");
-    const month = messageTime.toLocaleString("default", { month: "short" });
-    const year = messageTime.getFullYear().toString().slice(-2);
-    const hours = messageTime.getHours();
-    const minutes = messageTime.getMinutes();
+    const day = kolkataTimestamp.getDate().toString().padStart(2, "0");
+    const month = kolkataTimestamp.toLocaleString("default", {
+      month: "short",
+    });
+    const year = kolkataTimestamp.getFullYear().toString().slice(-2);
+    const hours = kolkataTimestamp.getHours();
+    const minutes = kolkataTimestamp.getMinutes();
     const ampm = hours >= 12 ? "pm" : "am";
     const formattedHours = hours % 12 || 12;
     formattedTime = `${day}-${month}-${year}, ${formattedHours}:${minutes
