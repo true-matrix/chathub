@@ -261,7 +261,75 @@ const OmegaPage = () => {
           const currentData = filteredData.slice(startIndex, endIndex);      
   return (
     <>
-  {/* Create User Modal */}
+
+
+    <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold">Manage Omega</h2>
+                  <button className="rounded-md border-none bg-primary text-white text-md py-2 px-4 flex flex-shrink-0" onClick={handleAddUser}>Add New Omega</button>
+                </div>
+                
+                {/* Search Bar */}
+                <div className="mb-4">
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    className="border p-2 w-full rounded-lg text-md py-3 px-5 focus:outline-none"
+                    value={searchQuery}
+                    onChange={handleSearch}
+                  />
+                </div>
+
+                {/* Table */}
+                <div className="table-container">
+                  <table className="table-fixed w-full">
+                    <thead>
+                      <tr>
+                        {tableFields.map(field => (
+                          <th key={field.key}>{field.value}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {currentData.map((user,index) => (
+                        <>
+                          <tr className="row"></tr>
+                          <tr key={user._id}>
+                            {/* <td><img className="w-10 h-10 rounded-full" src={user.image} alt=""/></td> */}
+                            <td scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
+                                <img className="w-10 h-10 rounded-full" src={user.avatar.url} alt="img"/>
+                                <div className="ps-3">
+                                    <div className="text-base font-semibold">{user.name || user.username }</div>
+                                    <div className="font-normal text-gray-500">{user.email}</div>
+                                </div>  
+                            </td>
+                            <td>{user.phone ? user.phone : '9876543210'}</td>
+                            <td className={`text-center ${user.verified ? 'text-green-500' : 'text-red-500'}`}>
+                                {user.verified ? 'Active' : 'Inactive'}
+                              </td>
+                            <td>
+                              <button className="focus:outline-none text-white bg-yellow-500 hover:bg-yellow-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2 me-2  dark:focus:ring-yellow-900" onClick={()=>handleUpdateUser(user._id)}  >Edit</button>
+                              <button className="focus:outline-none text-white bg-red-500 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 me-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900" onClick={()=>handleDelete(user._id)}>Delete</button>
+                            </td>
+                          </tr>
+                        </>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Pagination */}
+                <ReactPaginate
+                    previousLabel={"Previous"}
+                    nextLabel={"Next"}
+                    pageCount={Math.ceil(filteredData.length / itemsPerPage)}
+                    onPageChange={handlePageClick}
+                    containerClassName={"pagination"}
+                    previousLinkClassName={"pagination__link"}
+                    nextLinkClassName={"pagination__link"}
+                    disabledClassName={"pagination__link--disabled"}
+                    activeClassName={"pagination__link--active"}
+                />
+                  {/* Create User Modal */}
   {isCreateUserModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center">
           <div className="absolute inset-0 bg-gray-800 opacity-75"></div>
@@ -269,35 +337,35 @@ const OmegaPage = () => {
         {(formik) => {
               const { values, handleSubmit } = formik;
               return (
-          <div className="relative bg-white p-8 rounded-md">
-            <h2 className="text-2xl mb-4">{!isEditing ?  'Add New Omega' : 'Update Omega'}</h2>
+          <div className="relative bg-white rounded-md update-popup">
+            <h2 className="mb-4">{!isEditing ?  'Add New Omega' : 'Update Omega'}</h2>
             {/* {JSON.stringify(values)} */}
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="p-5">
               <div className="mb-4">
                 <label htmlFor="name">Name:</label>
-                <Field type="text" name="name" className="form-control" />
+                <Field type="text" name="name" className="block w-full rounded-xl outline outline-[1px] outline-zinc-400 border-0 py-3 px-4 font-light" />
                 <ErrorMessage name="name" component="div" className="text-danger" />
               </div>
               <div className="mb-4">
                 <label htmlFor="email">Email:</label>
-                <Field type="email" name="email" className="form-control" disabled={isEditing ? true : false}/>
+                <Field type="email" name="email" className="block w-full rounded-xl outline outline-[1px] outline-zinc-400 border-0 py-3 px-4 font-light" disabled={isEditing ? true : false}/>
                  <ErrorMessage name="email" component="div" className="text-danger" />
               </div>
               <>{!isEditing && <><div className="mb-4">
                 <label htmlFor="password">Password:</label>
-                <Field type={"password"} name="password" className="form-control pe-5" />
+                <Field type={"password"} name="password" className="block w-full rounded-xl outline outline-[1px] outline-zinc-400 border-0 py-3 px-4 font-light pe-5" />
                  <ErrorMessage name="password" component="div" className="text-danger" />
               </div>
               </>}</>
               <div className="mb-4">
                 <label htmlFor="phone">Phone:</label>
-                 <Field type="text" name="phone" className="form-control" />
+                 <Field type="text" name="phone" className="block w-full rounded-xl outline outline-[1px] outline-zinc-400 border-0 py-3 px-4 font-light" />
                  <ErrorMessage name="phone" component="div" className="text-danger" />
               </div>
 
               {(user.userRole==="supremeAlpha") && <div className="mb-4">
                 <label htmlFor="selectedAlpha">Select Alpha</label>
-                 <Field as="select" name="selectedAlpha" className="form-control" value={values?.selectedAlpha || ''}>
+                 <Field as="select" name="selectedAlpha" className="block w-full rounded-xl outline outline-[1px] outline-zinc-400 border-0 py-3 px-4 font-light" value={values?.selectedAlpha || ''}>
                  <option value="" disabled>Select a alpha to add under this omega</option>
                  {alphas?.map((optionValue : any, index : number) => (
                         <option key={index} value={optionValue?._id}>
@@ -312,30 +380,31 @@ const OmegaPage = () => {
                 <label htmlFor="gender">Gender:</label>
                 <div>
                     <label>
-                    <Field type="radio" name="gender" value="male" />
+                    <Field type="radio" name="gender" value="male"  className="me-2"/>
                     Male
                     </label>
                     <label className="ml-4">
-                    <Field type="radio" name="gender" value="female" />
+                    <Field type="radio" name="gender" value="female"  className="me-2"/>
                     Female
                     </label>
                 </div>
                 <ErrorMessage name="gender" component="div" className="text-danger" />
                 </div>
               {/* Add other form fields similarly */}
-              <div className="mb-4">
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white px-4 py-2"
-                >
-                  Submit
-                </button>
+              <div className="mb-4 ms-auto w-fit">
+                
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="bg-gray-500 text-white px-4 py-2 ml-2"
+                  className="rounded-md border-none  bg-gray-500 text-white px-4 py-2"
                 >
                   Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="rounded-md border-none bg-primary text-white text-md py-2 px-4 ml-2"
+                >
+                  Submit
                 </button>
               </div>
             </form>
@@ -345,68 +414,6 @@ const OmegaPage = () => {
         </div>
       )}
 
-
-    <div className="flex justify-between items-center mb-4">
-                  <h2>Manage Omega</h2>
-                  <button className="bg-green-500 text-white px-4 py-2" onClick={handleAddUser}>Add New Omega</button>
-                </div>
-                
-                {/* Search Bar */}
-                <div className="mb-4">
-                  <input
-                    type="text"
-                    placeholder="Search..."
-                    className="border p-2 w-full"
-                    value={searchQuery}
-                    onChange={handleSearch}
-                  />
-                </div>
-
-                {/* Table */}
-                <table className="table-fixed w-full">
-                  <thead style={{ backgroundColor: '#e2e8f0' }}>
-                    <tr>
-                      {tableFields.map(field => (
-                        <th key={field.key}>{field.value}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {currentData.map((user,index) => (
-                      <tr key={user._id} style={{ backgroundColor: index % 2 === 0 ? '#f7fafc' : 'white' }}>
-                        {/* <td><img className="w-10 h-10 rounded-full" src={user.image} alt=""/></td> */}
-                        <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
-                            <img className="w-10 h-10 rounded-full" src={user.avatar.url} alt="img"/>
-                            <div className="ps-3">
-                                <div className="text-base font-semibold">{user.name || user.username }</div>
-                                <div className="font-normal text-gray-500">{user.email}</div>
-                            </div>  
-                        </th>
-                        <td>{user.phone ? user.phone : '9876543210'}</td>
-                        <td className={`text-center ${user.verified ? 'text-green-500' : 'text-red-500'}`}>
-                            {user.verified ? 'Active' : 'Inactive'}
-                          </td>
-                        <td>
-                          <button className="bg-blue-500 text-white px-2 py-1 mr-2" onClick={()=>handleUpdateUser(user._id)}  >Edit</button>
-                          <button className="bg-red-500 text-white px-2 py-1" onClick={()=>handleDelete(user._id)}>Delete</button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-
-                {/* Pagination */}
-                <ReactPaginate
-                    previousLabel={"Previous"}
-                    nextLabel={"Next"}
-                    pageCount={Math.ceil(filteredData.length / itemsPerPage)}
-                    onPageChange={handlePageClick}
-                    containerClassName={"pagination"}
-                    previousLinkClassName={"pagination__link"}
-                    nextLinkClassName={"pagination__link"}
-                    disabledClassName={"pagination__link--disabled"}
-                    activeClassName={"pagination__link--active"}
-                />
     </>
   )
 }
