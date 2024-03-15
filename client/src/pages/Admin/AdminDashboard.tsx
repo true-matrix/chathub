@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import AlphaPage from "./AlphaPage";
 import OmegaPage from "./OmegaPage";
 import OtpPage from "./OtpPage";
+import PacksPage from "./PacksPage";
 
 
 const AdminDashboard = () => {
@@ -29,6 +30,7 @@ const AdminDashboard = () => {
             {user?.userRole === "admin" &&<Tab>SupremeAlpha</Tab>}
             {user?.userRole === "supremeAlpha" && <Tab>Alpha</Tab>}
             {(user?.userRole === "supremeAlpha" || user?.userRole === "alpha") && <Tab>Omega</Tab>}
+            {user?.userRole === "supremeAlpha" && <Tab>Packs</Tab>}
             <Tab>OTP</Tab>
             </TabList>
 
@@ -40,6 +42,9 @@ const AdminDashboard = () => {
             </TabPanel>}
             {(user?.userRole === "supremeAlpha" || user?.userRole === "alpha") && <TabPanel>
                 <OmegaPage/>
+            </TabPanel>}
+            {user?.userRole === "supremeAlpha" && <TabPanel>
+                <PacksPage/>
             </TabPanel>}
             <TabPanel>
               <OtpPage/>
