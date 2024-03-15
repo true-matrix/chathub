@@ -107,20 +107,41 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     );
   };
 
-  // Function to handle user logout
+  // // Function to handle user logout
+  // const logout = async () => {
+  //   await requestHandler(
+  //     async () => await logoutUser(),
+  //     setIsLoading,
+  //     () => {
+  //       setUser(null);
+  //       setToken(null);
+  //       LocalStorage.clear(); // Clear local storage on logout
+  //       navigate("/login"); // Redirect to the login page after successful logout
+  //     },
+  //     alert // Display error alerts on request failure
+  //   );
+  // };
+
   const logout = async () => {
-    await requestHandler(
-      async () => await logoutUser(),
-      setIsLoading,
-      () => {
-        setUser(null);
-        setToken(null);
-        LocalStorage.clear(); // Clear local storage on logout
-        navigate("/login"); // Redirect to the login page after successful logout
-      },
-      alert // Display error alerts on request failure
-    );
-  };
+  await requestHandler(
+    async () => await logoutUser(),
+    setIsLoading,
+    () => {
+      setUser(null);
+      setToken(null);
+      // Exclude clearing unread messages from local storage
+      const unreadMessages = LocalStorage.get('unreadMessages');
+      LocalStorage.clear();
+      if (unreadMessages) {
+        // Restore unread messages after clearing local storage
+        LocalStorage.set('unreadMessages', unreadMessages);
+      }
+      navigate("/login"); // Redirect to the login page after successful logout
+    },
+    alert // Display error alerts on request failure
+  );
+};
+
 
   // Check for saved user and token in local storage during component initialization
   useEffect(() => {
