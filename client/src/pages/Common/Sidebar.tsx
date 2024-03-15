@@ -78,7 +78,7 @@ const Sidebar = () => {
                 <li className="nav-item dropdown profile-user-dropdown mt-auto"> 
                 <Popup trigger={
                   <button
-                    className="rounded-none border-none bg-primary text-white text-sm py-3 px-4 flex flex-shrink-0 truncate hover:truncate-none"
+                    className="profile-user rounded-full bg-primary text-white text-md py-3 px-4"
                     title={user?.name}
                     >
                       {user?.name.length <= 6 ? user?.name : user?.name.slice(0, 6) + "..." }

@@ -256,10 +256,10 @@ const SupremeALphaPage = () => {
         {(formik) => {
               const { handleSubmit } = formik;
               return (
-          <div className="relative bg-white p-8 rounded-md">
-            <h2 className="text-2xl mb-4">{!isEditing ?  'manage supreme alpha' : 'Update Supreme Alpha'}</h2>
+          <div className="relative bg-white rounded-md update-popup">
+            <h2 className="mb-4">{!isEditing ?  'Manage Supreme Alpha' : 'Update Supreme Alpha'}</h2>
             {/* {JSON.stringify(values)} */}
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="p-5">
               <div className="mb-4">
                 <label htmlFor="name">Name:</label>
                 {/* <input
@@ -270,7 +270,7 @@ const SupremeALphaPage = () => {
                   onBlur={handleBlur}
                   value={values.name}
                 /> */}
-                <Field type="text" name="name" className="form-control" />
+                <Field type="text" name="name" className="block w-full rounded-xl outline outline-[1px] outline-zinc-400 border-0 py-3 px-4 font-light" />
                 <ErrorMessage name="name" component="div" className="text-danger" />
               </div>
               <div className="mb-4">
@@ -283,7 +283,7 @@ const SupremeALphaPage = () => {
                   onBlur={handleBlur}
                   value={values.email}
                 /> */}
-                <Field type="email" name="email" className="form-control" disabled={isEditing ? true : false}/>
+                <Field type="email" name="email" className="block w-full rounded-xl outline outline-[1px] outline-zinc-400 border-0 py-3 px-4 font-light" disabled={isEditing ? true : false}/>
                  <ErrorMessage name="email" component="div" className="text-danger" />
               </div>
               <>{!isEditing && <><div className="mb-4">
@@ -296,7 +296,7 @@ const SupremeALphaPage = () => {
                   onBlur={handleBlur}
                   value={values.password}
                 /> */}
-                <Field type={"password"} name="password" className="form-control pe-5" />
+                <Field type={"password"} name="password" className="block w-full rounded-xl outline outline-[1px] outline-zinc-400 border-0 py-3 px-4 font-light pe-5" />
                  <ErrorMessage name="password" component="div" className="text-danger" />
               </div>
               </>}</>
@@ -310,38 +310,39 @@ const SupremeALphaPage = () => {
                   onBlur={handleBlur}
                   value={values.phone}
                 /> */}
-                 <Field type="text" name="phone" className="form-control" />
+                 <Field type="text" name="phone" className="block w-full rounded-xl outline outline-[1px] outline-zinc-400 border-0 py-3 px-4 font-light" />
                  <ErrorMessage name="phone" component="div" className="text-danger" />
               </div>
               <div className="mb-4">
                 <label htmlFor="gender">Gender:</label>
-                <div>
+                <div className="mt-2">
                     <label>
-                    <Field type="radio" name="gender" value="male" />
+                    <Field type="radio" name="gender" value="male" className="me-2"/>
                     Male
                     </label>
                     <label className="ml-4">
-                    <Field type="radio" name="gender" value="female" />
+                    <Field type="radio" name="gender" value="female" className="me-2"/>
                     Female
                     </label>
                 </div>
                 <ErrorMessage name="gender" component="div" className="text-danger" />
                 </div>
               {/* Add other form fields similarly */}
-              <div className="mb-4">
-                <button
-                  type="submit"
-                  className="bg-blue-500 text-white px-4 py-2"
-                >
-                  Submit
-                </button>
+              <div className="mb-4 ms-auto w-fit">
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="bg-gray-500 text-white px-4 py-2 ml-2"
+                  className="rounded-md border-none  bg-gray-500 text-white px-4 py-2"
                 >
                   Cancel
                 </button>
+                <button
+                  type="submit"
+                  className="rounded-md border-none bg-primary text-white text-md py-2 px-4 ml-2"
+                >
+                  Submit
+                </button>
+                
               </div>
             </form>
           </div>

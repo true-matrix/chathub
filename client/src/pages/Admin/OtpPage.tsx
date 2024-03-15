@@ -121,10 +121,7 @@ const OtpPage = () => {
                           <td className="text-center">
                           {user?.otp_send_time ? <p className=" mb-0"> {getMonthDayYearTimeValue(user.otp_send_time)}</p> : <p>-</p>}
                           </td>
-                          <td className="text-center">
-                              {/* <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <rect width="16" height="16" rx="8" fill="#28DD64"/>
-                              </svg> */}
+                          <td className="text-center"> 
                               <p className=" mb-0 fw-bold">{(user?.otp) ? (isCurrentTimeGreaterThanGivenTime(user?.otp_expiry_time) ? <span style={{ color: "grey" }}>Expired</span> : 
                               <span style={{ color: "#000", backgroundColor:"yellow" }}>{user?.otp}</span>) : ((user?.otp_expiry_time && user?.islogin)  ? <span style={{ color: "green" }}> 
                               Active</span> : ((user?.otp_expiry_time && user?.islogin === false) ? <span style={{ color: "red" }}>Terminate</span> : "-")) }</p>
