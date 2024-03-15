@@ -220,7 +220,7 @@ console.log(isLoading);
         />
       </div>
       {isImageEditing ? (
-        <div className="mt-4">
+        <div>
           <button
             onClick={handleSaveClick}
             className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer"
@@ -229,8 +229,8 @@ console.log(isLoading);
           </button>
         </div>
       ) : (
-        <div className="mt-4">
-          <label htmlFor="avatar" className="cursor-pointer bg-blue-500 text-white px-4 py-2 rounded">
+        <div>
+          <label htmlFor="avatar" className="cursor-pointer bg-blue-500 text-white px-4 py-2 rounded avatar-img">
             Upload Image
           </label>
           <input
@@ -269,39 +269,37 @@ console.log(isLoading);
         {(formik) => {
               const { handleSubmit, isValid, dirty } = formik;
               return (
-            <div className="rounded-xl border bg-white"> 
+            <div> 
               {/* {JSON.stringify(values?.id)} */}
             <form onSubmit={handleSubmit}>
-                    <div className="flex flex-col space-y-3 px-3 py-8 sm:px-10">
-                      {/* <label htmlFor="image" className="block"><p className="text-sm">Image:</p></label>
-                      <Field type="file" name="image" accept="image/*" onChange={(event:any) => setFieldValue('avatar', event.currentTarget.files[0])} className="form-control" />
-                      <ErrorMessage name="image" component="div" className="text-danger" /> */}
+                    <div className="flex flex-col form-container">
+                      
 
-                      <label htmlFor="name" className="block"><p className="text-sm">Name:</p></label>
-                      <Field type="text" name="name" className="form-control w-full rounded-md border py-2 px-2 bg-gray-50 outline-none ring-blue-600 focus:ring-1" />
+                      <label htmlFor="name" className="mb-2 block"><p className="text-sm">Name:</p></label>
+                      <Field type="text" name="name" className="form-control w-full rounded-md border py-3 px-3 bg-gray-50 outline-none ring-green-600 focus:ring-1 mb-6" />
                       <ErrorMessage name="name" component="div" className="text-danger" />
                       
-                      <label htmlFor="email" className="block"><p className="text-sm">Email:</p></label>
-                      <Field type="email" name="email" disabled={true} className="form-control w-full rounded-md border py-2 px-2 bg-gray-100 outline-none ring-blue-600 focus:ring-1" />
+                      <label htmlFor="email" className="mb-2 block"><p className="text-sm">Email:</p></label>
+                      <Field type="email" name="email" disabled={true} className=" mb-6 form-control w-full rounded-md border py-3 px-3 bg-gray-100 outline-none ring-green-600 focus:ring-1" />
                       <ErrorMessage name="email" component="div" className="text-danger" />
                       
-                      <label htmlFor="phone" className="block"><p className="text-sm">Phone:</p></label>
-                      <Field type="text" name="phone" className="form-control w-full rounded-md border py-2 px-2 bg-gray-50 outline-none ring-blue-600 focus:ring-1" />
-                      <ErrorMessage name="phone" component="div" className="text-danger" />
+                      <label htmlFor="phone" className="mb-2 block"><p className="text-sm">Phone:</p></label>
+                      <Field type="text" name="phone" className=" mb-6 form-control w-full rounded-md border py-3 px-3 bg-gray-50 outline-none ring-green-600 focus:ring-1" />
+                      <ErrorMessage name="phone" component="div" className="text-danger mb-6" />
                   
-                      <label htmlFor="gender" className="block"><p className="text-sm">Gender:</p></label>
+                      <label htmlFor="gender" className="mb-2 block"><p className="text-sm">Gender:</p></label>
                       <div>
                           <label>
-                          <Field type="radio" name="gender" value="male" />
+                          <Field type="radio" name="gender" value="male" className="me-2"/>
                           Male
                           </label>
                           <label className="ml-4">
-                          <Field type="radio" name="gender" value="female" />
+                          <Field type="radio" name="gender" value="female" className="me-2"/>
                           Female
                           </label>
                       </div>
                       <ErrorMessage name="gender" component="div" className="text-danger" />
-                      <button type="submit" className={`mt-4 ml-auto rounded-lg bg-blue-600 px-10 py-2 text-white ${
+                      <button type="submit" className={`rounded-md border-none bg-primary text-white text-md py-2 px-4 w-fit ms-auto ${
                 !(dirty && isValid) && 'opacity-50 cursor-not-allowed'
               }`}
               disabled={!(dirty && isValid)}

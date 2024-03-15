@@ -58,7 +58,7 @@ const Login = () => {
                 <LockClosedIcon className="h-8 w-8 mb-2 text-success" /> Login
               </h1>
               {/* Input for entering the email */}
-            <form onSubmit={formik.handleSubmit}>
+            <form onSubmit={formik.handleSubmit} className="w-full">
 
               <Input
                 type="text"

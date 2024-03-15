@@ -73,7 +73,7 @@ const handleResendOtp = () => {
                 disabled
               >Enter the OTP send to email</Button> */}
               {/* Input for entering the email */}
-            <form onSubmit={formik.handleSubmit}>
+            <form onSubmit={formik.handleSubmit} className="w-full">
 
               <Input
                 type="text"
