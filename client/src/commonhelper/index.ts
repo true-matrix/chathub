@@ -58,7 +58,7 @@ export const getMonthDayYearTimeValue = (date: string | any) => {
 };
 
 export const getRecentTime = (date: string | any) => {
-  const currentTime: any = new Date();
+  // const currentTime: any = new Date();
   const messageTime: any = new Date(date);
 
   const isToday = (someDate: any) => {
@@ -70,15 +70,16 @@ export const getRecentTime = (date: string | any) => {
     );
   };
 
-  const timeDiffSeconds = (currentTime - messageTime) / 1000;
+  // const timeDiffSeconds = (currentTime - messageTime) / 1000;
 
   let formattedTime;
 
-  if (timeDiffSeconds < 60) {
-    formattedTime = "a few seconds ago";
-  } else if (timeDiffSeconds >= 60 && timeDiffSeconds < 120) {
-    formattedTime = "1 minute ago";
-  } else if (isToday(messageTime)) {
+  // if (timeDiffSeconds < 60) {
+  //   formattedTime = "a few seconds ago";
+  // } else if (timeDiffSeconds >= 60 && timeDiffSeconds < 120) {
+  //   formattedTime = "1 minute ago";
+  // }
+  if (isToday(messageTime)) {
     const hours = messageTime.getHours();
     const minutes = messageTime.getMinutes();
     const ampm = hours >= 12 ? "pm" : "am";
