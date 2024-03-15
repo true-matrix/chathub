@@ -271,7 +271,7 @@ const AlphaPage = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {currentData.map((user,index) => (
+                      {currentData.map((user) => (
                         <>
                         <tr className="row"></tr> 
                         <tr key={user._id}>
