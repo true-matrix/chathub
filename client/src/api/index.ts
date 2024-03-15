@@ -44,6 +44,10 @@ const verifyUserOtp = (data: { email: string; otp: string }) => {
 //   return apiClient.post("/users/register", data);
 // };
 
+const getAllGroups = () => {
+  return apiClient.get("/chat-app/chats/allgroups");
+};
+
 // ****************************************************SupremeAlpha CRUD API********************************************************************************//
 const addUser = (data: {
   username: string;
@@ -288,4 +292,5 @@ export {
   getAllContacts,
   updateProfile,
   updateProfileImage,
+  getAllGroups,
 };

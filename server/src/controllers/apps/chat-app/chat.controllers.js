@@ -79,6 +79,51 @@ const chatCommonAggregation = () => {
   ];
 };
 
+const groupChatCommonAggregation = () => {
+  return [
+    {
+      // lookup for the group chats
+      $lookup: {
+        from: "chatmessages",
+        foreignField: "_id",
+        localField: "lastMessage",
+        as: "lastMessage",
+        pipeline: [
+          {
+            // get details of the sender
+            $lookup: {
+              from: "users",
+              foreignField: "_id",
+              localField: "sender",
+              as: "sender",
+              pipeline: [
+                {
+                  $project: {
+                    name: 1,
+                    username: 1,
+                    avatar: 1,
+                    email: 1,
+                  },
+                },
+              ],
+            },
+          },
+          {
+            $addFields: {
+              sender: { $first: "$sender" },
+            },
+          },
+        ],
+      },
+    },
+    {
+      $addFields: {
+        lastMessage: { $first: "$lastMessage" },
+      },
+    },
+  ];
+};
+
 /**
  *
  * @param {string} chatId
@@ -1228,6 +1273,45 @@ const getAllChats = asyncHandler(async (req, res) => {
     );
 });
 
+const getAllGroups = asyncHandler(async (req, res) => {
+// Step 1: Find all users whose parentId is equal to req.user._id
+    const users = await User.find({ parentId: req.user._id });
+
+    // Step 2: Extract their _id values
+    const userIds = users.map(user => user._id);
+
+    // Step 3: Use aggregate to find all chats where participants' _id matches the userIds, isGroupChat is true, and apply additional common aggregation stages
+    const groups = await Chat.aggregate([
+      {
+        $match: {
+          participants: { $in: userIds },
+          isGroupChat: true
+        }
+      },
+      ...groupChatCommonAggregation() // Assuming groupChatCommonAggregation() returns additional stages
+    ]);
+  // const chats = await Chat.aggregate([
+  //   {
+  //     $match: {
+  //       "participants.parentId": req.user._id, // Match where parentId is equal to user's _id
+  //     },
+  //   },
+  //   {
+  //     $sort: {
+  //       updatedAt: -1,
+  //     },
+  //   },
+  //   ...groupChatCommonAggregation(),
+  // ]);
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, groups || [], "User groups fetched successfully!")
+    );
+});
+
+
 export {
   addNewParticipantInGroupChat,
   createAGroupChat,
@@ -1256,5 +1340,6 @@ export {
   getAllOTPs,
   getAllContacts,
   updateProfile,
-  updateProfileImage
+  updateProfileImage,
+  getAllGroups
 };

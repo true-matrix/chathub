@@ -14,6 +14,7 @@ import {
   getAllAlpha,
   getAllChats,
   getAllContacts,
+  getAllGroups,
   getAllOTPs,
   getAllOmega,
   getAllSupremeAlpha,
@@ -47,6 +48,8 @@ router.route("/").get(getAllChats);
 
 router.route("/users").get(searchAvailableUsers);
 router.route("/users/:userId").get(getUserById);
+
+router.route("/allgroups").get(getAllGroups);
 
 // ****************************************************SupremeAlpha routes********************************************************************************//
 router.route("/adduser").post(validate,addUser);
