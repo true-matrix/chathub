@@ -341,7 +341,7 @@ const OmegaPage = () => {
             </form>
           </div>
 )}}
-</Formik>
+          </Formik>
         </div>
       )}
 
