@@ -105,7 +105,7 @@ const OtpPage = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {users && getPaginatedData().map((user,index) => (
+                      {users && getPaginatedData().map((user) => (
                         <>
                         <tr className="row"></tr>
                         <tr key={user._id}>

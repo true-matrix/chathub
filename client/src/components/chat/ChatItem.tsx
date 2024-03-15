@@ -4,13 +4,13 @@ import {
   TrashIcon,
 } from "@heroicons/react/20/solid";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
-import moment from "moment";
 import React, { useState } from "react";
 import { deleteOneOnOneChat } from "../../api";
 import { useAuth } from "../../context/AuthContext";
 import { ChatListItemInterface } from "../../interfaces/chat";
 import { classNames, getChatObjectMetadata, requestHandler } from "../../utils";
 import GroupChatDetailsModal from "./GroupChatDetailsModal";
+import { getRecentTime } from "../../commonhelper";
 
 const ChatItem: React.FC<{
   chat: ChatListItemInterface;
@@ -111,26 +111,30 @@ const ChatItem: React.FC<{
           </button>
           <div className="flex justify-center items-center flex-shrink-0">
             {chat.isGroupChat ? (
-              <div className="w-12 relative h-12 flex-shrink-0 flex justify-start items-center flex-nowrap">
-                {chat.participants.slice(0, 3).map((participant, i) => {
-                  return (
-                    <img
-                      key={participant._id}
-                      src={participant.avatar.url}
-                      className={classNames(
-                        "w-9 h-9 border-[1px] border-white rounded-full absolute outline outline-1 outline-white group-hover:outline-white object-cover",
-                        i === 0
-                          ? "left-0 z-[3]"
-                          : i === 1
-                          ? "left-2.5 z-[2]"
-                          : i === 2
-                          ? "left-[18px] z-[1]"
-                          : ""
-                      )}
-                    />
-                  );
-                })}
-              </div>
+            <img
+                src={getChatObjectMetadata(chat, user!).avatar}
+                className="w-12 h-12 rounded-full object-cover"
+              />
+              // <div className="w-12 relative h-12 flex-shrink-0 flex justify-start items-center flex-nowrap">
+              //   {chat.participants.slice(0, 3).map((participant, i) => {
+              //     return (
+              //       <img
+              //         key={participant._id}
+              //         src={participant.avatar.url}
+              //         className={classNames(
+              //           "w-9 h-9 border-[1px] border-white rounded-full absolute outline outline-1 outline-white group-hover:outline-white object-cover",
+              //           i === 0
+              //             ? "left-0 z-[3]"
+              //             : i === 1
+              //             ? "left-2.5 z-[2]"
+              //             : i === 2
+              //             ? "left-[18px] z-[1]"
+              //             : ""
+              //         )}
+              //       />
+              //     );
+              //   })}
+              // </div>
             ) : (
               <img
                 src={getChatObjectMetadata(chat, user!).avatar}
@@ -155,7 +159,8 @@ const ChatItem: React.FC<{
           <div className="flex text-white/50 h-full text-sm flex-col justify-between items-end">
             <small className="mb-2 inline-flex flex-shrink-0 w-max text-zinc-400">
               {/* {moment(chat.updatedAt).add("TIME_ZONE", "hours").fromNow(true)} */}
-              {moment(chat.updatedAt).subtract("TIME_ZONE", "hours").fromNow(true)}
+              {/* {moment(chat.updatedAt).subtract("TIME_ZONE", "hours").fromNow(true)} */}
+              {getRecentTime(chat.updatedAt)}
             </small>
 
             {/* Unread count will be > 0 when user is on another chat and there is new message in a chat which is not currently active on user's screen */}

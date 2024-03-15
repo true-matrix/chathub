@@ -352,7 +352,9 @@ const AlphaPage = () => {
                             </div>  
                         </th>
                         <td>{user.phone ? user.phone : '9876543210'}</td>
-                        <td>inactive</td>
+                        <td className={`text-center ${user.verified ? 'text-green-500' : 'text-red-500'}`}>
+                            {user.verified ? 'Active' : 'Inactive'}
+                          </td>
                         <td>
                           <button className="bg-blue-500 text-white px-2 py-1 mr-2" onClick={()=>handleUpdateUser(user._id)}  >Edit</button>
                           <button className="bg-red-500 text-white px-2 py-1" onClick={()=>handleDelete(user._id)}>Delete</button>

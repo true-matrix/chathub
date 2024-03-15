@@ -380,7 +380,7 @@ const SupremeALphaPage = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {currentData.map((user,index) => (
+                      {currentData.map((user) => (
                         <>
                         <tr className="row"></tr>
                         <tr key={user._id}>
@@ -393,7 +393,9 @@ const SupremeALphaPage = () => {
                               </div>  
                           </td>
                           <td className="text-center">{user.phone ? user.phone : '9876543210'}</td>
-                          <td className="text-center">inactive</td>
+                          <td className={`text-center ${user.verified ? 'text-green-500' : 'text-red-500'}`}>
+                            {user.verified ? 'Active' : 'Inactive'}
+                          </td>
                           <td className="text-center">
                             <button className="focus:outline-none text-white bg-yellow-500 hover:bg-yellow-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2 me-2  dark:focus:ring-yellow-900" onClick={()=>handleUpdateUser(user._id)}  >Edit</button>
                             <button className="focus:outline-none text-white bg-red-500 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 me-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900" onClick={()=>handleDelete(user._id)}>Delete</button>

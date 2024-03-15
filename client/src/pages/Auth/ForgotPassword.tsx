@@ -1,19 +1,19 @@
 // Importing necessary components and hooks
 import { LockClosedIcon } from "@heroicons/react/20/solid";
-import Button from "../components/Button";
-import Input from "../components/Input";
-import { useAuth } from "../context/AuthContext";
+import Button from "../../components/Button";
+import Input from "../../components/Input";
+import { useAuth } from "../../context/AuthContext";
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import logoitem from "../assets/images/full-logo.png";
-import vector from "../assets/images/auth-img.png";
+import logoitem from "../../assets/images/full-logo.png";
+import vector from "../../assets/images/auth-img.png";
 
 interface FormValues {
   email: string;
   password: string;
 }
 // Component for the Login page
-const Login = () => {
+const ForgotPassword = () => {
   const { login } = useAuth();
   // const [isPasswordHide, setIsPasswordHide] = useState(false);
   // Accessing the login function from the AuthContext
@@ -55,16 +55,16 @@ const Login = () => {
 
             <div className="p-8 flex justify-center items-center gap-5 flex-col shadow-md rounded-2xl my-5 border-[1px] login bg-white">
               <h1 className="inline-flex items-center text-2xl mb-4 flex-col">
-                <LockClosedIcon className="h-8 w-8 mb-2 text-success" /> Login
+                <LockClosedIcon className="h-8 w-8 mb-2 text-success" /> Forgot 
               </h1>
               {/* Input for entering the email */}
-            <form onSubmit={formik.handleSubmit} className="w-full">
+            <form onSubmit={formik.handleSubmit}>
 
               <Input
                 type="text"
                 id="email"
                 name="email"
-                placeholder="Email"
+                placeholder="Enter your email"
                 // value={data.email}
                 // onChange={handleDataChange("email")}
                 onChange={formik.handleChange}
@@ -74,46 +74,20 @@ const Login = () => {
               {formik.touched.email && formik.errors.email ? (
                                 <div className='error-msg'>{formik.errors.email}</div>
                                 ) : null}
-              {/* Input for entering the password */}
-              <Input
-                placeholder="Password"
-                type={"password"}
-                id="password"
-                name="password"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values.password}
-                className="mt-2"
-                // value={data.password}
-                // onChange={handleDataChange("password")}
-              />
-              {formik.touched.password && formik.errors.password ? (
-                                <div className='error-msg'>{formik.errors.password}</div>
-                                ) : null}
-              {/* <Button
-                                className="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted"
-                                type="button"
-                                onClick={handlePasswordHide}
-                            >
-                                <i className="ri-eye-fill align-middle" />
-                            </Button> */}
-
-              {/* Button to initiate the login process */}
               <Button
-                // disabled={Object.values(data).some((val) => !val)}
                 fullWidth
                 className="mt-3"
                 type="submit"
                 disabled={!formik.dirty || formik.isSubmitting}
               >
-                Login
+                Submit
               </Button>
 
               {/* Link to the registration page */}
               <small className="text-zinc-300 pl-12">
-                Forget password?{" "}
-                <a className="text-primary hover:underline" href="/forgot-password">
-                  Reset
+                I know my password!{" "}
+                <a className="text-primary hover:underline" href="/login">
+                  Login
                 </a>
               </small>
             </form>
@@ -127,4 +101,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassword;
