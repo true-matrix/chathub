@@ -37,6 +37,20 @@ const Sidebar = () => {
   const handleContextMenu = (e : any) => {
     e.preventDefault();
   };
+  const capitalizeName = (fullName: string) => {
+    const names = fullName.split(' ');
+    let firstNameInitial, lastNameInitial;
+  // Handle cases where the name has 3 or more characters
+    if (names.length > 1) {
+      firstNameInitial = names[0].charAt(0).toUpperCase();
+      lastNameInitial = names[names.length - 1].charAt(0).toUpperCase();
+    } else {
+      // Handle cases where the name has less than 3 characters
+      firstNameInitial = names[0].charAt(0).toUpperCase();
+      lastNameInitial = '';
+    }
+    return firstNameInitial + lastNameInitial;
+    }
 
   return (
     <>
@@ -80,8 +94,9 @@ const Sidebar = () => {
                   <button
                     className="profile-user rounded-full bg-primary text-white text-md py-3 px-4"
                     title={user?.name}
-                    >
-                      {user?.name.length <= 6 ? user?.name : user?.name.slice(0, 6) + "..." }
+                  >
+                    {capitalizeName(user?.name)}
+                      {/* {user?.name.length <= 6 ? user?.name : user?.name.slice(0, 6) + "..." } */}
                   </button>
                   // <button className="nav-link dropdown-toggle bg-white rounded-full" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-describedby="popup-78477">
                   //               <img crossOrigin="anonymous" src={user?.avatar?.url} alt="" className="profile-user rounded-full border-2"/>

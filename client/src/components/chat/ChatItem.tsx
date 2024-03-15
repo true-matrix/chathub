@@ -11,7 +11,6 @@ import { ChatListItemInterface } from "../../interfaces/chat";
 import { classNames, getChatObjectMetadata, requestHandler } from "../../utils";
 import GroupChatDetailsModal from "./GroupChatDetailsModal";
 import { getRecentTime } from "../../commonhelper";
-import { useGlobal } from "../../context/GlobalContext";
 
 const ChatItem: React.FC<{
   chat: ChatListItemInterface;
