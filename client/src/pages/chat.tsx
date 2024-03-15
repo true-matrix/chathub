@@ -466,12 +466,12 @@ const ChatPage = () => {
                 setLocalSearchQuery(e.target.value.toLowerCase())
               }
             />
-            {user?.userRole !== 'omega' && (<button
+            <button
               onClick={() => setOpenAddChat(true)}
               className="rounded-xl border-none bg-primary text-white text-sm py-3 px-4 flex flex-shrink-0"
             >
-              + Add chat
-            </button>)}
+              + New chat
+            </button>
           </div>
           {loadingChats ? (
             <div className="flex justify-center items-center h-[calc(100%-88px)]">

@@ -11,12 +11,14 @@ import { classNames, requestHandler } from "../../utils";
 import Button from "../Button";
 import Input from "../Input";
 import Select from "../Select";
+import { useAuth } from "../../context/AuthContext";
 
 const AddChatModal: React.FC<{
   open: boolean;
   onClose: () => void;
   onSuccess: (chat: ChatListItemInterface) => void;
 }> = ({ open, onClose, onSuccess }) => {
+  const { user } = useAuth();
   // State to store the list of users, initialized as an empty array
   const [users, setUsers] = useState<any[]>([]);
   // State to store the name of a group, initialized as an empty string
@@ -175,7 +177,7 @@ const AddChatModal: React.FC<{
                   </div>
                 </div>
                 <div>
-                  <Switch.Group as="div" className="flex items-center my-5">
+                  {user?.userRole !== 'omega' && (<Switch.Group as="div" className="flex items-center my-5">
                     <Switch
                       checked={isGroupChat}
                       onChange={setIsGroupChat}
@@ -204,7 +206,7 @@ const AddChatModal: React.FC<{
                         Is it a pack?
                       </span>{" "}
                     </Switch.Label>
-                  </Switch.Group>
+                  </Switch.Group>)}
                   {isGroupChat ? (
                     <div className="my-5">
                       <Input
