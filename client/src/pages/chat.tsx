@@ -266,7 +266,7 @@ const ChatPage = () => {
     if (message?.chat !== currentChat.current?._id) {
       // If not, update the list of unread messages
       // setUnreadMessages((prev) => [message, ...prev]);
-       // If not, update the list of unread messages
+      // If not, update the list of unread messages
     setUnreadMessages((prev) => {
       const updatedUnreadMessages = [message, ...prev];
       // Store the updated unread messages in local storage
@@ -505,6 +505,7 @@ const ChatPage = () => {
                       )
                         return;
                       LocalStorage.set("currentChat", chat);
+                      LocalStorage.set("unreadMessages", []);
                       currentChat.current = chat;
                       setMessage("");
                       getMessages();
