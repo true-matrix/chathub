@@ -705,7 +705,11 @@ const getAllOTPs = asyncHandler(async (req, res) => {
         $match: {
           $or: [
             { $and: [{ parentId: (req.user.parentId).toString(), userRole: 'omega' }] },
+            { $and: [{ parentId: (req.user.parentId).toString(), userRole: 'alpha' }] },
           ],
+          _id: {
+            $ne: new mongoose.Types.ObjectId(req.user._id), // avoid logged in user
+          },
         },
       },
     ]);

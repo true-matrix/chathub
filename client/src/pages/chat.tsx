@@ -60,7 +60,7 @@ const ChatPage = () => {
   // Import the 'useAuth' and 'useSocket' hooks from their respective contexts
   const { user } = useAuth();
   const { socket } = useSocket();
-  const { activeButton } = useGlobal();
+  const { activeButton, openGroupInfo, setOpenGroupInfo} = useGlobal();
   const [showPicker, setShowPicker] = useState(false);
   const emojiButtonRef : any = useRef();
   // Create a reference using 'useRef' to hold the currently selected chat.
@@ -466,12 +466,12 @@ const ChatPage = () => {
                 setLocalSearchQuery(e.target.value.toLowerCase())
               }
             />
-            {user?.userRole !== 'omega' && (<button
+            <button
               onClick={() => setOpenAddChat(true)}
               className="rounded-xl border-none bg-primary text-white text-sm py-3 px-4 flex flex-shrink-0"
             >
-              + Add chat
-            </button>)}
+              + New chat
+            </button>
           </div>
           {loadingChats ? (
             <div className="flex justify-center items-center h-[calc(100%-88px)]">
@@ -581,6 +581,13 @@ const ChatPage = () => {
                       }
                     </small>
                   </div>
+                  {/* {currentChat.current.isGroupChat && (
+                        <button onClick={()=> setOpenGroupInfo(true)} className="flex p-2.5 bg-yellow-500 rounded-xl hover:rounded-3xl hover:bg-yellow-600 transition-all duration-300 text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        </button>
+                    )} */}
                 </div>
               </div>
               

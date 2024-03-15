@@ -12,7 +12,7 @@ interface FormValues {
   email: string;
 }
 // Component for the Login page
-const ForgotPassword = () => {
+const ResetPassword = () => {
   // const [isPasswordHide, setIsPasswordHide] = useState(false);
   // Accessing the login function from the AuthContext
   const formInititalState : FormValues = {
@@ -49,7 +49,7 @@ const ForgotPassword = () => {
 
             <div className="p-8 flex justify-center items-center gap-5 flex-col shadow-md rounded-2xl my-5 border-[1px] login bg-white">
               <h1 className="inline-flex items-center text-2xl mb-4 flex-col">
-                <LockClosedIcon className="h-8 w-8 mb-2 text-success" /> Forgot your password? 
+                <LockClosedIcon className="h-8 w-8 mb-2 text-success" /> Login to your account
               </h1>
               {/* Input for entering the email */}
             <form onSubmit={formik.handleSubmit}>
@@ -95,4 +95,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default ResetPassword;

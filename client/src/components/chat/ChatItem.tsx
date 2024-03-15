@@ -20,6 +20,7 @@ const ChatItem: React.FC<{
   onChatDelete: (chatId: string) => void;
 }> = ({ chat, onClick, isActive, unreadCount = 0, onChatDelete }) => {
   const { user } = useAuth();
+  // const { openGroupInfo, setOpenGroupInfo } = useGlobal();
   const [openOptions, setOpenOptions] = useState(false);
   const [openGroupInfo, setOpenGroupInfo] = useState(false);
 
