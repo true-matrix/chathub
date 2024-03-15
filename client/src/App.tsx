@@ -10,6 +10,8 @@ import ProfilePage from "./pages/profile";
 import SettingsPage from "./pages/settings";
 import VerifyOtp from "./pages/Otp/VerifyOtp";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
+import ResetPassword from "./pages/Auth/ResetPassword";
 
 // Main App component
 const App = () => {
@@ -91,6 +93,24 @@ const App = () => {
         element={
           <PublicRoute>
             <Login />
+          </PublicRoute>
+        }
+      />
+      <Route
+        path="/forgot-password"
+        element={
+          <PublicRoute>
+            <ForgotPassword />
+          </PublicRoute>
+        }
+      />
+
+      {/* This should be private Route */}
+      <Route
+        path="/reset-password"
+        element={
+          <PublicRoute>
+            <ResetPassword/>
           </PublicRoute>
         }
       />

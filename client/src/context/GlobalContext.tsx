@@ -4,13 +4,17 @@ import React, { createContext, useContext, useState } from "react";
 const GlobalContext = createContext<{
     activeButton: string;
     tabIndex: number;
+    openGroupInfo: boolean;
     setActiveButton: React.Dispatch<React.SetStateAction<string>>;
     setTabIndex: React.Dispatch<React.SetStateAction<number>>;
+    setOpenGroupInfo: React.Dispatch<React.SetStateAction<boolean>>;
 }>({
     activeButton: "",
     tabIndex: -1,
+    openGroupInfo: false,
     setActiveButton: () => {},
-    setTabIndex: () => {},
+    setTabIndex: () => { },
+    setOpenGroupInfo: () => { },
 });
 
 // Create a hook to access the GlobalContext
@@ -22,12 +26,14 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [activeButton, setActiveButton] = useState<string>("chat");
   const [tabIndex, setTabIndex] = useState<number>(-1);
+  const [openGroupInfo, setOpenGroupInfo] = useState<boolean>(false);
+
 
 
 console.log('activeButton',activeButton);
 
   return (
-    <GlobalContext.Provider value={{ activeButton, tabIndex, setActiveButton, setTabIndex }}>
+    <GlobalContext.Provider value={{ activeButton, tabIndex, openGroupInfo, setActiveButton, setTabIndex, setOpenGroupInfo }}>
       {children}
     </GlobalContext.Provider>
   );

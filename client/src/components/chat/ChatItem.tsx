@@ -11,6 +11,7 @@ import { ChatListItemInterface } from "../../interfaces/chat";
 import { classNames, getChatObjectMetadata, requestHandler } from "../../utils";
 import GroupChatDetailsModal from "./GroupChatDetailsModal";
 import { getRecentTime } from "../../commonhelper";
+import { useGlobal } from "../../context/GlobalContext";
 
 const ChatItem: React.FC<{
   chat: ChatListItemInterface;
@@ -20,6 +21,7 @@ const ChatItem: React.FC<{
   onChatDelete: (chatId: string) => void;
 }> = ({ chat, onClick, isActive, unreadCount = 0, onChatDelete }) => {
   const { user } = useAuth();
+  // const { openGroupInfo, setOpenGroupInfo } = useGlobal();
   const [openOptions, setOpenOptions] = useState(false);
   const [openGroupInfo, setOpenGroupInfo] = useState(false);
 
