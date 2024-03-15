@@ -86,7 +86,7 @@ const AlphaPage = () => {
       }, []);
 
   
-    const itemsPerPage = 2; // Number of items per page
+    const itemsPerPage = 4; // Number of items per page
     // const pageCount = Math.ceil(users?.length / itemsPerPage);
   
 
