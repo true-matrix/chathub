@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import 'react-tabs/style/react-tabs.css';
 import ReactPaginate from 'react-paginate';
-import {  getAllGroups, getAllOTPs } from "../../api";
+import {  getAllGroups } from "../../api";
 import { LocalStorage, requestHandler } from "../../utils";
-import {  getMonthDayYearTimeValue, isCurrentTimeGreaterThanGivenTime } from "../../commonhelper";
-import { CopyToClipboardButton } from "../../components/CopyToClipboardButton";
 import moment from "moment";
 import GroupChatDetailsModal from "../../components/chat/GroupChatDetailsModal";
 import { ChatListItemInterface } from "../../interfaces/chat";
@@ -12,7 +10,6 @@ import { ChatListItemInterface } from "../../interfaces/chat";
 const PacksPage = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
-    const [users, setUsers] = useState<any[]>([]);
     const [packs, setPacks] = useState<any[]>([]);
     const [openOptions, setOpenOptions] = useState(false);
     const [openGroupInfo, setOpenGroupInfo] = useState(false);
@@ -20,21 +17,6 @@ const PacksPage = () => {
   
   const currentChat = useRef<ChatListItemInterface | null>(null);
 
-    // Function to retrieve available users.
-    const getUsers = useCallback( async () => {
-        requestHandler(
-        // Call to get the list of available users.
-        async () => await getAllOTPs(),
-        null,
-        // On successful retrieval, set the users' state.
-        (res) => {
-            const { data } = res;
-            setUsers(data || []);
-        },
-        alert // Use default alert for any error messages.
-        );
-    }, [])
-  
   const getPacks = useCallback( async () => {
         requestHandler(
         // Call to get the list of available users.
@@ -50,7 +32,6 @@ const PacksPage = () => {
     }, [])
   
     useEffect(() => {
-      getUsers();
       getPacks()
     }, []);
   
