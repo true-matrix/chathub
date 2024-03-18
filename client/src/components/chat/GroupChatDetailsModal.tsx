@@ -7,6 +7,8 @@ import {
   XMarkIcon,
 } from "@heroicons/react/20/solid";
 import React, { Fragment, useEffect, useState } from "react";
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css'; // Import the default styles for react-tabs
 import {
   addParticipantToGroup,
   deleteGroup,
@@ -199,6 +201,12 @@ const GroupChatDetailsModal: React.FC<{
     getUsers();
   }, [open]); // The effect is dependent on the 'open' state or prop, so it re-runs whenever 'open' changes
 
+  // Sample image data
+  const images = [
+    { url: 'https://fastly.picsum.photos/id/4/5000/3333.jpg?hmac=ghf06FdmgiD0-G4c9DdNM8RnBIN7BO0-ZGEw47khHP4', size: '1.2 MB', date: '2024-03-18' },
+    { url: 'https://fastly.picsum.photos/id/4/5000/3333.jpg?hmac=ghf06FdmgiD0-G4c9DdNM8RnBIN7BO0-ZGEw47khHP4', size: '0.8 MB', date: '2024-03-19' },
+    // Add more image objects as needed
+  ];
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-40" onClose={handleClose}>
@@ -311,8 +319,152 @@ const GroupChatDetailsModal: React.FC<{
                             Pack · {groupDetails?.participants.length}{" "}
                             participants
                           </p>
-                        </div> 
-                        <div className="w-full mt-6">
+                        </div>
+                        <Tabs>
+                        <TabList>
+                          <Tab>Participants</Tab>
+                          <Tab>Files</Tab>
+                          <Tab>Links</Tab>
+                        </TabList>
+                        <TabPanel>
+                              <div className="w-full mt-6">
+                          {/* <p className="inline-flex items-center">
+                            <UserGroupIcon className="h-6 w-6 mr-2" />{" "}
+                            {groupDetails?.participants.length} Participants
+                          </p> */}
+                          <div className="w-full my-6">
+                            {groupDetails?.participants?.map((part : any) => {
+                              return (
+                                <React.Fragment key={part._id}>
+                                  <div className="flex justify-between items-center w-full py-2">
+                                    <div className="flex justify-start items-start gap-3 w-full">
+                                      <img
+                                        className="h-12 w-12 rounded-full"
+                                        src={part.avatar.url}
+                                      />
+                                      <div>
+                                        <p className="text-dark font-semibold text-sm inline-flex items-center w-full">
+                                          {part.name}{" "}
+                                          {part._id === groupDetails.admin ? (
+                                            <span className="ml-2 text-[10px] px-4 bg-success/10 border-[0.1px] border-success rounded-full text-success">
+                                              admin
+                                            </span>
+                                          ) : null}
+                                        </p>
+                                        <small className="text-zinc-400">
+                                          {part.email}
+                                        </small>
+                                      </div>
+                                    </div>
+                                    {(groupDetails.admin === user?._id || user?.userRole === 'supremeAlpha' ) ? (
+                                      <div>
+                                        <Button title="Remove User" className="shadow-none bg-transparent hover:bg-transparent opacity-40 hover:opacity-90 hover:shadow-none"
+                                          onClick={() => {
+                                            const ok = confirm(
+                                              "Are you sure you want to remove " +
+                                                user.name +
+                                                " ?"
+                                            );
+                                            if (ok) {
+                                              removeParticipant(part._id || "");
+                                            }
+                                          }}
+                                          size="small"
+                                          severity="danger"
+                                        >
+                                          <img src={delete_icon}  />
+                                        </Button>
+                                      </div>
+                                    ) : null}
+                                  </div>
+                                  <hr className=" border-zinc-200 my-1 w-full" />
+                                </React.Fragment>
+                              );
+                            })}
+                            {(groupDetails?.admin === user?._id || user?.userRole === 'supremeAlpha') ? (
+                              <div className="w-full my-6 flex flex-col justify-center items-center gap-2 ">
+                                {!addingParticipant ? (
+                                  <Button
+                                    onClick={() => setAddingParticipant(true)}
+                                    fullWidth
+                                    severity="success"
+                                  >
+                                    <UserPlusIcon className="w-5 h-5 mr-1" />{" "}
+                                    Add participant
+                                  </Button>
+                                ) : (
+                                  <div className="w-full flex justify-start items-center gap-3">
+                                    <Select
+                                      placeholder="Select a user to add..."
+                                      value={participantToBeAdded}
+                                      options={users.map((user : any) => ({
+                                        label: user.name,
+                                        value: user._id,
+                                        imageSrc: user.avatar.url,
+                                      }))}
+                                      onChange={({ value }) => {
+                                        setParticipantToBeAdded(value);
+                                      }}
+                                    />
+                                    <Button onClick={() => addParticipant()}>
+                                      + Add
+                                    </Button>
+                                    <Button
+                                      severity="secondary"
+                                      onClick={() => {
+                                        setAddingParticipant(false);
+                                        setParticipantToBeAdded("");
+                                      }}
+                                    >
+                                      Cancel
+                                    </Button>
+                                  </div>
+                                )}
+                                <Button
+                                  fullWidth
+                                  severity="danger"
+                                  onClick={() => {
+                                    const ok = confirm(
+                                      "Are you sure you want to delete this pack?"
+                                    );
+                                    if (ok) {
+                                      deleteGroupChat();
+                                    }
+                                  }}
+                                >
+                                  <TrashIcon className="w-5 h-5 mr-1" /> Delete pack
+                                </Button>
+                              </div>
+                            ) : null}
+                          </div>
+                        </div>
+                        </TabPanel>
+                          <TabPanel> 
+                            <div className="w-full mt-6">
+      {/* Static image file UI */}
+      {/* <div className="flex flex-wrap justify-center items-center">
+        <img className="w-32 h-32 m-4" src="https://fastly.picsum.photos/id/4/5000/3333.jpg?hmac=ghf06FdmgiD0-G4c9DdNM8RnBIN7BO0-ZGEw47khHP4" alt="File 1" />
+        <img className="w-32 h-32 m-4" src="https://fastly.picsum.photos/id/28/4928/3264.jpg?hmac=GnYF-RnBUg44PFfU5pcw_Qs0ReOyStdnZ8MtQWJqTfA" alt="File 2" />
+        <img className="w-32 h-32 m-4" src="https://fastly.picsum.photos/id/4/5000/3333.jpg?hmac=ghf06FdmgiD0-G4c9DdNM8RnBIN7BO0-ZGEw47khHP4" alt="File 1" />
+      </div> */}
+                              <div className="flex flex-col">
+      {images.map((image : any, index : number) => (
+        <div key={index} className="flex items-center justify-start my-4">
+          <img src={image.url} alt={`Image ${index}`} className="w-32 h-32 mr-4" />
+          <div>
+            <p>Size: {image.size}</p>
+            <p>Date: {image.date}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    </div>
+                        </TabPanel>
+                        <TabPanel> Hello3
+                        </TabPanel>
+                      </Tabs>
+                        {/* <div className="w-full mt-6">
                           <p className="inline-flex items-center">
                             <UserGroupIcon className="h-6 w-6 mr-2" />{" "}
                             {groupDetails?.participants.length} Participants
@@ -422,7 +574,7 @@ const GroupChatDetailsModal: React.FC<{
                               </div>
                             ) : null}
                           </div>
-                        </div>
+                        </div> */}
                       </div>
                     </div>
                   </div>
