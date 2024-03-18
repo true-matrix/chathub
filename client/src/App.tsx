@@ -1,5 +1,5 @@
 // Importing required modules and components from the react-router-dom and other files.
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import Login from "./pages/login";
 import ChatPage from "./pages/chat";
 import { useAuth } from "./context/AuthContext";
@@ -12,11 +12,78 @@ import VerifyOtp from "./pages/Otp/VerifyOtp";
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import ForgotPassword from "./pages/Auth/ForgotPassword";
 import ResetPassword from "./pages/Auth/ResetPassword";
+import { LocalStorage, requestHandler } from "./utils";
+import { logoutUser } from "./api";
+import { useEffect, useState } from "react";
 
 // Main App component
 const App = () => {
   // Extracting 'token' and 'user' from the authentication context
   const { token, user } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  console.log(isLoading);
+  useEffect(() => {
+    let inactivityTimer : any;
+
+    const resetTimer = () => {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(async () => {
+        // await logoutUser(); // Make an API call to logout
+        // // await LocalStorage.clear();
+        // await navigate("/login"); 
+
+            await requestHandler(
+        async () => await logoutUser(),
+        setIsLoading,
+        () => {
+          // Exclude clearing unread messages from local storage
+          const unreadMessages = LocalStorage.get('unreadMessages');
+          LocalStorage.clear();
+          if (unreadMessages) {
+            // Restore unread messages after clearing local storage
+            LocalStorage.set('unreadMessages', unreadMessages);
+          }
+          navigate("/login"); // Redirect to the login page after successful logout
+        clearInterval(inactivityTimer);
+              },
+        alert // Display error alerts on request failure
+        );
+      }, 3600000); // 1 hour in milliseconds
+    };
+
+    const handleActivity = () => {
+      resetTimer();
+    };
+
+    const clearDataAndSetTimer = () => {
+      // Clear all data or delete cookies from the browser
+      document.cookie.split(";").forEach((c) => {
+        document.cookie = c
+          .replace(/^ +/, "")
+          .replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`);
+      });
+       
+      // Call resetTimer only once after clearing data
+      resetTimer();
+
+      // Add event listeners for user activity
+      document.addEventListener("mousemove", handleActivity);
+      document.addEventListener("keypress", handleActivity);
+    }
+    // Initial setup of the timer
+    resetTimer();
+    // Call clearDataAndSetTimer to clear data and set timer only once
+    clearDataAndSetTimer();
+
+
+    return () => {
+      // Cleanup event listeners
+      document.removeEventListener("mousemove", handleActivity);
+      document.removeEventListener("keypress", handleActivity);
+      clearTimeout(inactivityTimer);
+    };
+  }, []);
 
   return (
     <Routes>
