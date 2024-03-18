@@ -1,17 +1,24 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import 'react-tabs/style/react-tabs.css';
 import ReactPaginate from 'react-paginate';
 import {  getAllGroups, getAllOTPs } from "../../api";
-import { requestHandler } from "../../utils";
+import { LocalStorage, requestHandler } from "../../utils";
 import {  getMonthDayYearTimeValue, isCurrentTimeGreaterThanGivenTime } from "../../commonhelper";
 import { CopyToClipboardButton } from "../../components/CopyToClipboardButton";
 import moment from "moment";
+import GroupChatDetailsModal from "../../components/chat/GroupChatDetailsModal";
+import { ChatListItemInterface } from "../../interfaces/chat";
 
 const PacksPage = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
     const [users, setUsers] = useState<any[]>([]);
     const [packs, setPacks] = useState<any[]>([]);
+    const [openOptions, setOpenOptions] = useState(false);
+    const [openGroupInfo, setOpenGroupInfo] = useState(false);
+  const [packId, setPackId] = useState("");
+  
+  const currentChat = useRef<ChatListItemInterface | null>(null);
 
     // Function to retrieve available users.
     const getUsers = useCallback( async () => {
@@ -42,15 +49,10 @@ const PacksPage = () => {
         );
     }, [])
   
-
     useEffect(() => {
       getUsers();
       getPacks()
     }, []);
-  
-  console.log('packs',packs);
-  
-
   
     const itemsPerPage = 2; // Number of items per page
     // const pageCount = Math.ceil(users?.length / itemsPerPage);
@@ -89,9 +91,28 @@ const PacksPage = () => {
               return dateB.diff(dateA);
             })?.slice(startIndex, endIndex);;
             // return filteredUsers?.slice(startIndex, endIndex);
-          };  
+  };  
+  const handlePackModel = (id: string) => {
+              setPackId(id);
+              setOpenOptions(!openOptions);
+              setOpenGroupInfo(true);
+    
+  }
   return (
     <>
+      {openGroupInfo && <GroupChatDetailsModal
+        open={openGroupInfo}
+        onClose={() => {
+          setOpenGroupInfo(false);
+        }}
+        chatId={packId}
+        onGroupDelete={(chatId) => {
+          if (currentChat.current?._id === chatId) {
+            currentChat.current = null;
+            LocalStorage.remove("currentChat");
+          }
+        }}
+      />}
 
             <div className="flex justify-between items-center mb-4">
                   <h2 className="text-xl font-semibold py-1">Manage Packs</h2>
@@ -132,7 +153,7 @@ const PacksPage = () => {
                               </div>  
                             </td>
                             <td className="text-center">
-                            <button className="focus:outline-none text-white bg-yellow-500 hover:bg-yellow-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2 me-2  dark:focus:ring-yellow-900" >Edit</button>
+                            <button onClick={() => handlePackModel(pack._id)}  className="focus:outline-none text-white bg-yellow-500 hover:bg-yellow-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2 me-2  dark:focus:ring-yellow-900" >Info</button>
                           </td>
                           {/* <td className="text-center">{user.phone ? user.phone : '-'}</td>
                           <td className="text-center">
