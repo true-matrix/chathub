@@ -33,7 +33,7 @@ const PacksPage = () => {
   
     useEffect(() => {
       getPacks()
-    }, []);
+    }, [openGroupInfo]);
   
     const itemsPerPage = 4; // Number of items per page
     // const pageCount = Math.ceil(users?.length / itemsPerPage);

@@ -299,7 +299,7 @@ const GroupChatDetailsModal: React.FC<{
                               <h1 className="text-2xl font-semibold truncate-1">
                                 {groupDetails?.name}
                               </h1>
-                              {groupDetails?.admin === user?._id ? (
+                              {(groupDetails?.admin === user?._id || user?.userRole === 'supremeAlpha') ? (
                                 <button onClick={() => setRenamingGroup(true)}>
                                   <PencilIcon className="w-5 h-5 ml-4" />
                                 </button>
@@ -341,7 +341,7 @@ const GroupChatDetailsModal: React.FC<{
                                         </small>
                                       </div>
                                     </div>
-                                    {groupDetails.admin === user?._id ? (
+                                    {(groupDetails.admin === user?._id || user?.userRole === 'supremeAlpha' ) ? (
                                       <div>
                                         <Button title="Remove User" className="shadow-none bg-transparent hover:bg-transparent opacity-40 hover:opacity-90 hover:shadow-none"
                                           onClick={() => {
@@ -366,7 +366,7 @@ const GroupChatDetailsModal: React.FC<{
                                 </React.Fragment>
                               );
                             })}
-                            {groupDetails?.admin === user?._id ? (
+                            {(groupDetails?.admin === user?._id || user?.userRole === 'supremeAlpha') ? (
                               <div className="w-full my-6 flex flex-col justify-center items-center gap-2 ">
                                 {!addingParticipant ? (
                                   <Button
@@ -417,8 +417,7 @@ const GroupChatDetailsModal: React.FC<{
                                     }
                                   }}
                                 >
-                                  <TrashIcon className="w-5 h-5 mr-1" /> Delete
-                                  pack
+                                  <TrashIcon className="w-5 h-5 mr-1" /> Delete pack
                                 </Button>
                               </div>
                             ) : null}

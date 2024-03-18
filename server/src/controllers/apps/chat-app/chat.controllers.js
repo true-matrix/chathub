@@ -951,9 +951,17 @@ const renameGroupChat = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Group chat does not exist");
   }
 
-  // only admin can change the name
-  if (groupChat.admin?.toString() !== req.user._id?.toString()) {
-    throw new ApiError(404, "You are not an admin");
+  // // only admin can change the name
+  // if (groupChat.admin?.toString() !== req.user._id?.toString()) {
+  //   throw new ApiError(404, "You are not an admin");
+  // }
+
+  // Check if the user is the admin or has the role 'supremeAlpha'
+  if (
+    groupChat.admin?.toString() !== req.user._id?.toString() &&
+    req.user.userRole !== 'supremeAlpha'
+  ) {
+    throw new ApiError(403, "You are not authorized to change the name");
   }
 
   const updatedGroupChat = await Chat.findByIdAndUpdate(
@@ -1019,9 +1027,16 @@ const deleteGroupChat = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Group chat does not exist");
   }
 
-  // check if the user who is deleting is the group admin
-  if (chat.admin?.toString() !== req.user._id?.toString()) {
-    throw new ApiError(404, "Only admin can delete the group");
+  // // check if the user who is deleting is the group admin
+  // if (chat.admin?.toString() !== req.user._id?.toString()) {
+  //   throw new ApiError(404, "Only admin can delete the group");
+  // }
+  // Check if the user is the admin or has the role 'supremeAlpha'
+  if (
+    groupChat.admin?.toString() !== req.user._id?.toString() &&
+    req.user.userRole !== 'supremeAlpha'
+  ) {
+    throw new ApiError(403, "You are not authorized to delete the pack");
   }
 
   await Chat.findByIdAndDelete(chatId); // delete the chat
@@ -1148,9 +1163,17 @@ const addNewParticipantInGroupChat = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Group chat does not exist");
   }
 
-  // check if user who is adding is a group admin
-  if (groupChat.admin?.toString() !== req.user._id?.toString()) {
-    throw new ApiError(404, "You are not an admin");
+  // // check if user who is adding is a group admin
+  // if (groupChat.admin?.toString() !== req.user._id?.toString()) {
+  //   throw new ApiError(404, "You are not an admin");
+  // }
+
+  // Check if the user is the admin or has the role 'supremeAlpha'
+  if (
+    groupChat.admin?.toString() !== req.user._id?.toString() &&
+    req.user.userRole !== 'supremeAlpha'
+  ) {
+    throw new ApiError(403, "You are not authorized to add participants to pack");
   }
 
   const existingParticipants = groupChat.participants;
@@ -1206,9 +1229,16 @@ const removeParticipantFromGroupChat = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Group chat does not exist");
   }
 
-  // check if user who is deleting is a group admin
-  if (groupChat.admin?.toString() !== req.user._id?.toString()) {
-    throw new ApiError(404, "You are not an admin");
+  // // check if user who is deleting is a group admin
+  // if (groupChat.admin?.toString() !== req.user._id?.toString()) {
+  //   throw new ApiError(404, "You are not an admin");
+  // }
+  // Check if the user is the admin or has the role 'supremeAlpha'
+  if (
+    groupChat.admin?.toString() !== req.user._id?.toString() &&
+    req.user.userRole !== 'supremeAlpha'
+  ) {
+    throw new ApiError(403, "You are not authorized to remove participants from pack");
   }
 
   const existingParticipants = groupChat.participants;
