@@ -447,11 +447,11 @@ const GroupChatDetailsModal: React.FC<{
                               <div className="flex flex-col">
       {groupDetails?.attachments && groupDetails?.attachments.map((image : any, index : number) => (
         <div key={index} className="flex items-center justify-start my-1 border p-2 rounded-lg">
-           <a href={image.url} target="_blank" rel="noopener noreferrer">
+           <a href={image.url} target="_blank" rel="noopener noreferrer" className="flex-none">
               <img 
                 src={image.url.toLowerCase().endsWith('.pdf') ? DOC_PREVIEW : image.url} 
                 alt={`Image ${index + 1}`} 
-                className="w-14 h-14 mr-4 rounded-md border" 
+                className="w-14 h-14 mr-4 rounded-md border flex-none" 
               />
             </a>
           <div className="text-sm">
