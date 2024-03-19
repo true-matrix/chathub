@@ -132,10 +132,10 @@ const sendMessage = asyncHandler(async (req, res) => {
   // Store the aggregation result
   const receivedMessage = messages[0];
 
-  console.log("message=>", message);
-  console.log("chat=>", chat);
-  console.log("messages=>", messages);
-  console.log("receivedMessage=>", receivedMessage);
+  // console.log("message=>", message);
+  // console.log("chat=>", chat);
+  // console.log("messages=>", messages);
+  // console.log("receivedMessage=>", receivedMessage);
 
   if (!receivedMessage) {
     throw new ApiError(500, "Internal server error");
