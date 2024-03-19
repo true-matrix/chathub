@@ -629,7 +629,7 @@ const ChatPage = () => {
                         key={i}
                         className="group w-32 h-32 relative aspect-square rounded-xl cursor-pointer"
                       >
-                        <div className="absolute inset-0 flex justify-center items-center w-full h-full bg-black/40 group-hover:opacity-100 opacity-0 transition-opacity ease-in-out duration-150">
+                        <div className="absolute inset-0 flex justify-center items-center w-full h-full bg-white/10 shadow-lg border-green-400 group-hover:opacity-100 rounded-lg border transition-opacity ease-in-out duration-150">
                           <button
                             onClick={() => {
                               setAttachedFiles(
@@ -638,7 +638,7 @@ const ChatPage = () => {
                             }}
                             className="absolute -top-2 -right-2"
                           >
-                            <XCircleIcon className="h-6 w-6 text-white" />
+                            <XCircleIcon className="h-5 w-5 text-red-500 bg-white rounded-full" />
                           </button>
                         </div>
                         <img

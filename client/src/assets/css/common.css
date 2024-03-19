@@ -473,6 +473,17 @@ ul.react-tabs__tab-list {
   border: 1px solid #0000000d;
   margin-bottom: 20px;
 }
+
+.sidebar-tabs{
+  width: 100%;
+}
+.sidebar-tabs ul.react-tabs__tab-list{
+  margin: auto;
+}
+.sidebar-tabs .react-tabs{
+  padding-left: 0;
+  padding-right: 0px;
+}
 .react-tabs__tab--selected {
   background: #42AB65;
   color: #fff;
