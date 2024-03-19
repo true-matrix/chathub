@@ -2,7 +2,6 @@ import { Dialog, Transition } from "@headlessui/react";
 import {
   PencilIcon,
   TrashIcon,
-  UserGroupIcon,
   UserPlusIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
@@ -25,6 +24,7 @@ import Input from "../Input";
 import Select from "../Select";
 import delete_icon from "../../assets/images/remove-user.svg";
 import DOC_PREVIEW from "../../assets/images/doc-preview.png";
+import LINK_PREVIEW from "../../assets/images/link-preview.png";
 import { ImageSizeDisplay } from "../ImageSizeDisplay";
 
 const GroupChatDetailsModal: React.FC<{
@@ -466,7 +466,29 @@ const GroupChatDetailsModal: React.FC<{
 
     </div>
                         </TabPanel>
-                        <TabPanel> No links found!
+                          <TabPanel>
+                            {groupDetails?.contentLinks.length === 0 ? (
+                                <p>No links found!</p>
+                              ) : (
+                                <div>
+                                  {groupDetails?.contentLinks.map((link : any, index : number) => (
+                                    // <a key={index} href={link} target="_blank" rel="noopener noreferrer">
+                                    //   Link {index + 1}
+                                    // </a>
+                                    <div key={index} style={{ display: 'flex', marginBottom: '10px' }}>
+                                      <div style={{ marginRight: '10px' }}>
+                                        {/* <span>{link.charAt(0)}</span> */}
+                                        <img src={LINK_PREVIEW} alt="Preview" style={{ width: '50px', height: 'auto' }} />
+                                      </div>
+                                      <div>
+                                        <a href={link} target="_blank" rel="noopener noreferrer" className="link">
+                                          {link}
+                                        </a>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
                         </TabPanel>
                         </Tabs>
                       </div>

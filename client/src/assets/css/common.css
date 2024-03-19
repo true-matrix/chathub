@@ -611,7 +611,15 @@ button.profile-user {
   width: 60px;
 }
 
-.image-gallery{
+.link {
+   color: green;
+   text-decoration: none;
+   transition: color 0.3s;
+ }
+.link:hover {
+   color: red;
+ }
+ .image-gallery{
   position: absolute;
   left: 0;
   bottom: 90px;

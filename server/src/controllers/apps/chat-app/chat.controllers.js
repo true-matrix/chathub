@@ -8,7 +8,6 @@ import { ApiError } from "../../../utils/ApiError.js";
 import { ApiResponse } from "../../../utils/ApiResponse.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { removeLocalFile, getStaticFilePath, getLocalPath } from "../../../utils/helpers.js";
-
 /**
  * @description Utility function which returns the pipeline stages to structure the chat schema with common lookups
  * @returns {mongoose.PipelineStage[]}
@@ -1007,6 +1006,27 @@ const getGroupChatDetails = asyncHandler(async (req, res) => {
     },
   ]);
 
+  const allContentLinks = await ChatMessage.aggregate([
+    {
+      $match: {
+        chat: new mongoose.Types.ObjectId(chatId),
+        content: { $exists: true }, // Filter messages with content
+      },
+    },
+    {
+    $match: {
+      content: { $ne: '' } // Filter out documents where content string is not empty
+    }
+  },
+    ...chatMessageCommonAggregation(), // Reuse the common aggregation logic
+    {
+      $project: {
+        _id: 0, // Exclude _id field from the output
+        content: 1, // Include only the attachment field
+      },
+    },
+  ]);
+
   // Use Array.prototype.reduce() to flatten the structure of the attachments array
   const attachmentUrls = attachment.reduce((accumulator, message) => {
   // Extract the attachments array from each message
@@ -1022,11 +1042,23 @@ const getGroupChatDetails = asyncHandler(async (req, res) => {
   return accumulator;
 }, []);
   
-
+  // // Extract valid URLs from content field
+  //   const contentUrls = allContentLinks
+  //     .map(message => message.content.match(/(?:https?:\/\/|www\.)\S+\.(?:com|in|net)\b/gi)) // Extract URLs using regex
+  //     .filter(match => match !== null) // Filter out null matches
+  //     .flat(); // Flatten the array of matches
+  
+  // Extract links starting with http, https, or www
+  const contentUrls = allContentLinks
+      .map(message => message.content.match(/(?:https?:\/\/|www\.)\S+/gi)) // Extract URLs using regex
+      .filter(match => match !== null) // Filter out null matches
+      .flat(); // Flatten the array of matches
+  
   // Merge attachment URLs with the group chat details
   const groupChatWithAttachments = {
     ...chat,
     attachments: attachmentUrls,
+    contentLinks: contentUrls,
   };
 
   return res.status(200).json(new ApiResponse(200, groupChatWithAttachments, "Group chat with attachments fetched successfully"));
