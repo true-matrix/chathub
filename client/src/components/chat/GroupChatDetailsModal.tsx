@@ -24,6 +24,7 @@ import Button from "../Button";
 import Input from "../Input";
 import Select from "../Select";
 import delete_icon from "../../assets/images/remove-user.svg";
+import DOC_PREVIEW from "../../assets/images/doc-preview.png";
 import { ImageSizeDisplay } from "../ImageSizeDisplay";
 
 const GroupChatDetailsModal: React.FC<{
@@ -451,7 +452,7 @@ const GroupChatDetailsModal: React.FC<{
                               <div className="flex flex-col">
       {groupDetails?.attachments && groupDetails?.attachments.map((image : any, index : number) => (
         <div key={index} className="flex items-center justify-start my-4">
-          <img src={image.url} alt={`Image ${index}`} className="w-32 h-32 mr-4" />
+          <img src={image.url.toLowerCase().endsWith('.pdf') ? DOC_PREVIEW : image.url} alt={`Image ${index+1}`} className="w-32 h-32 mr-4" />
           <div>
             <p> {image.localPath.match(/[^/\\]+$/)[0]}</p>
             <ImageSizeDisplay imageUrl={image.url} />
