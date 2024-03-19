@@ -8,6 +8,7 @@ import { useState } from "react";
 import { ChatMessageInterface } from "../../interfaces/chat";
 import { classNames } from "../../utils";
 import { getRecentTime } from "../../commonhelper";
+import DOC_PREVIEW from "../../assets/images/doc-preview.png";
 
 const MessageItem: React.FC<{
   isOwnMessage?: boolean;
@@ -98,7 +99,7 @@ const MessageItem: React.FC<{
                     </button>
                     <img
                       className="h-full w-full object-cover"
-                      src={file.url}
+                      src={file.url.toLowerCase().endsWith('.pdf') ? DOC_PREVIEW : file.url}
                       alt="msg_img"
                     />
                   </div>

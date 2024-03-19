@@ -24,6 +24,7 @@ import Button from "../Button";
 import Input from "../Input";
 import Select from "../Select";
 import delete_icon from "../../assets/images/remove-user.svg";
+import DOC_PREVIEW from "../../assets/images/doc-preview.png";
 import { ImageSizeDisplay } from "../ImageSizeDisplay";
 
 const GroupChatDetailsModal: React.FC<{
@@ -202,12 +203,6 @@ const GroupChatDetailsModal: React.FC<{
     getUsers();
   }, [open]); // The effect is dependent on the 'open' state or prop, so it re-runs whenever 'open' changes
 
-  // Sample image data
-  const images = [
-    { url: 'https://fastly.picsum.photos/id/4/5000/3333.jpg?hmac=ghf06FdmgiD0-G4c9DdNM8RnBIN7BO0-ZGEw47khHP4', size: '1.2 MB', date: '2024-03-18' },
-    { url: 'https://fastly.picsum.photos/id/4/5000/3333.jpg?hmac=ghf06FdmgiD0-G4c9DdNM8RnBIN7BO0-ZGEw47khHP4', size: '0.8 MB', date: '2024-03-19' },
-    // Add more image objects as needed
-  ];
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-40" onClose={handleClose}>
@@ -451,8 +446,14 @@ const GroupChatDetailsModal: React.FC<{
       </div> */}
                               <div className="flex flex-col">
       {groupDetails?.attachments && groupDetails?.attachments.map((image : any, index : number) => (
-        <div key={index} className="flex items-center justify-start my-1 border p-2 rounded-lg ">
-          <img src={image.url} alt={`Image ${index}`} className="w-14 h-14 mr-4 rounded-md border" />
+        <div key={index} className="flex items-center justify-start my-1 border p-2 rounded-lg">
+           <a href={image.url} target="_blank" rel="noopener noreferrer">
+              <img 
+                src={image.url.toLowerCase().endsWith('.pdf') ? DOC_PREVIEW : image.url} 
+                alt={`Image ${index + 1}`} 
+                className="w-14 h-14 mr-4 rounded-md border" 
+              />
+            </a>
           <div className="text-sm">
             <p className="break-all"> {image.localPath.match(/[^/\\]+$/)[0]}</p>
             <div className="mt-2 font-medium text-red-600 ">
@@ -465,7 +466,7 @@ const GroupChatDetailsModal: React.FC<{
 
     </div>
                         </TabPanel>
-                          <TabPanel> Hello3
+                        <TabPanel> No links found!
                         </TabPanel>
                         </Tabs>
                       </div>
