@@ -527,7 +527,7 @@ const ChatPage = () => {
         </div>}
 
         {/* Chat Body */}
-        {activeButton === "chat" && <div className="w-2/3 border-l-[0.1px] border-secondary chat-background">
+        {activeButton === "chat" && <div className="w-2/3 border-l-[0.1px] border-secondary chat-background relative">
           {currentChat.current && currentChat.current?._id ? (
             <>
               <div className="p-4 py-3 sticky top-0 z-20 flex justify-between items-center w-full border-b-[0.1px] border-secondary user-chat-header">
@@ -596,7 +596,7 @@ const ChatPage = () => {
                 className={classNames(
                   "p-8 overflow-y-auto flex flex-col-reverse gap-6 w-full",
                   attachedFiles.length > 0
-                    ? "h-[calc(100vh-336px)]"
+                    ? "h-[calc(100vh-280px)]"
                     : "h-[calc(100vh-176px)]"
                 )}
                 id="message-window"
@@ -622,12 +622,12 @@ const ChatPage = () => {
                 )}
               </div>
               {attachedFiles.length > 0 ? (
-                <div className="grid gap-4 grid-cols-5 p-4 justify-start max-w-fit">
+                <div className="image-gallery flex gap-2 p-4 justify-start w-100 flex-wrap">
                   {attachedFiles.map((file, i) => {
                     return (
                       <div
                         key={i}
-                        className="group w-32 h-32 relative aspect-square rounded-xl cursor-pointer"
+                        className="group w-24 h-24 relative aspect-square rounded-xl cursor-pointer"
                       >
                         <div className="absolute inset-0 flex justify-center items-center w-full h-full bg-white/10 shadow-lg border-green-400 group-hover:opacity-100 rounded-lg border transition-opacity ease-in-out duration-150">
                           <button

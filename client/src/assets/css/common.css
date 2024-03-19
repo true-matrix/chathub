@@ -619,3 +619,10 @@ button.profile-user {
 .link:hover {
    color: red;
  }
+ .image-gallery{
+  position: absolute;
+  left: 0;
+  bottom: 90px;
+  background: #fff;
+  width: 100%;
+}
