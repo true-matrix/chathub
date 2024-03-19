@@ -599,3 +599,12 @@ button.profile-user {
   height: 60px;
   width: 60px;
 }
+
+.link {
+   color: green;
+   text-decoration: none;
+   transition: color 0.3s;
+ }
+.link:hover {
+   color: red;
+ }
