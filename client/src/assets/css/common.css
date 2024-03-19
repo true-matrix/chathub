@@ -610,3 +610,11 @@ button.profile-user {
   height: 60px;
   width: 60px;
 }
+
+.image-gallery{
+  position: absolute;
+  left: 0;
+  bottom: 90px;
+  background: #fff;
+  width: 100%;
+}

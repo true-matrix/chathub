@@ -46,7 +46,7 @@ const MessageItem: React.FC<{
         />
         <div
           className={classNames(
-            "p-4 rounded-3xl flex flex-col",
+            "p-4 rounded-3xl flex flex-col break-all",
             isOwnMessage
               ? "order-1 rounded-br-none bg-primary"
               : "order-2 rounded-bl-none bg-white"
