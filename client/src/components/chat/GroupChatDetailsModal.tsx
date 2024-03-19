@@ -24,6 +24,7 @@ import Button from "../Button";
 import Input from "../Input";
 import Select from "../Select";
 import delete_icon from "../../assets/images/remove-user.svg";
+import { ImageSizeDisplay } from "../ImageSizeDisplay";
 
 const GroupChatDetailsModal: React.FC<{
   open: boolean;
@@ -448,12 +449,12 @@ const GroupChatDetailsModal: React.FC<{
         <img className="w-32 h-32 m-4" src="https://fastly.picsum.photos/id/4/5000/3333.jpg?hmac=ghf06FdmgiD0-G4c9DdNM8RnBIN7BO0-ZGEw47khHP4" alt="File 1" />
       </div> */}
                               <div className="flex flex-col">
-      {images.map((image : any, index : number) => (
+      {groupDetails?.attachments && groupDetails?.attachments.map((image : any, index : number) => (
         <div key={index} className="flex items-center justify-start my-4">
           <img src={image.url} alt={`Image ${index}`} className="w-32 h-32 mr-4" />
           <div>
-            <p>Size: {image.size}</p>
-            <p>Date: {image.date}</p>
+            <p> {image.localPath.match(/[^/\\]+$/)[0]}</p>
+            <ImageSizeDisplay imageUrl={image.url} />
           </div>
         </div>
       ))}

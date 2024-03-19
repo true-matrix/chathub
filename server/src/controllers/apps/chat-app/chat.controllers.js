@@ -76,6 +76,7 @@ const chatCommonAggregation = () => {
         lastMessage: { $first: "$lastMessage" },
       },
     },
+    //
   ];
 };
 
@@ -124,6 +125,33 @@ const groupChatCommonAggregation = () => {
   ];
 };
 
+const chatMessageCommonAggregation = () => {
+  return [
+    {
+      $lookup: {
+        from: "users",
+        foreignField: "_id",
+        localField: "sender",
+        as: "sender",
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+              username: 1,
+              avatar: 1,
+              email: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $addFields: {
+        sender: { $first: "$sender" },
+      },
+    },
+  ];
+};
 /**
  *
  * @param {string} chatId
@@ -914,8 +942,33 @@ const updateProfileImage = asyncHandler(async (req, res) => {
 
 // *****************************************************************************************************************************************//
 
+// const getGroupChatDetails = asyncHandler(async (req, res) => {
+//   const { chatId } = req.params;
+//   const groupChat = await Chat.aggregate([
+//     {
+//       $match: {
+//         _id: new mongoose.Types.ObjectId(chatId),
+//         isGroupChat: true,
+//       },
+//     },
+//     ...chatCommonAggregation(),
+//   ]);
+
+//   const chat = groupChat[0];
+
+//   if (!chat) {
+//     throw new ApiError(404, "Group chat does not exist");
+//   }
+
+//   return res
+//     .status(200)
+//     .json(new ApiResponse(200, chat, "Group chat fetched successfully"));
+// });
+
 const getGroupChatDetails = asyncHandler(async (req, res) => {
   const { chatId } = req.params;
+
+  // Retrieve group chat details including participants and last message
   const groupChat = await Chat.aggregate([
     {
       $match: {
@@ -932,9 +985,51 @@ const getGroupChatDetails = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Group chat does not exist");
   }
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, chat, "Group chat fetched successfully"));
+  // Fetch attachments for messages within the group chat
+  const attachment = await ChatMessage.aggregate([
+    {
+      $match: {
+        chat: new mongoose.Types.ObjectId(chatId),
+        attachments: { $exists: true }, // Filter messages with attachments
+      },
+    },
+    {
+    $match: {
+      attachments: { $ne: [] } // Filter out documents where attachments array is not empty
+    }
+  },
+    ...chatMessageCommonAggregation(), // Reuse the common aggregation logic
+    {
+      $project: {
+        _id: 0, // Exclude _id field from the output
+        attachments: 1, // Include only the attachment field
+      },
+    },
+  ]);
+
+  // Use Array.prototype.reduce() to flatten the structure of the attachments array
+  const attachmentUrls = attachment.reduce((accumulator, message) => {
+  // Extract the attachments array from each message
+  const attachments = message.attachments;
+  // If attachments array is not empty, concatenate the attachment objects to accumulator
+  if (attachments.length > 0) {
+    return accumulator.concat(attachments.map(attachment => ({
+      url: attachment.url,
+      localPath: attachment.localPath,
+      _id: attachment._id
+    })));
+  }
+  return accumulator;
+}, []);
+  
+
+  // Merge attachment URLs with the group chat details
+  const groupChatWithAttachments = {
+    ...chat,
+    attachments: attachmentUrls,
+  };
+
+  return res.status(200).json(new ApiResponse(200, groupChatWithAttachments, "Group chat with attachments fetched successfully"));
 });
 
 const renameGroupChat = asyncHandler(async (req, res) => {
