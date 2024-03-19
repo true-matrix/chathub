@@ -321,6 +321,7 @@ const GroupChatDetailsModal: React.FC<{
                             participants
                           </p>
                         </div>
+                        <div className="sidebar-tabs">
                         <Tabs>
                         <TabList>
                           <Tab>Participants</Tab>
@@ -450,11 +451,13 @@ const GroupChatDetailsModal: React.FC<{
       </div> */}
                               <div className="flex flex-col">
       {groupDetails?.attachments && groupDetails?.attachments.map((image : any, index : number) => (
-        <div key={index} className="flex items-center justify-start my-4">
-          <img src={image.url} alt={`Image ${index}`} className="w-32 h-32 mr-4" />
-          <div>
-            <p> {image.localPath.match(/[^/\\]+$/)[0]}</p>
+        <div key={index} className="flex items-center justify-start my-1 border p-2 rounded-lg ">
+          <img src={image.url} alt={`Image ${index}`} className="w-14 h-14 mr-4 rounded-md border" />
+          <div className="text-sm">
+            <p className="break-all"> {image.localPath.match(/[^/\\]+$/)[0]}</p>
+            <div className="mt-2 font-medium text-red-600 ">
             <ImageSizeDisplay imageUrl={image.url} />
+            </div> 
           </div>
         </div>
       ))}
@@ -462,9 +465,11 @@ const GroupChatDetailsModal: React.FC<{
 
     </div>
                         </TabPanel>
-                        <TabPanel> Hello3
+                          <TabPanel> Hello3
                         </TabPanel>
-                      </Tabs>
+                        </Tabs>
+                      </div>
+
                         {/* <div className="w-full mt-6">
                           <p className="inline-flex items-center">
                             <UserGroupIcon className="h-6 w-6 mr-2" />{" "}
