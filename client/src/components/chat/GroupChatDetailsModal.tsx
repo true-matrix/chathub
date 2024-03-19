@@ -470,18 +470,18 @@ const GroupChatDetailsModal: React.FC<{
                             {groupDetails?.contentLinks.length === 0 ? (
                                 <p>No links found!</p>
                               ) : (
-                                <div>
+                                <div className="w-full mt-6">
                                   {groupDetails?.contentLinks.map((link : any, index : number) => (
                                     // <a key={index} href={link} target="_blank" rel="noopener noreferrer">
                                     //   Link {index + 1}
                                     // </a>
-                                    <div key={index} style={{ display: 'flex', marginBottom: '10px' }}>
-                                      <div style={{ marginRight: '10px' }}>
+                                    <div key={index} className="flex mb-3 overflow-hidden">
+                                      <div className="mr-3 flex-none">
                                         {/* <span>{link.charAt(0)}</span> */}
-                                        <img src={LINK_PREVIEW} alt="Preview" style={{ width: '50px', height: 'auto' }} />
+                                        <img src={LINK_PREVIEW} alt="Preview" className="h-7 w-7 border rounded-lg flex-none" />
                                       </div>
-                                      <div>
-                                        <a href={link} target="_blank" rel="noopener noreferrer" className="link">
+                                      <div className="flex items-center justify-start  h-7  text-ellipsis overflow-hidden ... ">
+                                        <a href={link} target="_blank" rel="noopener noreferrer" title={link} className="link break-all text-sm truncate ...">
                                           {link}
                                         </a>
                                       </div>
