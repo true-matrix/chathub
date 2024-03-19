@@ -76,6 +76,7 @@ const chatCommonAggregation = () => {
         lastMessage: { $first: "$lastMessage" },
       },
     },
+    //
   ];
 };
 
@@ -124,6 +125,33 @@ const groupChatCommonAggregation = () => {
   ];
 };
 
+const chatMessageCommonAggregation = () => {
+  return [
+    {
+      $lookup: {
+        from: "users",
+        foreignField: "_id",
+        localField: "sender",
+        as: "sender",
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+              username: 1,
+              avatar: 1,
+              email: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $addFields: {
+        sender: { $first: "$sender" },
+      },
+    },
+  ];
+};
 /**
  *
  * @param {string} chatId
@@ -914,8 +942,33 @@ const updateProfileImage = asyncHandler(async (req, res) => {
 
 // *****************************************************************************************************************************************//
 
+// const getGroupChatDetails = asyncHandler(async (req, res) => {
+//   const { chatId } = req.params;
+//   const groupChat = await Chat.aggregate([
+//     {
+//       $match: {
+//         _id: new mongoose.Types.ObjectId(chatId),
+//         isGroupChat: true,
+//       },
+//     },
+//     ...chatCommonAggregation(),
+//   ]);
+
+//   const chat = groupChat[0];
+
+//   if (!chat) {
+//     throw new ApiError(404, "Group chat does not exist");
+//   }
+
+//   return res
+//     .status(200)
+//     .json(new ApiResponse(200, chat, "Group chat fetched successfully"));
+// });
+
 const getGroupChatDetails = asyncHandler(async (req, res) => {
   const { chatId } = req.params;
+
+  // Retrieve group chat details including participants and last message
   const groupChat = await Chat.aggregate([
     {
       $match: {
@@ -932,9 +985,51 @@ const getGroupChatDetails = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Group chat does not exist");
   }
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, chat, "Group chat fetched successfully"));
+  // Fetch attachments for messages within the group chat
+  const attachment = await ChatMessage.aggregate([
+    {
+      $match: {
+        chat: new mongoose.Types.ObjectId(chatId),
+        attachments: { $exists: true }, // Filter messages with attachments
+      },
+    },
+    {
+    $match: {
+      attachments: { $ne: [] } // Filter out documents where attachments array is not empty
+    }
+  },
+    ...chatMessageCommonAggregation(), // Reuse the common aggregation logic
+    {
+      $project: {
+        _id: 0, // Exclude _id field from the output
+        attachments: 1, // Include only the attachment field
+      },
+    },
+  ]);
+
+  // Use Array.prototype.reduce() to flatten the structure of the attachments array
+  const attachmentUrls = attachment.reduce((accumulator, message) => {
+  // Extract the attachments array from each message
+  const attachments = message.attachments;
+  // If attachments array is not empty, concatenate the attachment objects to accumulator
+  if (attachments.length > 0) {
+    return accumulator.concat(attachments.map(attachment => ({
+      url: attachment.url,
+      localPath: attachment.localPath,
+      _id: attachment._id
+    })));
+  }
+  return accumulator;
+}, []);
+  
+
+  // Merge attachment URLs with the group chat details
+  const groupChatWithAttachments = {
+    ...chat,
+    attachments: attachmentUrls,
+  };
+
+  return res.status(200).json(new ApiResponse(200, groupChatWithAttachments, "Group chat with attachments fetched successfully"));
 });
 
 const renameGroupChat = asyncHandler(async (req, res) => {
@@ -951,9 +1046,17 @@ const renameGroupChat = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Group chat does not exist");
   }
 
-  // only admin can change the name
-  if (groupChat.admin?.toString() !== req.user._id?.toString()) {
-    throw new ApiError(404, "You are not an admin");
+  // // only admin can change the name
+  // if (groupChat.admin?.toString() !== req.user._id?.toString()) {
+  //   throw new ApiError(404, "You are not an admin");
+  // }
+
+  // Check if the user is the admin or has the role 'supremeAlpha'
+  if (
+    groupChat.admin?.toString() !== req.user._id?.toString() &&
+    req.user.userRole !== 'supremeAlpha'
+  ) {
+    throw new ApiError(403, "You are not authorized to change the name");
   }
 
   const updatedGroupChat = await Chat.findByIdAndUpdate(
@@ -1019,9 +1122,16 @@ const deleteGroupChat = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Group chat does not exist");
   }
 
-  // check if the user who is deleting is the group admin
-  if (chat.admin?.toString() !== req.user._id?.toString()) {
-    throw new ApiError(404, "Only admin can delete the group");
+  // // check if the user who is deleting is the group admin
+  // if (chat.admin?.toString() !== req.user._id?.toString()) {
+  //   throw new ApiError(404, "Only admin can delete the group");
+  // }
+  // Check if the user is the admin or has the role 'supremeAlpha'
+  if (
+    groupChat.admin?.toString() !== req.user._id?.toString() &&
+    req.user.userRole !== 'supremeAlpha'
+  ) {
+    throw new ApiError(403, "You are not authorized to delete the pack");
   }
 
   await Chat.findByIdAndDelete(chatId); // delete the chat
@@ -1148,9 +1258,17 @@ const addNewParticipantInGroupChat = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Group chat does not exist");
   }
 
-  // check if user who is adding is a group admin
-  if (groupChat.admin?.toString() !== req.user._id?.toString()) {
-    throw new ApiError(404, "You are not an admin");
+  // // check if user who is adding is a group admin
+  // if (groupChat.admin?.toString() !== req.user._id?.toString()) {
+  //   throw new ApiError(404, "You are not an admin");
+  // }
+
+  // Check if the user is the admin or has the role 'supremeAlpha'
+  if (
+    groupChat.admin?.toString() !== req.user._id?.toString() &&
+    req.user.userRole !== 'supremeAlpha'
+  ) {
+    throw new ApiError(403, "You are not authorized to add participants to pack");
   }
 
   const existingParticipants = groupChat.participants;
@@ -1206,9 +1324,16 @@ const removeParticipantFromGroupChat = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Group chat does not exist");
   }
 
-  // check if user who is deleting is a group admin
-  if (groupChat.admin?.toString() !== req.user._id?.toString()) {
-    throw new ApiError(404, "You are not an admin");
+  // // check if user who is deleting is a group admin
+  // if (groupChat.admin?.toString() !== req.user._id?.toString()) {
+  //   throw new ApiError(404, "You are not an admin");
+  // }
+  // Check if the user is the admin or has the role 'supremeAlpha'
+  if (
+    groupChat.admin?.toString() !== req.user._id?.toString() &&
+    req.user.userRole !== 'supremeAlpha'
+  ) {
+    throw new ApiError(403, "You are not authorized to remove participants from pack");
   }
 
   const existingParticipants = groupChat.participants;
