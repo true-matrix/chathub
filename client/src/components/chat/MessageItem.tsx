@@ -16,6 +16,15 @@ const MessageItem: React.FC<{
   message: ChatMessageInterface;
 }> = ({ message, isOwnMessage, isGroupChatMessage }) => {
   const [resizedImage, setResizedImage] = useState<string | null>(null);
+
+  const containsLink = (text : string) => {
+  // Regular expression to match URLs
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  return urlRegex.test(text);
+  };
+  const openLinkInNewTab = (url : any) => {
+  window.open(url, '_blank');
+};
   return (
     <>
       {resizedImage ? (
@@ -108,9 +117,37 @@ const MessageItem: React.FC<{
             </div>
           ) : null}
 
-          {message.content ? (
+          {/* {message.content ? (
             <p className={classNames("text-sm",isOwnMessage ? "text-zinc-50" : "text-zinc-800")} >{message.content}</p>
-          ) : null}
+          ) : null} */}
+          {
+            message.content ? (
+              <p className={`text-sm ${isOwnMessage ? 'text-zinc-50' : 'text-zinc-800'}`}>
+                {containsLink(message.content) ? (
+                  message.content.split(/(https?:\/\/[^\s]+)/g).map((part, index) => (
+                    containsLink(part) ? (
+                      <a
+                        key={index}
+                        href={part}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          openLinkInNewTab(part);
+                        }}
+                        style={{ color: '#0900ff' }}
+                      >
+                        {part}
+                      </a>
+                    ) : (
+                      <span key={index}>{part}</span>
+                    )
+                  ))
+                ) : (
+                  message.content
+                )}
+              </p>
+            ) : null }
           <p
             className={classNames(
               "mt-1.5 self-end text-[10px] inline-flex items-center",
