@@ -1054,6 +1054,10 @@ const getGroupChatDetails = asyncHandler(async (req, res) => {
       .filter(match => match !== null) // Filter out null matches
       .flat(); // Flatten the array of matches
   
+  // Reverse the arrays before merging
+  attachmentUrls.reverse();
+  contentUrls.reverse();
+  
   // Merge attachment URLs with the group chat details
   const groupChatWithAttachments = {
     ...chat,
