@@ -35,7 +35,7 @@ const MessageItem: React.FC<{
             onClick={() => setResizedImage(null)}
           />
           <img
-            className="w-full h-full object-contain"
+            className="max-w-11/12 object-contain"
             src={resizedImage}
             alt="chat image"
           />
@@ -102,7 +102,7 @@ const MessageItem: React.FC<{
                   return (
                     <div
                       key={file._id}
-                      className="group relative aspect-square rounded-xl overflow-hidden cursor-pointer"
+                      className="group relative  rounded-xl overflow-hidden cursor-pointer"
                     >
                       <button
                         onClick={() => setResizedImage(file.url)}
@@ -121,7 +121,7 @@ const MessageItem: React.FC<{
                         </a>
                       </button>
                       <img
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-contain"
                         src={file.url.toLowerCase().endsWith('.pdf') ? DOC_PREVIEW : file.url}
                         alt="msg_img"
                       />
@@ -136,7 +136,7 @@ const MessageItem: React.FC<{
             ) : null} */}
             {
               message.content ? (
-                <p className={`text-sm ${isOwnMessage ? 'text-zinc-50' : 'text-zinc-800'}`}>
+                <p className={`text-sm ${isOwnMessage ? 'text-zinc-50' : 'text-zinc-800'}  hover:underline underline-offset-1`}>
                   {containsLink(message.content) ? (
                     message.content.split(/(https?:\/\/[^\s]+)/g).map((part, index) => (
                       containsLink(part) ? (
@@ -144,12 +144,12 @@ const MessageItem: React.FC<{
                           key={index}
                           href={part}
                           target="_blank"
+                          className="shared-link"
                           rel="noopener noreferrer"
                           onClick={(e) => {
                             e.preventDefault();
                             openLinkInNewTab(part);
-                          }}
-                          style={{ color: '#0900ff' }}
+                          }} 
                         >
                           {part}
                         </a>

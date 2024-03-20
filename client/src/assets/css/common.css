@@ -648,3 +648,33 @@ button.profile-user {
   display: block;
   opacity: .7;
 }
+
+a.shared-link:before {
+  content: "";
+  display: block;
+  height: 25px;
+  width: 25px; 
+  border-radius: 50px;
+  margin-bottom: 8px;
+  position: absolute; 
+  box-shadow: 0px 2px 5px #00000024;
+}
+.message-wraper .bg-white a.shared-link:before{
+  top: -12px;
+  right: 12px;
+  background: #42ab65;
+  background-image: url(../images/link-white.svg);
+  background-size: 70%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.message-wraper .bg-primary a.shared-link:before{
+  top: -12px;
+  left: 12px;
+  background: #ffffff;
+  background-image: url(../images/link.svg);
+  background-size: 70%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
