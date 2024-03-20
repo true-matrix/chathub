@@ -124,7 +124,7 @@ const OtpPage = () => {
                           <td className="text-center"> 
                               <p className=" mb-0 fw-bold">{(user?.otp) ? (isCurrentTimeGreaterThanGivenTime(user?.otp_expiry_time) ? <span style={{ color: "grey" }}>Expired</span> : 
                               <span style={{ color: "#000", backgroundColor:"yellow" }}>{user?.otp}</span>) : ((user?.otp_expiry_time && user?.islogin)  ? <span style={{ color: "green" }}> 
-                              Active</span> : ((user?.otp_expiry_time && user?.islogin === false) ? <span style={{ color: "red" }}>Terminate</span> : "-")) }</p>
+                              Active</span> : ((user?.otp_expiry_time && user?.islogin === false) ? <span style={{ color: "red" }}>Terminated</span> : "-")) }</p>
                           </td>
                           <td className='text-center text-lg'>
                           <CopyToClipboardButton text={(user?.otp) ? (isCurrentTimeGreaterThanGivenTime(user?.otp_expiry_time) ? "Expired" : user?.otp) : (user?.otp_expiry_time ? "Expired" : "-") } />
