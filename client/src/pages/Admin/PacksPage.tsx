@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import 'react-tabs/style/react-tabs.css';
 import ReactPaginate from 'react-paginate';
 import {  getAllGroups } from "../../api";
-import { LocalStorage, requestHandler } from "../../utils";
+import { LocalStorage, classNames, requestHandler } from "../../utils";
 import moment from "moment";
 import GroupChatDetailsModal from "../../components/chat/GroupChatDetailsModal";
 import { ChatListItemInterface } from "../../interfaces/chat";
@@ -160,14 +160,15 @@ const PacksPage = () => {
                               <div className="text-base font-semibold">{getMonthDayYearTimeValue(pack.createdAt)}</div>
                             </td>
                             <td className="text-center">
-                                  <div className="text-base font-semibold">{(pack.admin === user?._id) ? 'You' : pack.adminName} <span style={{ color: "green" }}>(Admin)</span> </div>
+                                  <div className="text-base font-semibold">{(pack.admin === user?._id) ? 'You' : pack.adminName} </div>
                             </td>
                             <td className="text-center">
                               <div className="text-base font-semibold">{getMonthDayYearTimeValue(pack?.lastMessage?.createdAt) || "-"} </div>
                               {pack?.lastMessage?.sender && <div className="font-normal text-gray-500">By : {pack?.lastMessage?.sender?.name}</div>}
                             </td>
                             <td className="text-center">
-                            <button onClick={() => handlePackModel(pack._id)}  className="focus:outline-none text-white bg-yellow-500 hover:bg-yellow-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2 me-2  dark:focus:ring-yellow-900" >Info</button>
+
+                            <button onClick={() => handlePackModel(pack._id)}  className={ classNames("  focus:outline-none text-white bg-yellow-500  focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2 me-2  dark:focus:ring-yellow-900 " ,(pack.admin === user?._id) ?"hover:bg-green-600":"hover:bg-red-600" )}  title={(pack.admin === user?._id) ?"You are a Admin":"You are not a Admin" }>Info</button> 
                           </td>
                           {/* <td className="text-center">{user.phone ? user.phone : '-'}</td>
                           <td className="text-center">

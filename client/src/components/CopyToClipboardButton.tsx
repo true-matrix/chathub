@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import copy from 'copy-to-clipboard';
 import CopyIcon from '../assets/images/copy.png'; // Assuming you have a copy.svg file
+import Copy from '../assets/images/copy.svg'; // Assuming you have a copy.svg file
 
 export const CopyToClipboardButton = ({ text }: any) => {
   const [isCopied, setIsCopied] = useState(false);
@@ -23,7 +24,7 @@ export const CopyToClipboardButton = ({ text }: any) => {
           {isCopied ? (
             <span className="text-black">Copied!</span>
           ) : (
-              <img src={CopyIcon} width={50} height={50}/>
+              <img src={Copy} width={30} height={30} className='copy-button'/>
           )}
         </div>
       </div>
