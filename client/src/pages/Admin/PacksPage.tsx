@@ -7,6 +7,7 @@ import moment from "moment";
 import GroupChatDetailsModal from "../../components/chat/GroupChatDetailsModal";
 import { ChatListItemInterface } from "../../interfaces/chat";
 import { useAuth } from "../../context/AuthContext";
+import { getMonthDayYearTimeValue } from "../../commonhelper";
 
 const PacksPage = () => {
     const [currentPage, setCurrentPage] = useState(0);
@@ -59,6 +60,9 @@ const PacksPage = () => {
         
     const tableFields = [
             { key: "name", value: "Name" },
+            { key: "createdOn", value: "Created On" },
+            { key: "createdBy", value: "Created By" },
+            { key: "lastActivity", value: "Last Activity" },
             { key: "action", value: "Action" },
             // { key: "otp-received-time", value: "OTP Received Time" },
             // { key: "otp", value: "OTP" },
@@ -134,11 +138,7 @@ const PacksPage = () => {
                               <div className="ps-3">
                                   <div className="text-base font-semibold">{pack.name}</div>
                                   <div className="font-normal text-gray-500">{pack.participants?.length} membsrs</div>
-                              </div> 
-                              {/* <div className="ps-3 text-center focus:outline-none text-white bg-yellow-500 hover:bg-yellow-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2 me-2">
-                                You are not admin
-                              </div> */}
-                             {(pack.admin === user?._id) ? (<div className="px-4"> 
+                                {(pack.admin === user?._id) ? (<div className="px-0.5"> 
                                     <div className="flex items-center bg-green-500 text-white font-medium rounded-lg text-sm px-4 py-2 me-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                                             <path fill-rule="evenodd" d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm0-1a9 9 0 1 1 0 18 9 9 0 0 1 0-18zm0 7a1 1 0 0 1 1 1v5a1 1 0 1 1-2 0V9a1 1 0 0 1 1-1zm0-2a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" clip-rule="evenodd" />
@@ -146,7 +146,7 @@ const PacksPage = () => {
                                         You are admin
                                     </div>
                                 </div>)
-                              : (<div className="px-4">
+                              : (<div className="px-0.5">
                                 <div className="flex items-center bg-red-500 text-white font-medium rounded-lg text-sm px-4 py-2 me-2">
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm0-1a9 9 0 1 1 0 18 9 9 0 0 1 0-18zm0 7a1 1 0 0 1 1 1v5a1 1 0 1 1-2 0V9a1 1 0 0 1 1-1zm0-2a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" clip-rule="evenodd" />
@@ -154,6 +154,17 @@ const PacksPage = () => {
                                     You are not pack admin
                                 </div>
                             </div>)}
+                              </div> 
+                            </td>
+                            <td className="text-center">
+                              <div className="text-base font-semibold">{getMonthDayYearTimeValue(pack.createdAt)}</div>
+                            </td>
+                            <td className="text-center">
+                                  <div className="text-base font-semibold">{(pack.admin === user?._id) ? 'You' : pack.adminName} </div>
+                            </td>
+                            <td className="text-center">
+                              <div className="text-base font-semibold">{getMonthDayYearTimeValue(pack?.lastMessage?.createdAt) || "-"} </div>
+                              {pack?.lastMessage?.sender && <div className="font-normal text-gray-500">By : {pack?.lastMessage?.sender?.name}</div>}
                             </td>
                             <td className="text-center">
                             <button onClick={() => handlePackModel(pack._id)}  className="focus:outline-none text-white bg-yellow-500 hover:bg-yellow-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2 me-2  dark:focus:ring-yellow-900" >Info</button>
