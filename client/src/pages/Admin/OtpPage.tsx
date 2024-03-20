@@ -55,8 +55,8 @@ const OtpPage = () => {
           //   { key: "image", value: "Image" },
             { key: "name", value: "Name" },
           //   { key: "email", value: "Email" },
-            { key: "phone", value: "Phone No." },
-            { key: "otp-received-time", value: "OTP Received Time" },
+            // { key: "phone", value: "Phone No." },
+            { key: "requested-at", value: "Requested At" },
             { key: "otp", value: "OTP" },
             { key: "copy-otp", value: "Copy" },
           ];
@@ -117,7 +117,6 @@ const OtpPage = () => {
                                   <div className="font-normal text-gray-500">{user.email}</div>
                               </div>  
                           </td>
-                          <td className="text-center">{user.phone ? user.phone : '-'}</td>
                           <td className="text-center">
                           {user?.otp_send_time ? <p className=" mb-0"> {getMonthDayYearTimeValue(user.otp_send_time)}</p> : <p>-</p>}
                           </td>
