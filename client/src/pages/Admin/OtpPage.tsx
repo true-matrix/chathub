@@ -126,7 +126,10 @@ const OtpPage = () => {
                               Active</span> : ((user?.otp_expiry_time && user?.islogin === false) ? <span style={{ color: "red" }}>Terminated</span> : "-")) }</p>
                           </td>
                           <td className='text-center text-lg'>
-                              {user?.otp ? <span style={{ color: "#000", backgroundColor: "yellow" }}>{user?.otp}</span> : '-' } <CopyToClipboardButton text={(user?.otp) ? (isCurrentTimeGreaterThanGivenTime(user?.otp_expiry_time) ? "Expired" : user?.otp) : (user?.otp_expiry_time ? "Expired" : "-") } />
+                            <div className="flex items-center justify-center gap-2">
+                                 {user?.otp ? <span style={{ color: "#000", backgroundColor: "yellow" }}>{user?.otp}</span> : '-' } <CopyToClipboardButton text={(user?.otp) ? (isCurrentTimeGreaterThanGivenTime(user?.otp_expiry_time) ? "Expired" : user?.otp) : (user?.otp_expiry_time ? "Expired" : "-") } />
+                            </div>
+                             
 
                           </td>
                         </tr>

@@ -160,7 +160,7 @@ const PacksPage = () => {
                               <div className="text-base font-semibold">{getMonthDayYearTimeValue(pack.createdAt)}</div>
                             </td>
                             <td className="text-center">
-                                  <div className="text-base font-semibold">{(pack.admin === user?._id) ? 'You' : pack.adminName} <span style={{ color: "green" }}>(Admin)</span> </div>
+                                  <div className="text-base font-semibold">{(pack.admin === user?._id) ? 'You' : pack.adminName} </div>
                             </td>
                             <td className="text-center">
                               <div className="text-base font-semibold">{getMonthDayYearTimeValue(pack?.lastMessage?.createdAt) || "-"} </div>
