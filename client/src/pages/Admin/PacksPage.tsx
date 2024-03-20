@@ -8,7 +8,8 @@ import GroupChatDetailsModal from "../../components/chat/GroupChatDetailsModal";
 import { ChatListItemInterface } from "../../interfaces/chat";
 import { useAuth } from "../../context/AuthContext";
 import { getMonthDayYearTimeValue } from "../../commonhelper";
-
+import wolf_red from "../../../src/assets/images/wolflogo-red.svg";
+import wolf_green from "../../../src/assets/images/wolflogo-green.svg";
 const PacksPage = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
@@ -160,7 +161,7 @@ const PacksPage = () => {
                               <div className="text-base font-semibold">{getMonthDayYearTimeValue(pack.createdAt)}</div>
                             </td>
                             <td className="text-center">
-                                  <div className="text-base font-semibold">{(pack.admin === user?._id) ? 'You' : pack.adminName} </div>
+                                  <div className="text-base font-semibold flex justify-center gap-2">{(pack.admin === user?._id) ? 'You' : pack.adminName} {(pack.admin === user?._id) ?  <img src={wolf_green} title="You are a Admin"/>: <img src={wolf_red} title="You are not a Admin"/> }</div>
                             </td>
                             <td className="text-center">
                               <div className="text-base font-semibold">{getMonthDayYearTimeValue(pack?.lastMessage?.createdAt) || "-"} </div>
