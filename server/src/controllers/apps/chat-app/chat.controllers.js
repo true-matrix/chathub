@@ -151,6 +151,25 @@ const chatMessageCommonAggregation = () => {
     },
   ];
 };
+
+const adminNamePopulateAggregation = () => {
+  return [
+    // Populate the admin field to get the adminName
+    {
+      $lookup: {
+        from: 'users', // Assuming your users collection is named 'users'
+        localField: 'admin',
+        foreignField: '_id',
+        as: 'adminName'
+      }
+    },
+    {
+      $addFields: {
+        adminName: { $arrayElemAt: ['$adminName.name', 0] } // Get the name from the adminName array
+      }
+    },
+  ]
+}
 /**
  *
  * @param {string} chatId
@@ -1442,13 +1461,15 @@ const getAllGroups = asyncHandler(async (req, res) => {
     const userIds = users.map(user => user._id);
 
     // Step 3: Use aggregate to find all chats where participants' _id matches the userIds, isGroupChat is true, and apply additional common aggregation stages
-    const groups = await Chat.aggregate([
-      {
-        $match: {
-          participants: { $in: userIds },
-          isGroupChat: true
-        }
-      },
+  const groups = await Chat.aggregate([
+    {
+      $match: {
+        participants: { $in: userIds },
+        isGroupChat: true
+      }
+    },
+    
+      ...adminNamePopulateAggregation(),
       ...groupChatCommonAggregation() // Assuming groupChatCommonAggregation() returns additional stages
     ]);
   // const chats = await Chat.aggregate([
