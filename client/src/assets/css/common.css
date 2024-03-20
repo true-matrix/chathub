@@ -626,3 +626,25 @@ button.profile-user {
   background: #fff;
   width: 100%;
 }
+
+
+.dropdown-icon {
+  position: absolute; 
+  top: 0;
+  opacity: .7;
+  cursor: pointer;
+  display: none;
+}
+
+.dropdown-icon.dropdown-icon-left{
+  left:-20px;
+}
+
+.dropdown-icon.dropdown-icon-right{
+  right: -20px; 
+}
+
+.message-wraper:hover .dropdown-icon{
+  display: block;
+  opacity: .7;
+}
