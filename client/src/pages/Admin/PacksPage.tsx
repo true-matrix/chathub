@@ -138,7 +138,7 @@ const PacksPage = () => {
                               <div className="ps-3">
                                   <div className="text-base font-semibold">{pack.name}</div>
                                   <div className="font-normal text-gray-500">{pack.participants?.length} membsrs</div>
-                                {(pack.admin === user?._id) ? (<div className="px-0.5"> 
+                                {/* {(pack.admin === user?._id) ? (<div className="px-0.5"> 
                                     <div className="flex items-center bg-green-500 text-white font-medium rounded-lg text-sm px-4 py-2 me-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                                             <path fill-rule="evenodd" d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm0-1a9 9 0 1 1 0 18 9 9 0 0 1 0-18zm0 7a1 1 0 0 1 1 1v5a1 1 0 1 1-2 0V9a1 1 0 0 1 1-1zm0-2a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" clip-rule="evenodd" />
@@ -153,14 +153,14 @@ const PacksPage = () => {
                                     </svg>
                                     You are not pack admin
                                 </div>
-                            </div>)}
+                            </div>)} */}
                               </div> 
                             </td>
                             <td className="text-center">
                               <div className="text-base font-semibold">{getMonthDayYearTimeValue(pack.createdAt)}</div>
                             </td>
                             <td className="text-center">
-                                  <div className="text-base font-semibold">{(pack.admin === user?._id) ? 'You' : pack.adminName} </div>
+                                  <div className="text-base font-semibold">{(pack.admin === user?._id) ? 'You' : pack.adminName} <span style={{ color: "green" }}>(Admin)</span> </div>
                             </td>
                             <td className="text-center">
                               <div className="text-base font-semibold">{getMonthDayYearTimeValue(pack?.lastMessage?.createdAt) || "-"} </div>
