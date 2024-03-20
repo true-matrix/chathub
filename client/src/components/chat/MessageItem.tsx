@@ -6,7 +6,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { useState } from "react";
 import { ChatMessageInterface } from "../../interfaces/chat";
-import { classNames } from "../../utils";
+import { LocalStorage, classNames } from "../../utils";
 import { getRecentTime } from "../../commonhelper";
 import DOC_PREVIEW from "../../assets/images/doc-preview.png";
 import dropdown_icon from "../../assets/images/dropdown-dots.svg";
@@ -25,7 +25,14 @@ const MessageItem: React.FC<{
   };
   const openLinkInNewTab = (url : any) => {
   window.open(url, '_blank');
-};
+  };
+  const handleSenderClick = (name : string) => {
+    console.log(name);
+    
+    // Update LocalStorage to switch to the corresponding chat item
+    // LocalStorage.set("currentChat", { _id: message.chat });
+    // You may also trigger any necessary actions here, like fetching messages for the new chat item
+  };
   return (
     <>
       {resizedImage ? (
@@ -83,6 +90,8 @@ const MessageItem: React.FC<{
                     message.sender.name.length % 2
                   ]
                 )}
+                onClick={() => handleSenderClick(message.sender?._id)}
+                style={{ cursor: "pointer" }}
               >
                 {message.sender?.name}
               </p>
