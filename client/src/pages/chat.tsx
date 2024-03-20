@@ -470,7 +470,7 @@ const ChatPage = () => {
               onClick={() => setOpenAddChat(true)}
               className="rounded-xl border-none bg-primary text-white text-sm py-3 px-4 flex flex-shrink-0"
             >
-              + New chat
+               New chat
             </button>
           </div>
           {loadingChats ? (
