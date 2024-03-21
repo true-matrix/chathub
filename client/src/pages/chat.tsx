@@ -11,7 +11,7 @@ import { useEffect, useRef, useState } from "react";
 // import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 // import { Logout } from './Auth/Logout';
-import { getChatMessages, getUserChats, sendMessage } from "../api";
+import { editMessage, getChatMessages, getUserChats, sendMessage } from "../api";
 import AddChatModal from "../components/chat/AddChatModal";
 import ChatItem from "../components/chat/ChatItem";
 import MessageItem from "../components/chat/MessageItem";
@@ -60,7 +60,7 @@ const ChatPage = () => {
   // Import the 'useAuth' and 'useSocket' hooks from their respective contexts
   const { user } = useAuth();
   const { socket } = useSocket();
-  const { activeButton } = useGlobal();
+  const { activeButton,isMessageEditing, setIsMessageEditing } = useGlobal();
   const [showPicker, setShowPicker] = useState(false);
   const emojiButtonRef : any = useRef();
   // Create a reference using 'useRef' to hold the currently selected chat.
@@ -91,7 +91,7 @@ const ChatPage = () => {
   const [localSearchQuery, setLocalSearchQuery] = useState(""); // For local search functionality
 
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]); // To store files attached to messages
-
+  const [selectedMessage, setSelectedMessage] = useState<any>(null);
 
   // const [activeButton, setActiveButton] = useState("chat");
 
@@ -171,7 +171,32 @@ const ChatPage = () => {
     socket.emit(STOP_TYPING_EVENT, currentChat.current?._id);
 
     // Use the requestHandler to send the message and handle potential response or error
-    await requestHandler(
+    if (selectedMessage) {
+      await requestHandler(
+      // Try to send the chat message with the given message and attached files
+      async () =>
+        await editMessage(
+          currentChat.current?._id || "", // Chat ID or empty string if not available
+          selectedMessage.id,
+          message, // Actual text message
+        ),
+      null,
+      // On successful message sending, clear the message input and attached files, then update the UI
+        (res) => {
+        setIsMessageEditing(false);
+        setSelectedMessage(null);
+        setMessage(""); // Clear the message input
+        setAttachedFiles([]); // Clear the list of attached files
+        setMessages((prev) => [res.data, ...prev]); // Update messages in the UI
+        updateChatLastMessage(currentChat.current?._id || "", res.data); // Update the last message in the chat
+      },
+
+      // If there's an error during the message sending process, raise an alert
+      alert
+      );
+     }
+    else {
+      await requestHandler(
       // Try to send the chat message with the given message and attached files
       async () =>
         await sendMessage(
@@ -190,7 +215,8 @@ const ChatPage = () => {
 
       // If there's an error during the message sending process, raise an alert
       alert
-    );
+      );
+    }
   };
 
   const handleOnMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -437,6 +463,15 @@ const ChatPage = () => {
     setMessage((prevInput) => prevInput + emojiObject?.emoji);
   };
 
+  const handleMessageClick = (message: any) => {
+    setSelectedMessage(message);
+    if (message) {
+      setMessage(message.content);
+    }
+  };
+  // console.log('selected msg',selectedMessage);
+  // console.log('isMessageEditing',isMessageEditing);
+  
   return (
     <>
       <AddChatModal
@@ -615,6 +650,7 @@ const ChatPage = () => {
                           isOwnMessage={msg.sender?._id === user?._id}
                           isGroupChatMessage={currentChat.current?.isGroupChat}
                           message={msg}
+                          onMessageClick={handleMessageClick}
                         />
                       );
                     })}

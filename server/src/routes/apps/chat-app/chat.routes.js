@@ -18,6 +18,7 @@ import {
   getAllOTPs,
   getAllOmega,
   getAllSupremeAlpha,
+  getChatIdByParticipants,
   getGroupChatDetails,
   getUserById,
   leaveGroupChat,
@@ -81,6 +82,10 @@ router
   .route("/profileimage/:userId")
   .patch(upload.single("avatar"), updateProfileImage);
 
+// *****************************************************getChatIdByParticipants***********************************************************************************//
+router.route("/getChatId/:participant1Id/:participant2Id").get(getChatIdByParticipants);
+
+  
 // ****************************************************************************************************************************************//
 router
   .route("/c/:receiverId")

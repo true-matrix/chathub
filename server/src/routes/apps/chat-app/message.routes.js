@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  editMessage,
   getAllMessages,
   sendMessage,
 } from "../../../controllers/apps/chat-app/message.controllers.js";
@@ -22,6 +23,15 @@ router
     sendMessageValidator(),
     validate,
     sendMessage
-  );
+);
+  
+router.put("/:chatId/:messageId",
+  upload.fields([{ name: "attachments", maxCount: 5 }]), // If you need to handle attachments
+  mongoIdPathVariableValidator("chatId"), // Validate the chat ID path variable
+  mongoIdPathVariableValidator("messageId"), // Validate the message ID path variable
+  sendMessageValidator(), // Validate the request body
+  validate, // Validate the request
+  editMessage// Handle message editing
+);
 
 export default router;

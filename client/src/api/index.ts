@@ -192,6 +192,12 @@ const updateProfile = (
 ) => {
   return apiClient.patch(`/chat-app/chats/updateprofile/${userId}`, data);
 };
+// **************************************************************getChatIdByParticipants******************************************************************************//
+const getChatId = (participant1Id: string, participant2Id: string) => {
+  return apiClient.get(
+    `/chat-app/chats/getChatId/${participant1Id}/${participant2Id}`
+  );
+};
 // ********************************************************************************************************************************************//
 
 const logoutUser = () => {
@@ -257,6 +263,22 @@ const sendMessage = (chatId: string, content: string, attachments: File[]) => {
   return apiClient.post(`/chat-app/messages/${chatId}`, formData);
 };
 
+const editMessage = (
+  chatId: string,
+  messageId: string,
+  content: string
+  // attachments: File[]
+) => {
+  // const formData = new FormData();
+  // if (content) {
+  //   formData.append("content", content);
+  // }
+  // attachments?.map((file) => {
+  //   formData.append("attachments", file);
+  // });
+  return apiClient.put(`/chat-app/messages/${chatId}/${messageId}`, content);
+};
+
 // Export all the API functions
 export {
   addParticipantToGroup,
@@ -293,4 +315,6 @@ export {
   updateProfile,
   updateProfileImage,
   getAllGroups,
+  getChatId,
+  editMessage,
 };
