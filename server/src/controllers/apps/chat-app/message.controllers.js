@@ -161,4 +161,45 @@ const sendMessage = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, receivedMessage, "Message saved successfully"));
 });
 
-export { getAllMessages, sendMessage };
+// Define a route handler to handle message editing
+const editMessage = async (req, res) => {
+  try {
+    console.log('req.body',req.body);
+    const { chatId, messageId } = req.params;
+    const content  = Object.keys(req.body)[0];
+
+    // Validate the content
+    if (!content) {
+      return res.status(400).json({ error: "Message content is required" });
+    }
+
+    // Find the chat in the database
+    const chat = await Chat.findById(chatId);
+
+    if (!chat) {
+      return res.status(404).json({ error: "Chat not found" });
+    }
+
+    // Find the message to edit
+    const message = await ChatMessage.findById(messageId);
+
+    if (!message) {
+      return res.status(404).json({ error: "Message not found" });
+    }
+
+    // Update the message content
+    message.content = content;
+    await message.save();
+
+    // Optionally, emit a socket event to notify other participants about the edited message
+    // EmitSocketEvent();
+
+    return res.status(200).json({ message: "Message edited successfully" });
+  } catch (error) {
+    console.error("Error editing message:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+export { getAllMessages, sendMessage, editMessage };

@@ -1493,6 +1493,28 @@ const getAllGroups = asyncHandler(async (req, res) => {
     );
 });
 
+//Get ChatId by participants ids one-to-one-chat getChatIdByParticipants
+const getChatIdByParticipants = asyncHandler(async (req, res) => {
+  const { participant1Id, participant2Id } = req.params;
+
+  // Perform validation or error handling for participant IDs if needed
+
+  const chat = await Chat.findOne({
+    $and: [
+      { participants: { $all: [new mongoose.Types.ObjectId(participant1Id), new mongoose.Types.ObjectId(participant2Id)] } },
+      { isGroupChat: false }
+    ]
+  });
+
+  if (!chat) {
+    throw new ApiError(404, "Chat not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { chatId: chat._id }, "Chat ID fetched successfully"));
+});
+
 
 export {
   addNewParticipantInGroupChat,
@@ -1523,5 +1545,6 @@ export {
   getAllContacts,
   updateProfile,
   updateProfileImage,
-  getAllGroups
+  getAllGroups,
+  getChatIdByParticipants
 };

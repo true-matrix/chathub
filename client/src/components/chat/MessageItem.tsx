@@ -4,19 +4,53 @@ import {
   PaperClipIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
-import { useState } from "react";
-import { ChatMessageInterface } from "../../interfaces/chat";
-import { LocalStorage, classNames } from "../../utils";
+import { useEffect, useRef, useState } from "react";
+import { ChatListItemInterface, ChatMessageInterface } from "../../interfaces/chat";
+import { LocalStorage, classNames, requestHandler } from "../../utils";
 import { getRecentTime } from "../../commonhelper";
 import DOC_PREVIEW from "../../assets/images/doc-preview.png";
 import dropdown_icon from "../../assets/images/dropdown-dots.svg";
+import { createUserChat, editMessage, getChatId, getChatMessages } from "../../api";
+import { useAuth } from "../../context/AuthContext";
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
+import {PencilIcon, TrashIcon, ArrowUturnLeftIcon } from '@heroicons/react/20/solid';
+import CopyText from "../CopyText";
+import { useGlobal } from "../../context/GlobalContext";
 
 const MessageItem: React.FC<{
   isOwnMessage?: boolean;
   isGroupChatMessage?: boolean;
   message: ChatMessageInterface;
-}> = ({ message, isOwnMessage, isGroupChatMessage }) => {
+  onMessageClick?: any;
+}> = ({ message, isOwnMessage, isGroupChatMessage, onMessageClick }) => {
   const [resizedImage, setResizedImage] = useState<string | null>(null);
+  const [creatingChat, setCreatingChat] = useState(false);
+  const [dataLoading, setDataLoading] = useState(false);
+  const currentChat = useRef<ChatListItemInterface | null>(null);
+  const { user } = useAuth();
+  const { setIsMessageEditing } = useGlobal();
+  const messageItemRef = useRef<HTMLDivElement>(null);
+
+  // useEffect(() => {
+  //   const handleClickOutside = (event: MouseEvent) => {
+  //     const isClickedInsideMessageItem = event.target instanceof Node && 
+  //       // Replace 'messageItemRef' with the actual ref pointing to the root element of MessageItem component
+  //       messageItemRef.current?.contains(event.target as Node);
+
+  //     if (!isClickedInsideMessageItem) {
+  //       setIsMessageEditing(false);
+  //       onMessageClick(null);
+  //     }
+  //   };
+
+  //   document.body.addEventListener("click", handleClickOutside);
+
+  //   return () => {
+  //     document.body.removeEventListener("click", handleClickOutside);
+  //   };
+  // }, [setIsMessageEditing]);
+
 
   const containsLink = (text : string) => {
   // Regular expression to match URLs
@@ -26,13 +60,41 @@ const MessageItem: React.FC<{
   const openLinkInNewTab = (url : any) => {
   window.open(url, '_blank');
   };
-  const handleSenderClick = (name : string) => {
-    console.log(name);
-    
-    // Update LocalStorage to switch to the corresponding chat item
-    // LocalStorage.set("currentChat", { _id: message.chat });
-    // You may also trigger any necessary actions here, like fetching messages for the new chat item
+
+  // Function to create a new chat with a user
+  const createNewChat = async (selectedUserId: string) => {
+    let chatId: string;
+    // Handle the request to create a chat
+    await requestHandler(
+          async () => await getChatId(selectedUserId, user._id),
+          setDataLoading,
+      (res) => {
+        const { data } = res; // Extract data from response
+        chatId = data.chatId;
+          },
+          alert // Display error alerts on request failure
+        );
+    await requestHandler(
+      async () => await getChatMessages(chatId),
+      setCreatingChat, // Callback to handle loading state
+      (res) => {
+        const { data } = res; // Extract data from response
+        if (
+              currentChat.current?._id &&
+              currentChat.current?._id === data._id
+            )
+          return;
+        LocalStorage.set("currentChat", data);
+        LocalStorage.set("unreadMessages", []);
+                      currentChat.current = data;
+      },
+      alert // Use the alert as the error handler
+    );
   };
+  const handleEditMessage = (message: any) => {
+    onMessageClick(message);
+    setIsMessageEditing(true);
+  }
   return (
     <>
       {resizedImage ? (
@@ -63,15 +125,33 @@ const MessageItem: React.FC<{
               isOwnMessage ? "order-2" : "order-1"
             )}
           />
-          
-
           <div className={classNames(
               "dropdown-icon",
               isOwnMessage
                 ? "dropdown-icon-left"
                 : "dropdown-icon-right"
-            )}>
-              <img src={dropdown_icon} />
+          )}>
+            <Popup trigger={<button><img src={dropdown_icon} />
+              </button>} position={isOwnMessage ? "left center" : "right center"}>
+              <div className="flex flex-col gap-2">
+                {message.content && <div className="flex items-center">
+                  <CopyText textToCopy={message.content} />
+                </div>}
+                {message.content && <div className="flex items-center" onClick={() => handleEditMessage({ 'content': message.content, 'id': message._id })}>
+                  <PencilIcon className="w-5 h-5 mr-2" />
+                  <span>Edit</span>
+                </div>}
+                <div className="flex items-center">
+                  <TrashIcon className="w-5 h-5 mr-2" />
+                  <span>Delete</span>
+                </div> 
+                {/* <div className="flex items-center">
+                  <ArrowUturnLeftIcon className="w-5 h-5 mr-2" />
+                  <span>Reply</span>
+                </div>  */}
+              </div>
+            </Popup>
+              {/* <img src={dropdown_icon} /> */}
           </div>
 
           <div
@@ -90,7 +170,7 @@ const MessageItem: React.FC<{
                     message.sender.name.length % 2
                   ]
                 )}
-                onClick={() => handleSenderClick(message.sender?._id)}
+                // onClick={() => createNewChat(message.sender?._id)}
                 style={{ cursor: "pointer" }}
               >
                 {message.sender?.name}
