@@ -4,11 +4,11 @@ import {
   TrashIcon,
 } from "@heroicons/react/20/solid";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { deleteOneOnOneChat } from "../../api";
 import { useAuth } from "../../context/AuthContext";
 import { ChatListItemInterface } from "../../interfaces/chat";
-import { classNames, getChatObjectMetadata, requestHandler } from "../../utils";
+import { LocalStorage, classNames, getChatObjectMetadata, requestHandler } from "../../utils";
 import GroupChatDetailsModal from "./GroupChatDetailsModal";
 import { getRecentTime } from "../../commonhelper";
 
@@ -18,12 +18,44 @@ const ChatItem: React.FC<{
   isActive?: boolean;
   unreadCount?: number;
   onChatDelete: (chatId: string) => void;
-}> = ({ chat, onClick, isActive, unreadCount = 0, onChatDelete }) => {
+  isOnline?: any;
+}> = ({ chat, onClick, isActive, unreadCount = 0, onChatDelete, isOnline }) => {
   const { user } = useAuth();
   // const { openGroupInfo, setOpenGroupInfo } = useGlobal();
   const [openOptions, setOpenOptions] = useState(false);
   const [openGroupInfo, setOpenGroupInfo] = useState(false);
-
+//  const getUserChatsOnlineStatus = () => {
+//     const userChats = LocalStorage.get('userChats');
+//     const res = userChats.map((group : any) => {
+//       // if (!group.isGroupChat) {
+//           if(chat._id === group._id){
+//             group.participants.forEach((participant : any) => {
+//               if (participant._id !== user._id) {
+//                   return participant.islogin == true ? true : false;
+//                 }
+//             });
+//           }
+//         // }
+//     });
+//    console.log('res',res);
+//    return res;
+  //   }
+  const getUserChatsOnlineStatus = () => {
+    const userChats = LocalStorage.get('userChats');
+    const res = userChats.map((group : any) => {
+        if (chat._id === group._id) {
+            return group.participants.some((participant : any) => {
+                return participant._id !== user._id && participant.islogin;
+            });
+        }
+    })
+    return res.some((value:any) => value !== null && value !== undefined);
+}
+  useEffect(() => {
+    const userChats = LocalStorage.get('userChats');
+    const isChatOnline = userChats.find((group:any) => group._id === chat._id)?.participants.some((participant:any) => participant._id !== user._id && participant.islogin) || false;
+    console.log('isChatOnline',isChatOnline)
+  },[])
   // Define an asynchronous function named 'deleteChat'.
   const deleteChat = async () => {
     await requestHandler(
@@ -136,12 +168,13 @@ const ChatItem: React.FC<{
               //     );
               //   })}
               // </div>
-            ) : (
+            ) : (<>
               <img
-                src={getChatObjectMetadata(chat, user!).avatar}
-                className="w-12 h-12 rounded-full object-cover"
-              />
-            )}
+                  src={getChatObjectMetadata(chat, user!).avatar}
+                  // className="w-12 h-12 rounded-full object-cover"
+                  className={`w-12 h-12 rounded-full object-cover border-4 ${isOnline ? 'border-green-500' : 'border-red-500'}`}
+                />
+            </>)}
           </div>
           <div className="w-full">
             <p className="truncate-1 text-sm">

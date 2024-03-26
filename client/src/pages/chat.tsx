@@ -92,7 +92,12 @@ const ChatPage = () => {
 
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]); // To store files attached to messages
   const [selectedMessage, setSelectedMessage] = useState<any>(null);
-
+  const [userChats, setUserChats] = useState<any>([]);
+  useEffect(() => {
+        // Fetch initial userChats data when component mounts
+        const initialUserChats = LocalStorage.get('userChats');
+        setUserChats(initialUserChats);
+    }, [socket,isConnected]);
   // const [activeButton, setActiveButton] = useState("chat");
 
   /**
@@ -125,6 +130,7 @@ const ChatPage = () => {
       (res) => {
         const { data } = res;
         setChats(data || []);
+        LocalStorage.set("userChats", data);
       },
       alert
     );
@@ -254,13 +260,73 @@ const ChatPage = () => {
     }, timerLength);
   };
 
-  const onConnect = () => {
-    setIsConnected(true);
-  };
+  // const onConnect = () => {
+  //   setIsConnected(true);
 
-  const onDisconnect = () => {
-    setIsConnected(false);
-  };
+  //   const userChats : any = LocalStorage.get('userChats');
+  //   const updatedData = userChats.map((group : any) => {
+  //       if (!group.isGroupChat) {
+  //           group.participants.forEach((participant : any) => {
+  //               if (participant._id !== user._id) {
+  //                   participant.islogin = true;
+  //               }
+  //           });
+  //       }
+  //       return group;
+  //   });
+  //   LocalStorage.set('userChats', updatedData);
+  // };
+
+  // const onDisconnect = () => {
+  //   setIsConnected(false);
+
+  //   const userChats : any = LocalStorage.get('userChats');
+  //   const updatedData = userChats.map((group : any) => {
+  //       if (!group.isGroupChat) {
+  //           group.participants.forEach((participant : any) => {
+  //               if (participant._id !== user._id) {
+  //                   participant.islogin = false;
+  //               }
+  //           });
+  //       }
+  //       return group;
+  //   });
+  //   LocalStorage.set('userChats', updatedData);
+  // };
+
+   const updateUserChats = (newUserChats : any) => {
+        setUserChats(newUserChats);
+    };
+
+    const onConnect = () => {
+        setIsConnected(true);
+        const newUserChats = userChats.map((group:any) => {
+            if (!group.isGroupChat) {
+                group.participants.forEach((participant:any) => {
+                    if (participant._id !== user._id) {
+                        participant.islogin = true;
+                    }
+                });
+            }
+            return group;
+        });
+        updateUserChats(newUserChats);
+    };
+
+    const onDisconnect = () => {
+        setIsConnected(false);
+        const newUserChats = userChats.map((group:any) => {
+            if (!group.isGroupChat) {
+                group.participants.forEach((participant:any) => {
+                    if (participant._id !== user._id) {
+                        participant.islogin = false;
+                    }
+                });
+            }
+            return group;
+        });
+        updateUserChats(newUserChats);
+    };
 
   /**
    * Handles the "typing" event on the socket.
@@ -471,7 +537,8 @@ const ChatPage = () => {
   };
   // console.log('selected msg',selectedMessage);
   // console.log('isMessageEditing',isMessageEditing);
-  
+    // const isChatOnline = userChats.find((group:any) => group._id === chat._id)?.participants.some((participant:any) => participant._id !== user._id && participant.islogin) || false;
+   
   return (
     <>
       <AddChatModal
@@ -529,6 +596,7 @@ const ChatPage = () => {
                 return (
                   <ChatItem
                     chat={chat}
+                    isOnline={userChats.find((group:any) => group._id === chat._id)?.participants.some((participant:any) => participant._id !== user._id && participant.islogin) || false}
                     isActive={chat._id === currentChat.current?._id}
                     unreadCount={
                       unreadMessages.filter((n) => n.chat === chat._id).length

@@ -79,14 +79,17 @@ const initializeSocketIO = (io) => {
       socket.join(user._id.toString());
       socket.emit(ChatEventEnum.CONNECTED_EVENT); // emit the connected event so that client is aware
       console.log("User connected 🗼. userId: ", user._id.toString());
+      await User.findByIdAndUpdate({ _id: decodedToken?._id }, { $set: { islogin: true } })
 
       // Common events that needs to be mounted on the initialization
       mountJoinChatEvent(socket);
       mountParticipantTypingEvent(socket);
       mountParticipantStoppedTypingEvent(socket);
 
-      socket.on(ChatEventEnum.DISCONNECT_EVENT, () => {
+      socket.on(ChatEventEnum.DISCONNECT_EVENT, async () => {
         console.log("user has disconnected 🚫. userId: " + socket.user?._id);
+        await User.findByIdAndUpdate({ _id: socket.user?._id }, { $set: { islogin: false } })
+
         if (socket.user?._id) {
           socket.leave(socket.user._id);
         }
@@ -111,5 +114,4 @@ const initializeSocketIO = (io) => {
 const emitSocketEvent = (req, roomId, event, payload) => {
   req.app.get("io").in(roomId).emit(event, payload);
 };
-
 export { initializeSocketIO, emitSocketEvent };
