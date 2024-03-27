@@ -580,10 +580,14 @@ const ChatPage = () => {
       setMessage(message.content);
     }
   };
-  // console.log('selected msg',selectedMessage);
+  console.log('selected msg',selectedMessage);
   // console.log('isMessageEditing',isMessageEditing);
-    // const isChatOnline = userChats.find((group:any) => group._id === chat._id)?.participants.some((participant:any) => participant._id !== user._id && participant.islogin) || false;
-   
+  // const isChatOnline = userChats.find((group:any) => group._id === chat._id)?.participants.some((participant:any) => participant._id !== user._id && participant.islogin) || false;
+  const handleCloseEditing = () => {
+    setIsMessageEditing(false);
+    setSelectedMessage(null); // Reset selected message
+    setMessage("");
+  };
   return (
     <>
       <AddChatModal
@@ -802,10 +806,10 @@ const ChatPage = () => {
               ) : null}
 
 
-                <div className="edit-message-container flex gap-2 p-3 justify-start w-100 flex-wrap">   
+                {isMessageEditing && <div className="edit-message-container flex gap-2 p-3 justify-start w-100 flex-wrap">   
                     <div className="edit-message">
 
-                      <button className="absolute top-2 right-2">
+                  <button className="absolute top-2 right-2" onClick={() => handleCloseEditing()}>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" className="h-5 w-5 text-red-500 bg-white rounded-full"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd"></path></svg>
                       </button>
 
@@ -814,9 +818,9 @@ const ChatPage = () => {
                       </div>
                   
                         
-                        <p className="text-sm">Edit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit Message</p>
+                        <p className="truncate-1 text-sm">{selectedMessage.content}</p>
                     </div> 
-                </div>
+                </div> }
 
               <div className="sticky top-full p-4 flex justify-between items-center w-full gap-2 border-t-[0.1px] border-secondary">
                 <input
