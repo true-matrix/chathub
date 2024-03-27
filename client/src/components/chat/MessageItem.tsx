@@ -133,9 +133,9 @@ const MessageItem: React.FC<{
           )}>
             <Popup trigger={<button><img src={dropdown_icon} />
               </button>} position={isOwnMessage ? "left center" : "right center"}>
-              <div className="flex flex-col gap-2">
-                {message.content && <div className="flex items-center">
-                  <CopyText textToCopy={message.content} />
+                <div className="flex flex-col gap-2">
+                  {message.content && <div className="flex items-center">
+                  <CopyText textToCopy={message.content}  className="flex items-center"/>
                 </div>}
                 {(message.content && isOwnMessage) && <div className="flex items-center" onClick={() => handleEditMessage({ 'content': message.content, 'id': message._id })}>
                   <PencilIcon className="w-5 h-5 mr-2" />

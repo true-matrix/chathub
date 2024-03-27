@@ -619,7 +619,7 @@ button.profile-user {
 .link:hover {
    color: red;
  }
- .image-gallery{
+ .image-gallery,.edit-message-container{
   position: absolute;
   left: 0;
   bottom: 90px;
@@ -681,4 +681,30 @@ a.shared-link:before {
 img.copy-button:hover {
   filter: brightness(0.5);
   transition-duration: .3s;
+}
+.edit-message-container .icon{
+  border-right: 3px solid green;
+}
+.edit-message { 
+  padding: 14px;
+  width: 100%;
+  background: #daefe0;
+  padding-left: 15px;
+  margin-left: 5px;
+  border-radius: 10px;
+  position: relative;
+}
+.edit-message svg.edit-icon {
+  width: 12px;
+}
+
+.edit-message svg.edit-icon  path {
+  fill: #14532d;
+}
+
+[role=tooltip].popup-content {
+  width: 200px;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 9%);
+  border-radius: 10px;
+  padding: 10px;
 }

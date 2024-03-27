@@ -15,10 +15,10 @@ const CopyText = ( {textToCopy}  : any) => {
   };
 
   return (
-      <div>
+      <div className=' hover:text-green-700 w-100'>
           {copySuccess ? 
               <span style={{ marginLeft: '5px', color: 'green' }}>✔Copied!</span>
-              : (<button onClick={copyToClipboard}><ClipboardIcon className="w-5 h-5 mr-2" />
+              : (<button onClick={copyToClipboard} className=' flex items-center'> <ClipboardIcon className="w-5 h-5 mr-2" />
                     <span>Copy</span>
                 </button>)
           }

@@ -771,7 +771,7 @@ const ChatPage = () => {
                 )}
               </div>
               {attachedFiles.length > 0 ? (
-                <div className="image-gallery flex gap-2 p-4 justify-start w-100 flex-wrap">
+                <div className="image-gallery flex gap-2 p-3 justify-start w-100 flex-wrap">
                   {attachedFiles.map((file, i) => {
                     return (
                       <div
@@ -800,6 +800,24 @@ const ChatPage = () => {
                   })}
                 </div>
               ) : null}
+
+
+                <div className="edit-message-container flex gap-2 p-3 justify-start w-100 flex-wrap">   
+                    <div className="edit-message">
+
+                      <button className="absolute top-2 right-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" className="h-5 w-5 text-red-500 bg-white rounded-full"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd"></path></svg>
+                      </button>
+
+                      <div className="flex align-center mb-2">
+                          <h6 className="font-bold text-green-900	text-sm mr-1">Edit Message</h6> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" className="w-5 h-5 mr-2 edit-icon"><path d="M2.695 14.763l-1.262 3.154a.5.5 0 00.65.65l3.155-1.262a4 4 0 001.343-.885L17.5 5.5a2.121 2.121 0 00-3-3L3.  58 13.42a4 4 0 00-.885 1.343z"></path></svg>
+                      </div>
+                  
+                        
+                        <p className="text-sm">Edit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit MessageEdit Message</p>
+                    </div> 
+                </div>
+
               <div className="sticky top-full p-4 flex justify-between items-center w-full gap-2 border-t-[0.1px] border-secondary">
                 <input
                   hidden
