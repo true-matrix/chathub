@@ -195,6 +195,7 @@ const ChatItem: React.FC<{
               {/* {moment(chat.updatedAt).add("TIME_ZONE", "hours").fromNow(true)} */}
               {/* {moment(chat.updatedAt).subtract("TIME_ZONE", "hours").fromNow(true)} */}
               {getRecentTime(chat.updatedAt)}
+              {/* {getRecentTime(chat.updatedAt)} */}
             </small>
 
             {/* Unread count will be > 0 when user is on another chat and there is new message in a chat which is not currently active on user's screen */}

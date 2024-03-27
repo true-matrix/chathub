@@ -23,6 +23,10 @@ const chatMessageSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Chat",
     },
+    edited: {
+      type: Boolean,
+      default: false,
+    }
   },
   { timestamps: true }
 );

@@ -21,6 +21,7 @@ export interface ChatMessageInterface {
     localPath: string;
     _id: string;
   }[];
+  edited?: any;
   createdAt: string;
   updatedAt: string;
 }

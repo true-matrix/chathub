@@ -137,14 +137,14 @@ const MessageItem: React.FC<{
                 {message.content && <div className="flex items-center">
                   <CopyText textToCopy={message.content} />
                 </div>}
-                {message.content && <div className="flex items-center" onClick={() => handleEditMessage({ 'content': message.content, 'id': message._id })}>
+                {(message.content && isOwnMessage) && <div className="flex items-center" onClick={() => handleEditMessage({ 'content': message.content, 'id': message._id })}>
                   <PencilIcon className="w-5 h-5 mr-2" />
                   <span>Edit</span>
                 </div>}
-                <div className="flex items-center">
+                {(message.content && isOwnMessage) && <div className="flex items-center">
                   <TrashIcon className="w-5 h-5 mr-2" />
                   <span>Delete</span>
-                </div> 
+                </div>} 
                 {/* <div className="flex items-center">
                   <ArrowUturnLeftIcon className="w-5 h-5 mr-2" />
                   <span>Reply</span>
@@ -263,7 +263,9 @@ const MessageItem: React.FC<{
               {/* {moment(message.updatedAt).add("TIME_ZONE, "hours").fromNow(true)}{" "} */}
               {/* {moment(message.updatedAt).subtract("TIME_ZONE", "hours").fromNow(true)}{" "}
               ago */}
-              {getRecentTime(message.updatedAt)}
+              {message?.edited ? 'edited ' : ''}
+              {getRecentTime(message.createdAt)}
+              {/* {getRecentTime(message.updatedAt)} */}
             </p>
           </div>
         </div>

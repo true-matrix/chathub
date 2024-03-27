@@ -51,6 +51,7 @@ const NEW_CHAT_EVENT = "newChat";
 const TYPING_EVENT = "typing";
 const STOP_TYPING_EVENT = "stopTyping";
 const MESSAGE_RECEIVED_EVENT = "messageReceived";
+const MESSAGE_EDITED_EVENT = "messageEdited";
 const LEAVE_CHAT_EVENT = "leaveChat";
 const UPDATE_GROUP_NAME_EVENT = "updateGroupName";
 // const SOCKET_ERROR_EVENT = "socketError";
@@ -189,19 +190,37 @@ const ChatPage = () => {
       null,
       // On successful message sending, clear the message input and attached files, then update the UI
         (res) => {
-        setIsMessageEditing(false);
-        setSelectedMessage(null);
-        setMessage(""); // Clear the message input
-        setAttachedFiles([]); // Clear the list of attached files
-        setMessages((prev) => [res.data, ...prev]); // Update messages in the UI
-        updateChatLastMessage(currentChat.current?._id || "", res.data); // Update the last message in the chat
-      },
+        //   setIsMessageEditing(false);
+        // setSelectedMessage(null);  
+        // setMessage(""); // Clear the message input
+        // setAttachedFiles([]); // Clear the list of attached files
+        // setMessages((prev) => [res.data, ...prev]); // Update messages in the UI
+        // // updateChatLastMessage(currentChat.current?._id || "", res.data); // Update the last message in the chat
+      // Find the index of the edited message in the messages array
+        const editedMessageIndex = messages.findIndex((msg) => msg._id === res.data._id);
+        if (editedMessageIndex !== -1) {
+          // If the edited message exists in the array, replace it with the edited message data
+          setMessages((prevMessages) => {
+            const newMessages = [...prevMessages];
+            newMessages[editedMessageIndex] = res.data;
+            return newMessages;
+          });
+          }
+          if (res.data.edited) {
+             updateChatLastMessage(currentChat.current?._id || "", res.data); // Update the last message in the chat
+          }
+          setIsMessageEditing(false); // Reset message editing state
+          setSelectedMessage(null); // Reset selected message
+          setMessage(""); // Clear the message input
+          setAttachedFiles([]); // Clear the list of attached files
+        },
 
       // If there's an error during the message sending process, raise an alert
       alert
       );
      }
     else {
+      setSelectedMessage(null);
       await requestHandler(
       // Try to send the chat message with the given message and attached files
       async () =>
@@ -374,6 +393,29 @@ const ChatPage = () => {
     updateChatLastMessage(message.chat || "", message);
   };
 
+  const onMessageEdited = (message: ChatMessageInterface) => {
+      setMessages((prev) => [message, ...prev]);
+
+    // // Check if the received message belongs to the currently active chat
+    // if (message?.chat !== currentChat.current?._id) {
+    //   // If not, update the list of unread messages
+    //   // setUnreadMessages((prev) => [message, ...prev]);
+    //   // If not, update the list of unread messages
+    // setUnreadMessages((prev) => {
+    //   const updatedUnreadMessages = [message, ...prev];
+    //   // Store the updated unread messages in local storage
+    //   LocalStorage.set("unreadMessages", updatedUnreadMessages);
+    //   return updatedUnreadMessages;
+    // });
+    // } else {
+    //   // If it belongs to the current chat, update the messages list for the active chat
+    //   setMessages((prev) => [message, ...prev]);
+    // }
+
+    // Update the last message for the chat to which the received message belongs
+    // updateChatLastMessage(message.chat || "", message);
+  };
+
   const onNewChat = (chat: ChatListItemInterface) => {
     setChats((prev) => [chat, ...prev]);
   };
@@ -476,6 +518,8 @@ const ChatPage = () => {
     socket.on(STOP_TYPING_EVENT, handleOnSocketStopTyping);
     // Listener for when a new message is received.
     socket.on(MESSAGE_RECEIVED_EVENT, onMessageReceived);
+    // Listener for when a message is edited.
+    socket.on(MESSAGE_EDITED_EVENT, onMessageEdited);
     // Listener for the initiation of a new chat.
     socket.on(NEW_CHAT_EVENT, onNewChat);
     // Listener for when a user leaves a chat.
@@ -491,6 +535,7 @@ const ChatPage = () => {
       socket.off(TYPING_EVENT, handleOnSocketTyping);
       socket.off(STOP_TYPING_EVENT, handleOnSocketStopTyping);
       socket.off(MESSAGE_RECEIVED_EVENT, onMessageReceived);
+      socket.off(MESSAGE_EDITED_EVENT, onMessageEdited);
       socket.off(NEW_CHAT_EVENT, onNewChat);
       socket.off(LEAVE_CHAT_EVENT, onChatLeave);
       socket.off(UPDATE_GROUP_NAME_EVENT, onGroupNameChange);
