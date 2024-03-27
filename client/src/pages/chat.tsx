@@ -5,13 +5,13 @@ import {
   XCircleIcon,
 } from "@heroicons/react/20/solid";
 /// <reference lib="node" />
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 // import { Link, NavLink, useNavigate } from 'react-router-dom';
 // import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 // import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 // import { Logout } from './Auth/Logout';
-import { editMessage, getChatMessages, getUserChats, sendMessage } from "../api";
+import { deleteMessage, editMessage, getChatMessages, getUserChats, sendMessage } from "../api";
 import AddChatModal from "../components/chat/AddChatModal";
 import ChatItem from "../components/chat/ChatItem";
 import MessageItem from "../components/chat/MessageItem";
@@ -43,6 +43,9 @@ import {
 } from "../utils";
 import { useGlobal } from "../context/GlobalContext";
 import Sidebar from "./Common/Sidebar";
+import { confirmAlert } from "react-confirm-alert";
+import { ConfirmAlert } from "../components/ConfirmAlert";
+import { useNavigate } from "react-router-dom";
 
 const CONNECTED_EVENT = "connected";
 const DISCONNECT_EVENT = "disconnect";
@@ -52,6 +55,7 @@ const TYPING_EVENT = "typing";
 const STOP_TYPING_EVENT = "stopTyping";
 const MESSAGE_RECEIVED_EVENT = "messageReceived";
 const MESSAGE_EDITED_EVENT = "messageEdited";
+const MESSAGE_DELETED_EVENT = "messageDeleted";
 const LEAVE_CHAT_EVENT = "leaveChat";
 const UPDATE_GROUP_NAME_EVENT = "updateGroupName";
 // const SOCKET_ERROR_EVENT = "socketError";
@@ -61,7 +65,8 @@ const ChatPage = () => {
   // Import the 'useAuth' and 'useSocket' hooks from their respective contexts
   const { user } = useAuth();
   const { socket } = useSocket();
-  const { activeButton,isMessageEditing, setIsMessageEditing } = useGlobal();
+    const navigate = useNavigate();
+  const { activeButton,isMessageEditing, isMessageDeleting, setIsMessageEditing, setIsMessageDeleting } = useGlobal();
   const [showPicker, setShowPicker] = useState(false);
   const emojiButtonRef : any = useRef();
   // Create a reference using 'useRef' to hold the currently selected chat.
@@ -78,6 +83,7 @@ const ChatPage = () => {
   const [openAddChat, setOpenAddChat] = useState(false); // To control the 'Add Chat' modal
   const [loadingChats, setLoadingChats] = useState(false); // To indicate loading of chats
   const [loadingMessages, setLoadingMessages] = useState(false); // To indicate loading of messages
+  const [loadingDeleteMessage, setLoadingDeleteMessage] = useState(false); // To indicate loading of messages
 
   const [chats, setChats] = useState<ChatListItemInterface[]>([]); // To store user's chats
   const [messages, setMessages] = useState<ChatMessageInterface[]>([]); // To store chat messages
@@ -100,6 +106,45 @@ const ChatPage = () => {
         setUserChats(initialUserChats);
     }, [socket,isConnected]);
   // const [activeButton, setActiveButton] = useState("chat");
+
+   const onYes = useCallback(async (id:string) => {
+        await requestHandler(
+      // Try to send the chat message with the given message and attached files
+      async () =>
+            await deleteMessage(
+              currentChat.current?._id || "", // Chat ID or empty string if not available
+              selectedMessage.id,
+        ),
+      null,
+      // On successful message sending, clear the message input and attached files, then update the UI
+          async () => {
+            setIsMessageDeleting(false);
+            navigate("/chat"); // Redirect to the login page after successful registration
+            setMessage(""); // Clear the message input
+            setAttachedFiles([]); // Clear the list of attached files
+            await getChats()
+            await getMessages();
+
+            // setMessages((prev) => [res.data, ...prev]); // Update messages in the UI
+            // updateChatLastMessage(currentChat.current?._id || "", res.data); // Update the last message in the chat
+      },
+
+      // If there's an error during the message sending process, raise an alert
+      alert
+      );
+     console.log('delete=>', id);
+     setMessages(messages.filter((message: any) => message.id !== id));
+        
+    }, []);
+      const handleDelete = useCallback((id:string) => {
+        confirmAlert({
+            customUI: ({ onClose }) => {
+                return (
+                  <ConfirmAlert onClose={onClose} onYes={() => onYes(id)} heading="Are you sure?" subHeading={"You want to delete message?"} onCloseText="Close" onSubmitText="Delete" />
+                );
+            }
+        });
+    }, []);
 
   /**
    *  A  function to update the last message of a specified chat to update the chat list
@@ -416,6 +461,12 @@ const ChatPage = () => {
     // updateChatLastMessage(message.chat || "", message);
   };
 
+  const onMessageDeleted = (message: ChatMessageInterface) => {
+      setMessages((prev) => [message, ...prev]);
+    // Update the last message for the chat to which the received message belongs
+      updateChatLastMessage(message.chat || "", message);
+  };
+
   const onNewChat = (chat: ChatListItemInterface) => {
     setChats((prev) => [chat, ...prev]);
   };
@@ -520,6 +571,8 @@ const ChatPage = () => {
     socket.on(MESSAGE_RECEIVED_EVENT, onMessageReceived);
     // Listener for when a message is edited.
     socket.on(MESSAGE_EDITED_EVENT, onMessageEdited);
+    // Listener for when a message is deleted.
+    socket.off(MESSAGE_DELETED_EVENT, onMessageDeleted);
     // Listener for the initiation of a new chat.
     socket.on(NEW_CHAT_EVENT, onNewChat);
     // Listener for when a user leaves a chat.
@@ -536,6 +589,7 @@ const ChatPage = () => {
       socket.off(STOP_TYPING_EVENT, handleOnSocketStopTyping);
       socket.off(MESSAGE_RECEIVED_EVENT, onMessageReceived);
       socket.off(MESSAGE_EDITED_EVENT, onMessageEdited);
+      socket.off(MESSAGE_DELETED_EVENT, onMessageDeleted);
       socket.off(NEW_CHAT_EVENT, onNewChat);
       socket.off(LEAVE_CHAT_EVENT, onChatLeave);
       socket.off(UPDATE_GROUP_NAME_EVENT, onGroupNameChange);
@@ -590,6 +644,7 @@ const ChatPage = () => {
   };
   return (
     <>
+      {/* {isMessageDeleting && handleDelete(selectedMessage?.id)} */}
       <AddChatModal
         open={openAddChat}
         onClose={() => {
@@ -768,6 +823,7 @@ const ChatPage = () => {
                           isGroupChatMessage={currentChat.current?.isGroupChat}
                           message={msg}
                           onMessageClick={handleMessageClick}
+                          onMessageDelete={handleDelete}
                         />
                       );
                     })}

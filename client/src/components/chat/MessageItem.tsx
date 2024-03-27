@@ -23,33 +23,15 @@ const MessageItem: React.FC<{
   isGroupChatMessage?: boolean;
   message: ChatMessageInterface;
   onMessageClick?: any;
-}> = ({ message, isOwnMessage, isGroupChatMessage, onMessageClick }) => {
+  onMessageDelete?: any;
+}> = ({ message, isOwnMessage, isGroupChatMessage, onMessageClick, onMessageDelete }) => {
   const [resizedImage, setResizedImage] = useState<string | null>(null);
   const [creatingChat, setCreatingChat] = useState(false);
   const [dataLoading, setDataLoading] = useState(false);
   const currentChat = useRef<ChatListItemInterface | null>(null);
   const { user } = useAuth();
-  const { setIsMessageEditing } = useGlobal();
+  const { setIsMessageEditing, setIsMessageDeleting } = useGlobal();
   const messageItemRef = useRef<HTMLDivElement>(null);
-
-  // useEffect(() => {
-  //   const handleClickOutside = (event: MouseEvent) => {
-  //     const isClickedInsideMessageItem = event.target instanceof Node && 
-  //       // Replace 'messageItemRef' with the actual ref pointing to the root element of MessageItem component
-  //       messageItemRef.current?.contains(event.target as Node);
-
-  //     if (!isClickedInsideMessageItem) {
-  //       setIsMessageEditing(false);
-  //       onMessageClick(null);
-  //     }
-  //   };
-
-  //   document.body.addEventListener("click", handleClickOutside);
-
-  //   return () => {
-  //     document.body.removeEventListener("click", handleClickOutside);
-  //   };
-  // }, [setIsMessageEditing]);
 
 
   const containsLink = (text : string) => {
@@ -94,7 +76,14 @@ const MessageItem: React.FC<{
   const handleEditMessage = (message: any) => {
     onMessageClick(message);
     setIsMessageEditing(true);
+    setIsMessageDeleting(false);
   }
+
+  const handleDeleteMessage = (message: any) => {
+    onMessageDelete(message);
+    setIsMessageDeleting(true);
+  }
+  
   return (
     <>
       {resizedImage ? (
@@ -141,7 +130,7 @@ const MessageItem: React.FC<{
                   <PencilIcon className="w-5 h-5 mr-2" />
                   <span>Edit</span>
                 </div>}
-                {(message.content && isOwnMessage) && <div className="flex items-center">
+                {(message.content && isOwnMessage) && <div className="flex items-center" onClick={() => handleDeleteMessage({ 'id': message._id })}>
                   <TrashIcon className="w-5 h-5 mr-2" />
                   <span>Delete</span>
                 </div>} 

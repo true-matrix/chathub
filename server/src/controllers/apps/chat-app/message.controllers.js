@@ -162,108 +162,7 @@ const sendMessage = asyncHandler(async (req, res) => {
 });
 
 // Define a route handler to handle message editing
-// const editMessage = async (req, res) => {
-//   try {
-//     console.log('req.body',req.body);
-//     const { chatId, messageId } = req.params;
-//     const content  = Object.keys(req.body)[0];
-
-//     // Validate the content
-//     if (!content) {
-//       return res.status(400).json({ error: "Message content is required" });
-//     }
-
-//     // Find the chat in the database
-//     const chat = await Chat.findById(chatId);
-
-//     if (!chat) {
-//       return res.status(404).json({ error: "Chat not found" });
-//     }
-
-//     // Find the message to edit
-//     const message = await ChatMessage.findById(messageId);
-
-//     if (!message) {
-//       return res.status(404).json({ error: "Message not found" });
-//     }
-
-//     // Update the message content
-//     message.content = content;
-//     await message.save();
-
-//     // Optionally, emit a socket event to notify other participants about the edited message
-//     // EmitSocketEvent();
-
-//     return res.status(200).json({ message: "Message edited successfully" });
-//   } catch (error) {
-//     console.error("Error editing message:", error);
-//     return res.status(500).json({ error: "Internal server error" });
-//   }
-// };
-
-// const editMessage = async (req, res) => {
-//   try {
-//     console.log('req.body',req.body);
-//     const { chatId, messageId } = req.params;
-//     const content  = Object.keys(req.body)[0];
-
-//     // Validate the content
-//     if (!content) {
-//       return res.status(400).json({ error: "Message content is required" });
-//     }
-
-//     // Find the chat in the database
-//     const chat = await Chat.findById(chatId);
-
-//     if (!chat) {
-//       return res.status(404).json({ error: "Chat not found" });
-//     }
-
-//     // Find the message to edit
-//     const message = await ChatMessage.findById(messageId);
-
-//     if (!message) {
-//       return res.status(404).json({ error: "Message not found" });
-//     }
-
-//     // Store the previous content and edit timestamp
-//     const previousContent = message.content;
-//     // const previousEditTimestamp = message.editTimestamp;
-
-//     // Update the message content and edit timestamp
-//     message.content = content;
-//     message.edited = true;
-//     await message.save();
-
-//     // Update the chat's last message
-//     // chat.lastMessage = message._id;
-//     // await chat.save();
-
-//     // Emit a socket event to notify other participants about the edited message
-//     chat.participants.forEach((participantObjectId) => {
-//       if (participantObjectId.toString() === req.user._id.toString()) return;
-
-//       // Emit the message edited event to the other participants with edited message details
-//       emitSocketEvent(
-//         req,
-//         participantObjectId.toString(),
-//         ChatEventEnum.MESSAGE_RECEIVED_EVENT,
-//         message.content,
-//       );
-//     });
-
-//     return res.status(200).json({
-//       message: "Message edited successfully",
-//       previousContent: previousContent,
-//       edited: true
-//     });
-//   } catch (error) {
-//     console.error("Error editing message:", error);
-//     return res.status(500).json({ error: "Internal server error" });
-//   }
-// };
-
-const editMessage = async (req, res) => {
+const editMessage = asyncHandler(async (req, res) => {
   try {
     // console.log("req.body", req.body);
     const { chatId, messageId } = req.params;
@@ -328,10 +227,50 @@ const editMessage = async (req, res) => {
     console.error("Error editing message:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
-};
+});
+
+// Delete Message Controller
+const deleteMessage = asyncHandler(async (req, res) => {
+  try {
+    const { chatId, messageId } = req.params;
+
+    // Find the chat in the database
+    const chat = await Chat.findById(chatId);
+
+    if (!chat) {
+      return res.status(404).json({ error: "Chat not found" });
+    }
+
+    // Find the message to delete
+    const deletedMessage = await ChatMessage.findByIdAndDelete(messageId);
+
+    if (!deletedMessage) {
+      return res.status(404).json({ error: "Message not found" });
+    }
+
+    // Emit a socket event to notify other participants about the deleted message
+    chat.participants.forEach((participantObjectId) => {
+      if (participantObjectId.toString() === req.user._id.toString()) return;
+
+      // Emit the message deleted event to the other participants with deleted message details
+      emitSocketEvent(
+        req,
+        participantObjectId.toString(),
+        ChatEventEnum.MESSAGE_DELETED_EVENT,
+        { messageId: deletedMessage._id }
+      );
+    });
+
+    return res.status(200).json(new ApiResponse(200, null, 'Message deleted successfully'));
+  } catch (error) {
+    console.error("Error deleting message:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 
 
 
 
-export { getAllMessages, sendMessage, editMessage };
+
+export { getAllMessages, sendMessage, editMessage, deleteMessage };

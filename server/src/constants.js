@@ -90,8 +90,10 @@ export const ChatEventEnum = Object.freeze({
   UPDATE_GROUP_NAME_EVENT: "updateGroupName",
   // ? when new message is received
   MESSAGE_RECEIVED_EVENT: "messageReceived",
-
+  // ? when new message is edited
   MESSAGE_EDITED_EVENT: "messageEdited",
+  // ? when new message is deleted
+  MESSAGE_DELETED_EVENT: "messageDeleted",
 
   // ? when there is new one on one chat, new group chat or user gets added in the group
   NEW_CHAT_EVENT: "newChat",

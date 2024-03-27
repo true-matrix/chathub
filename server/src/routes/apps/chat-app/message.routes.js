@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  deleteMessage,
   editMessage,
   getAllMessages,
   sendMessage,
@@ -32,6 +33,14 @@ router.put("/:chatId/:messageId",
   sendMessageValidator(), // Validate the request body
   validate, // Validate the request
   editMessage// Handle message editing
+);
+
+router.delete("/:chatId/:messageId",
+  mongoIdPathVariableValidator("chatId"), // Validate the chat ID path variable
+  mongoIdPathVariableValidator("messageId"), // Validate the message ID path variable
+  // sendMessageValidator(), // Validate the request body
+  validate, // Validate the request
+  deleteMessage// Handle message editing
 );
 
 export default router;
