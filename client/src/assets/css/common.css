@@ -619,7 +619,7 @@ button.profile-user {
 .link:hover {
    color: red;
  }
- .image-gallery,.edit-message-container{
+ .image-gallery,.edit-message-container, .reply-message-container{
   position: absolute;
   left: 0;
   bottom: 90px;
@@ -682,10 +682,10 @@ img.copy-button:hover {
   filter: brightness(0.5);
   transition-duration: .3s;
 }
-.edit-message-container .icon{
+.edit-message-container .icon,.reply-message-container .icon{
   border-right: 3px solid green;
 }
-.edit-message { 
+.edit-message, .reply-message { 
   padding: 14px;
   width: 100%;
   background: #daefe0;
@@ -694,11 +694,11 @@ img.copy-button:hover {
   border-radius: 10px;
   position: relative;
 }
-.edit-message svg.edit-icon {
+.edit-message svg.edit-icon , .reply-message svg.edit-icon {
   width: 12px;
 }
 
-.edit-message svg.edit-icon  path {
+.edit-message svg.edit-icon  path, .reply-message svg.edit-icon  path {
   fill: #14532d;
 }
 
