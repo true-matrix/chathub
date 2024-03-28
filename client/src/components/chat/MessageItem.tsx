@@ -294,10 +294,10 @@ const MessageItem: React.FC<{
             </svg>
           </p>} */}
             
-            {(isOwnMessage) && <p className={getSeenClassName(message?.seenBy?.length)}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+            {/* {(isOwnMessage) && <p className={getSeenClassName(message?.seenBy?.length)}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
             </svg>
-          </p>}
+          </p>} */}
 
             {/* {(isOwnMessage && message?.status === 'sent') && <p className={getClassName(message?.status)}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
