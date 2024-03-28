@@ -83,7 +83,40 @@ const MessageItem: React.FC<{
     onMessageDelete(message);
     setIsMessageDeleting(true);
   }
-  
+
+ const getClassName = (status : string) => {
+    switch (status) {
+      case 'sent':
+        return 'text-sm text-gray-500'; 
+      case 'messageReceived':
+        return 'text-sm text-gray-500'; 
+      case 'seenByOne':
+        return 'text-sm text-yellow-500'; 
+      case 'seenByAll':
+        return 'text-sm text-green-500'; 
+      default:
+        return 'text-sm text-gray-500'; 
+    }
+  };
+
+//  const getSeenClassName = (status : any) => {
+//     switch (status) {
+//       case false:
+//         return 'text-sm text-gray-500';
+//       default:
+//         return 'text-sm text-green-500';
+//     }
+  //   }; 
+  const getSeenClassName = (status: any) => {
+    switch (true) {
+      case status === 0:
+        return 'text-sm text-gray-500'; 
+      case status >= 1:
+        return 'text-sm text-green-500'; 
+      default:
+        return ''; // Handle other cases as needed
+    }
+};
   return (
     <>
       {resizedImage ? (
@@ -256,6 +289,27 @@ const MessageItem: React.FC<{
               {getRecentTime(message.createdAt)}
               {/* {getRecentTime(message.updatedAt)} */}
             </p>
+            {/* {(isOwnMessage) && <p className={getSeenClassName(message?.seen)}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+            </svg>
+          </p>} */}
+            
+            {(isOwnMessage) && <p className={getSeenClassName(message?.seenBy?.length)}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+            </svg>
+          </p>}
+
+            {/* {(isOwnMessage && message?.status === 'sent') && <p className={getClassName(message?.status)}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+            </svg>
+          </p>}
+
+            {(isOwnMessage && (message?.status === 'seenByOne' || message?.status === 'seenByAll' || message?.status === 'messageReceived')) && <p className={getClassName(message?.status)}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+            </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+  <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+          </p>} */}
           </div>
         </div>
       </div>

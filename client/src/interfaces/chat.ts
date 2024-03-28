@@ -22,6 +22,9 @@ export interface ChatMessageInterface {
     _id: string;
   }[];
   edited?: any;
+  status?: any;
+  seen?: any;
+  seenBy?: any;
   createdAt: string;
   updatedAt: string;
 }
