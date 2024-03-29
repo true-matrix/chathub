@@ -103,6 +103,7 @@ const sendMessage = asyncHandler(async (req, res) => {
   // Create a new message instance with appropriate metadata
   const message = await ChatMessage.create({
     sender: new mongoose.Types.ObjectId(req.user._id),
+    senderName: req.user.name,
     content: content || "",
     chat: new mongoose.Types.ObjectId(chatId),
     attachments: messageFiles,
@@ -329,6 +330,7 @@ const updatedParentMessage = await ChatMessage.findByIdAndUpdate(
     // Create and save the reply message
     const replyMessage = await ChatMessage.create({
       sender: new mongoose.Types.ObjectId(req.user._id),
+      senderName: req.user.name,
       content: content || "",
       chat: new mongoose.Types.ObjectId(chatId),
       attachments: messageFiles,

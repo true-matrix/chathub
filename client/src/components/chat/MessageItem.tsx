@@ -217,7 +217,7 @@ const MessageItem: React.FC<{
             ) : null}
 
             {(message.updatedParentMessage && message.updatedParentMessage !==null) && (<div className="reply-message-block bg-white p-2 mb-2  rounded-xl">
-              <p className="text-xs text-green-500 ">Rajesh</p>
+              <p className="text-xs text-green-500 ">{message.updatedParentMessage?.senderName ? message.updatedParentMessage?.senderName : ''}</p>
               <p className="truncate-1 text-sm text-zinc-500  hover:underline underline-offset-1">{message.updatedParentMessage?.content ? message.updatedParentMessage?.content : (message.updatedParentMessage.attachments.length > 0 ? <img
                         className="h-8 w-8 object-contain"
                         src={message.updatedParentMessage.attachments[0].url}
