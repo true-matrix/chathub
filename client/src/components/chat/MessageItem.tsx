@@ -23,14 +23,15 @@ const MessageItem: React.FC<{
   isGroupChatMessage?: boolean;
   message: ChatMessageInterface;
   onMessageClick?: any;
+  onMessageReply?: any;
   onMessageDelete?: any;
-}> = ({ message, isOwnMessage, isGroupChatMessage, onMessageClick, onMessageDelete }) => {
+}> = ({ message, isOwnMessage, isGroupChatMessage, onMessageClick, onMessageReply, onMessageDelete }) => {
   const [resizedImage, setResizedImage] = useState<string | null>(null);
   const [creatingChat, setCreatingChat] = useState(false);
   const [dataLoading, setDataLoading] = useState(false);
   const currentChat = useRef<ChatListItemInterface | null>(null);
   const { user } = useAuth();
-  const { setIsMessageEditing, setIsMessageDeleting } = useGlobal();
+  const { setIsMessageEditing, setIsMessageDeleting, setIsMessageReplying } = useGlobal();
   const messageItemRef = useRef<HTMLDivElement>(null);
 
 
@@ -76,12 +77,24 @@ const MessageItem: React.FC<{
   const handleEditMessage = (message: any) => {
     onMessageClick(message);
     setIsMessageEditing(true);
+    setIsMessageReplying(false);
+    setIsMessageDeleting(false);
+  }
+
+  const handleReplyMessage = (message: any) => {
+    onMessageReply(message);
+    setIsMessageReplying(true);
+    setIsMessageEditing(false);
     setIsMessageDeleting(false);
   }
 
   const handleDeleteMessage = (message: any) => {
     onMessageDelete(message);
     setIsMessageDeleting(true);
+    setIsMessageReplying(false);
+    setIsMessageEditing(false);
+
+
   }
 
  const getClassName = (status : string) => {
@@ -158,6 +171,10 @@ const MessageItem: React.FC<{
                 <div className="flex flex-col gap-2">
                   {message.content && <div className="flex items-center">
                   <CopyText textToCopy={message.content}  className="flex items-center"/>
+                </div>}
+                {message.content && <div className="flex items-center" onClick={() => handleReplyMessage({ 'content': message.content, 'id': message._id, 'data': message })}>
+                    <ArrowUturnLeftIcon className="w-5 h-5 mr-2" />
+                  <span>Reply</span>
                 </div>}
                 {(message.content && isOwnMessage) && <div className="flex items-center" onClick={() => handleEditMessage({ 'content': message.content, 'id': message._id })}>
                   <PencilIcon className="w-5 h-5 mr-2" />
