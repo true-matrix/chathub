@@ -263,6 +263,22 @@ const sendMessage = (chatId: string, content: string, attachments: File[]) => {
   return apiClient.post(`/chat-app/messages/${chatId}`, formData);
 };
 
+const replyMessage = (
+  chatId: string,
+  messageId: string,
+  content: string,
+  attachments: File[]
+) => {
+  const formData = new FormData();
+  if (content) {
+    formData.append("content", content);
+  }
+  attachments?.map((file) => {
+    formData.append("attachments", file);
+  });
+  return apiClient.post(`/chat-app/messages/${chatId}/${messageId}`, formData);
+};
+
 const editMessage = (
   chatId: string,
   messageId: string,
@@ -321,5 +337,6 @@ export {
   getAllGroups,
   getChatId,
   editMessage,
+  replyMessage,
   deleteMessage,
 };
