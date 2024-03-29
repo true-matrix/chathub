@@ -259,6 +259,58 @@ const MessageItem: React.FC<{
           </div>
         </div>
       </div>
+
+
+
+
+
+
+
+      <div className="message-wraper">
+        <div
+          className={classNames(
+            "flex relative justify-start items-end gap-3 max-w-lg min-w- w-fit",
+            isOwnMessage ? "ml-auto" : ""
+          )}
+        >
+          <img
+            src={message.sender?.avatar?.url}
+            className={classNames(
+              "h-8 w-8 object-cover rounded-full flex flex-shrink-0",
+              isOwnMessage ? "order-2" : "order-1"
+            )}
+          />
+          <div className={classNames(
+              "dropdown-icon",
+              isOwnMessage
+                ? "dropdown-icon-left"
+                : "dropdown-icon-right"
+          )}> 
+          </div>
+
+          <div
+            className={classNames(
+              "p-4 rounded-3xl flex flex-col break-all",
+              isOwnMessage
+                ? "order-1 rounded-br-none bg-primary"
+                : "order-2 rounded-bl-none bg-white"
+            )}
+          >  
+
+            <div className="reply-message-block bg-white p-2 mb-2  rounded-xl">
+              <p className="text-xs text-green-500  hover:underline underline-offset-1 mb-2">Rajesh</p>
+              <p className="text-sm text-zinc-500  hover:underline underline-offset-1">hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey </p>
+            </div>
+            <p className="text-sm text-zinc-50  hover:underline underline-offset-1 mb-2">Rajesh</p>
+
+              
+              <p className="mt-1.5 self-end text-[10px] inline-flex items-center text-zinc-200">Today, 3:06pm</p>
+
+
+
+          </div>
+        </div>
+      </div>
     </>
   );
 };

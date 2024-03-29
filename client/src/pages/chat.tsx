@@ -883,6 +883,8 @@ const ChatPage = () => {
                 </div> }
                 
 
+
+                  {/* reply */}
                 <div className="reply-message-container flex flex-row gap-1 p-3 justify-start w-100 ">   
                     <div>
                       <img src={USER_IMG} className="h-16w-10 h-10 rounded-full" />
@@ -902,7 +904,7 @@ const ChatPage = () => {
                       </div> 
                         <p className="truncate-1 text-sm"> asdsad</p>
                     </div> 
-              </div>
+                </div>
 
 
 
