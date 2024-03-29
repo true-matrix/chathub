@@ -25,6 +25,7 @@ export interface ChatMessageInterface {
   status?: any;
   seen?: any;
   seenBy?: any;
+  updatedParentMessage?: any;
   createdAt: string;
   updatedAt: string;
 }

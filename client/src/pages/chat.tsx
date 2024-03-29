@@ -997,7 +997,11 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
 
 
                       </div> 
-                  <p className="truncate-1 text-sm">{selectedMessage?.content}</p>
+                  <p className="truncate-1 text-sm">{selectedMessage?.content ? selectedMessage?.content : <img
+                        className="h-8 w-8 object-contain"
+                        src={selectedMessage.data.attachments[0].url}
+                        alt="msg_img"
+                      />}</p>
                     </div> 
                 </div>)}
 

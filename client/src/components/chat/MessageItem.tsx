@@ -172,10 +172,10 @@ const MessageItem: React.FC<{
                   {message.content && <div className="flex items-center">
                   <CopyText textToCopy={message.content}  className="flex items-center"/>
                 </div>}
-                {message.content && <div className="flex items-center" onClick={() => handleReplyMessage({ 'content': message.content, 'id': message._id, 'data': message })}>
+                <div className="flex items-center" onClick={() => handleReplyMessage({ 'content': message.content, 'id': message._id, 'data': message })}>
                     <ArrowUturnLeftIcon className="w-5 h-5 mr-2" />
                   <span>Reply</span>
-                </div>}
+                </div>
                 {(message.content && isOwnMessage) && <div className="flex items-center" onClick={() => handleEditMessage({ 'content': message.content, 'id': message._id })}>
                   <PencilIcon className="w-5 h-5 mr-2" />
                   <span>Edit</span>
@@ -215,6 +215,15 @@ const MessageItem: React.FC<{
                 {message.sender?.name}
               </p>
             ) : null}
+
+            {(message.updatedParentMessage && message.updatedParentMessage !==null) && (<div className="reply-message-block bg-white p-2 mb-2  rounded-xl">
+              <p className="text-xs text-green-500 ">Rajesh</p>
+              <p className="truncate-1 text-sm text-zinc-500  hover:underline underline-offset-1">{message.updatedParentMessage?.content ? message.updatedParentMessage?.content : (message.updatedParentMessage.attachments.length > 0 ? <img
+                        className="h-8 w-8 object-contain"
+                        src={message.updatedParentMessage.attachments[0].url}
+                        alt="msg_img"
+                      /> : 'File')}</p>
+            </div>)}        
 
             {message?.attachments?.length > 0 ? (
               <div
@@ -344,7 +353,7 @@ const MessageItem: React.FC<{
             isOwnMessage ? "ml-auto" : ""
           )}
         >
-          <img
+          {/* <img
             src={message.sender?.avatar?.url}
             className={classNames(
               "h-8 w-8 object-cover rounded-full flex flex-shrink-0",
@@ -357,9 +366,9 @@ const MessageItem: React.FC<{
                 ? "dropdown-icon-left"
                 : "dropdown-icon-right"
           )}> 
-          </div>
+          </div> */}
 
-          <div
+          {/* <div
             className={classNames(
               "p-4 rounded-3xl flex flex-col break-all",
               isOwnMessage
@@ -379,7 +388,7 @@ const MessageItem: React.FC<{
 
 
 
-          </div>
+          </div> */}
         </div>
       </div>
     </>
