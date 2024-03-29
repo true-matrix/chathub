@@ -311,7 +311,7 @@ const MessageItem: React.FC<{
               {/* {moment(message.updatedAt).add("TIME_ZONE, "hours").fromNow(true)}{" "} */}
               {/* {moment(message.updatedAt).subtract("TIME_ZONE", "hours").fromNow(true)}{" "}
               ago */}
-              {message?.edited ? 'edited ' : ''}
+              {message?.edited ? <span style={{ fontStyle: 'italic' }}>{`edited`} &nbsp;</span> : ''}
               {getRecentTime(message.createdAt)}
               {/* {getRecentTime(message.updatedAt)} */}
             </p>
