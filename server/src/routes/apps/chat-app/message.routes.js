@@ -3,6 +3,7 @@ import {
   deleteMessage,
   editMessage,
   getAllMessages,
+  replyToMessage,
   sendMessage,
 } from "../../../controllers/apps/chat-app/message.controllers.js";
 import { verifyJWT } from "../../../middlewares/auth.middlewares.js";
@@ -33,6 +34,19 @@ router.put("/:chatId/:messageId",
   sendMessageValidator(), // Validate the request body
   validate, // Validate the request
   editMessage// Handle message editing
+);
+
+//Reply Message
+router
+  .route("/:chatId/:messageId")
+  .get(mongoIdPathVariableValidator("chatId"), validate, getAllMessages)
+  .post(
+    upload.fields([{ name: "attachments", maxCount: 5 }]),
+    mongoIdPathVariableValidator("chatId"),
+    mongoIdPathVariableValidator("messageId"), // Validate the message ID path variable
+    sendMessageValidator(),
+    validate,
+    replyToMessage
 );
 
 router.delete("/:chatId/:messageId",

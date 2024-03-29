@@ -11,7 +11,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 // import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 // import { Logout } from './Auth/Logout';
-import { deleteMessage, editMessage, getChatMessages, getUserChats, sendMessage } from "../api";
+import { deleteMessage, editMessage, getChatMessages, getUserChats, replyMessage, sendMessage } from "../api";
 import AddChatModal from "../components/chat/AddChatModal";
 import ChatItem from "../components/chat/ChatItem";
 import MessageItem from "../components/chat/MessageItem";
@@ -57,6 +57,7 @@ const MESSAGE_RECEIVED_EVENT = "messageReceived";
 const MESSAGE_SEEN_BY_ONE_EVENT = "seenByOne";
 const MESSAGE_SEEN_BY_ALL_EVENT = "seenByAll";
 const MESSAGE_EDITED_EVENT = "messageEdited";
+const MESSAGE_REPLY_EVENT = "messageReplied";
 const MESSAGE_DELETED_EVENT = "messageDeleted";
 const LEAVE_CHAT_EVENT = "leaveChat";
 const UPDATE_GROUP_NAME_EVENT = "updateGroupName";
@@ -68,7 +69,7 @@ const ChatPage = () => {
   const { user } = useAuth();
   const { socket } = useSocket();
     const navigate = useNavigate();
-  const { activeButton,isMessageEditing, isMessageDeleting, setIsMessageEditing, setIsMessageDeleting } = useGlobal();
+  const { activeButton,isMessageEditing, isMessageReplying, isMessageDeleting, setIsMessageEditing, setIsMessageReplying, setIsMessageDeleting } = useGlobal();
   const [showPicker, setShowPicker] = useState(false);
   const emojiButtonRef : any = useRef();
   // Create a reference using 'useRef' to hold the currently selected chat.
@@ -225,7 +226,7 @@ const ChatPage = () => {
     socket.emit(STOP_TYPING_EVENT, currentChat.current?._id);
 
     // Use the requestHandler to send the message and handle potential response or error
-    if (selectedMessage) {
+    if (selectedMessage && isMessageEditing) {
       await requestHandler(
       // Try to send the chat message with the given message and attached files
       async () =>
@@ -265,6 +266,30 @@ const ChatPage = () => {
       // If there's an error during the message sending process, raise an alert
       alert
       );
+    } 
+    else if (selectedMessage && isMessageReplying) {
+      await requestHandler(
+      // Try to send the chat message with the given message and attached files
+      async () =>
+        await replyMessage(
+          currentChat.current?._id || "", // Chat ID or empty string if not available
+          selectedMessage.id,
+          message, // Actual text message
+          attachedFiles // Any attached files
+        ),
+      null,
+      // On successful message sending, clear the message input and attached files, then update the UI
+        (res) => {
+          setMessage(""); // Clear the message input
+          setIsMessageReplying(false);
+          setAttachedFiles([]); // Clear the list of attached files
+          setMessages((prev) => [res.data, ...prev]); // Update messages in the UI
+          updateChatLastMessage(currentChat.current?._id || "", res.data); // Update the last message in the chat
+        },
+
+      // If there's an error during the message sending process, raise an alert
+      alert
+      );
      }
     else {
       setSelectedMessage(null);
@@ -280,6 +305,7 @@ const ChatPage = () => {
       // On successful message sending, clear the message input and attached files, then update the UI
       (res) => {
         setMessage(""); // Clear the message input
+        setIsMessageReplying(false);
         setAttachedFiles([]); // Clear the list of attached files
         setMessages((prev) => [res.data, ...prev]); // Update messages in the UI
         updateChatLastMessage(currentChat.current?._id || "", res.data); // Update the last message in the chat
@@ -503,6 +529,10 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
     // updateChatLastMessage(message.chat || "", message);
   };
 
+  const onMessageReplied = (message: ChatMessageInterface) => {
+    setMessages((prev) => [message, ...prev]);
+  }
+
   const onMessageDeleted = (message: ChatMessageInterface) => {
       setMessages((prev) => [message, ...prev]);
     // Update the last message for the chat to which the received message belongs
@@ -615,8 +645,10 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
     socket.on(MESSAGE_SEEN_BY_ALL_EVENT, onMessageSeenByAll)
     // Listener for when a message is edited.
     socket.on(MESSAGE_EDITED_EVENT, onMessageEdited);
+    // Listener for when a message is edited.
+    socket.on(MESSAGE_REPLY_EVENT, onMessageReplied);
     // Listener for when a message is deleted.
-    socket.off(MESSAGE_DELETED_EVENT, onMessageDeleted);
+    socket.on(MESSAGE_DELETED_EVENT, onMessageDeleted);
     // Listener for the initiation of a new chat.
     socket.on(NEW_CHAT_EVENT, onNewChat);
     // Listener for when a user leaves a chat.
@@ -635,6 +667,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
       socket.off(MESSAGE_SEEN_BY_ONE_EVENT, onMessageSeenByOne);
       socket.off(MESSAGE_SEEN_BY_ALL_EVENT, onMessageSeenByAll)
       socket.off(MESSAGE_EDITED_EVENT, onMessageEdited);
+      socket.off(MESSAGE_REPLY_EVENT, onMessageReplied);
       socket.off(MESSAGE_DELETED_EVENT, onMessageDeleted);
       socket.off(NEW_CHAT_EVENT, onNewChat);
       socket.off(LEAVE_CHAT_EVENT, onChatLeave);
@@ -680,11 +713,26 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
       setMessage(message.content);
     }
   };
+
+  const handleMessageReply = (message: any) => {
+    setSelectedMessage(message);
+    if (message) {
+      setMessage('');
+    }
+  };
+
+
   console.log('selected msg',selectedMessage);
   // console.log('isMessageEditing',isMessageEditing);
   // const isChatOnline = userChats.find((group:any) => group._id === chat._id)?.participants.some((participant:any) => participant._id !== user._id && participant.islogin) || false;
   const handleCloseEditing = () => {
     setIsMessageEditing(false);
+    setSelectedMessage(null); // Reset selected message
+    setMessage("");
+  };
+
+  const handleCloseReplying = () => {
+    setIsMessageReplying(false);
     setSelectedMessage(null); // Reset selected message
     setMessage("");
   };
@@ -746,7 +794,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
                 return (
                   <ChatItem
                     chat={chat}
-                    isOnline={userChats.find((group:any) => group._id === chat._id)?.participants.some((participant:any) => participant._id !== user._id && participant.islogin) || false}
+                    isOnline={userChats?.find((group:any) => group._id === chat._id)?.participants.some((participant:any) => participant._id !== user._id && participant.islogin) || false}
                     isActive={chat._id === currentChat.current?._id}
                     unreadCount={
                       unreadMessages.filter((n) => n.chat === chat._id).length
@@ -869,6 +917,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
                           isGroupChatMessage={currentChat.current?.isGroupChat}
                           message={msg}
                           onMessageClick={handleMessageClick}
+                          onMessageReply={handleMessageReply}
                           onMessageDelete={handleDelete}
                         />
                       );
@@ -929,26 +978,26 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
                 </div> }
                 
 
-                <div className="reply-message-container flex flex-row gap-1 p-3 justify-start w-100 ">   
+                {isMessageReplying && (<div className="reply-message-container flex flex-row gap-1 p-3 justify-start w-100 ">   
                     <div>
-                      <img src={USER_IMG} className="h-16w-10 h-10 rounded-full" />
+                      <img src={selectedMessage?.data?.sender?.avatar?.url ? selectedMessage?.data?.sender?.avatar?.url : USER_IMG} className="h-16w-10 h-10 rounded-full" />
                     </div>
                     <div className="reply-message"> 
-                      <button className="absolute top-2 right-2" >
+                      <button className="absolute top-2 right-2" onClick={() => handleCloseReplying()}>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" className="h-5 w-5 text-red-500 bg-white rounded-full"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd"></path></svg>
                       </button>
 
                       <div className="flex align-center mb-2">
-                          <h6 className="font-bold text-green-900	text-sm mr-1">Reply Message</h6> 
+                    <h6 className="font-bold text-green-900	text-sm mr-1">Reply to {selectedMessage?.data?.sender?.name}</h6> 
                           <svg className="mt-1" width="14" height="13" viewBox="0 0 14 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path fill-rule="evenodd" clip-rule="evenodd" d="M3.56992 1.21932C3.86055 0.970213 3.89421 0.53267 3.6451 0.242043C3.39599 -0.0485844 2.95844 -0.0822416 2.66782 0.166868L0.242031 2.24611C0.187449 2.2929 0.141054 2.34737 0.103935 2.40728C0.0406085 2.50921 0.002999 2.62879 0.000171731 2.75694C7.16258e-05 2.76144 1.53714e-05 2.76593 2.74262e-06 2.77042C6.65533e-07 2.77112 0 2.77182 0 2.77252C0 2.96871 0.0815179 3.14587 0.212531 3.27196L2.62879 5.68821C2.89945 5.95888 3.33829 5.95888 3.60895 5.68821C3.87962 5.41755 3.87962 4.97871 3.60895 4.70805L2.36651 3.4656H8.66145C10.6745 3.4656 12.3942 5.11911 12.4725 7.13126L12.4725 7.13134C12.5556 9.25659 10.7895 11.0895 8.66145 11.0895H2.77163C2.38886 11.0895 2.07855 11.3998 2.07855 11.7826C2.07855 12.1654 2.38886 12.4757 2.77163 12.4757H8.66145C11.5742 12.4757 13.9714 9.99072 13.8576 7.07731C13.7503 4.32105 11.4189 2.07944 8.66145 2.07944H2.56645L3.56992 1.21932ZM13.8576 7.07731L13.8576 7.07723L13.1651 7.10428L13.8576 7.07731Z" fill="#14532D"/>
                           </svg>
 
 
                       </div> 
-                        <p className="truncate-1 text-sm"> asdsad</p>
+                  <p className="truncate-1 text-sm">{selectedMessage?.content}</p>
                     </div> 
-              </div>
+              </div>)}
 
 
 

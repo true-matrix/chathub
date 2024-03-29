@@ -98,6 +98,7 @@ export const ChatEventEnum = Object.freeze({
   MESSAGE_SEEN_BY_ALL_EVENT: "seenByAll",
   // ? when new message is edited
   MESSAGE_EDITED_EVENT: "messageEdited",
+  MESSAGE_REPLY_EVENT: "messageReplied",
   // ? when new message is deleted
   MESSAGE_DELETED_EVENT: "messageDeleted",
 

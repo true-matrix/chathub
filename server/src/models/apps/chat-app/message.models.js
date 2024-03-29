@@ -41,6 +41,14 @@ const chatMessageSchema = new Schema(
     type: Boolean,
     default: false
     },
+    parentMessage : {
+      type: Schema.Types.ObjectId,
+      ref: "ChatMessage",
+    },
+    updatedParentMessage: {
+      type: Object,
+      default: null,
+    }
   },
   { timestamps: true }
 );

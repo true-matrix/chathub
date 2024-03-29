@@ -286,6 +286,128 @@ const editMessage = asyncHandler(async (req, res) => {
   }
 });
 
+const replyToMessage = asyncHandler(async (req, res) => {
+  try {
+    const { chatId, messageId } = req.params;
+    // const content = Object.keys(req.body)[0];
+    const content = req.body.content;
+
+    // Validate the content
+    if (!content) {
+      return res.status(400).json({ error: "Message content is required" });
+    }
+
+    // Find the chat in the database
+     const selectedChat = await Chat.findById(chatId);
+
+      if (!selectedChat) {
+        throw new ApiError(404, "Chat does not exist");
+      }
+
+    // Find the message to reply to
+    const parentMessage = await ChatMessage.findById(messageId);
+
+    if (!parentMessage) {
+      return res.status(404).json({ error: "Parent message not found" });
+    }
+
+  const messageFiles = [];
+
+  if (req.files && req.files.attachments?.length > 0) {
+    req.files.attachments?.map((attachment) => {
+      messageFiles.push({
+        url: getStaticFilePath(req, attachment.filename),
+        localPath: getLocalPath(attachment.filename),
+      });
+    });
+  }
+const updatedParentMessage = await ChatMessage.findByIdAndUpdate(
+      messageId,
+      { $set: { ...parentMessage.toObject() } }, // Use toObject() to convert parentMessage to a plain JavaScript object
+      { new: true }
+    );
+    // Create and save the reply message
+    const replyMessage = await ChatMessage.create({
+      sender: new mongoose.Types.ObjectId(req.user._id),
+      content: content || "",
+      chat: new mongoose.Types.ObjectId(chatId),
+      attachments: messageFiles,
+      parentMessage: new mongoose.Types.ObjectId(parentMessage._id),
+      updatedParentMessage: updatedParentMessage,
+    });
+
+
+    if (!parentMessage.replies) {
+        parentMessage.replies = []; // Initialize replies array if it doesn't exist
+      }
+    // Add the reply message to the parent message's replies array
+    parentMessage.replies.push(replyMessage._id);
+    await parentMessage.save();
+
+    
+    // update the chat's last message which could be utilized to show last message in the list item
+    const chat = await Chat.findByIdAndUpdate(
+      chatId,
+      {
+        $set: {
+          lastMessage: replyMessage._id,
+        },
+      },
+      { new: true }
+    );
+
+ // Fetch parent message details by ID and save it to the database
+    // const updatedParentMessage = await ChatMessage.findByIdAndUpdate(
+    //   messageId,
+    //   { $set: { ...parentMessage.toObject() } }, // Use toObject() to convert parentMessage to a plain JavaScript object
+    //   { new: true }
+    // );
+  // structure the message
+  let messages = await ChatMessage.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(replyMessage._id),
+      },
+    },
+    ...chatMessageCommonAggregation(),
+  ]);
+
+  // Store the aggregation result
+    // let receivedMessage = messages[0];
+    // Perform a lookup to join updatedParentMessage and message[0]
+    
+    let receivedMessage = messages[0];
+    // if (receivedMessage) {
+    //   receivedMessage = {
+    //     ...receivedMessage,
+    //     updatedParentMessage: updatedParentMessage,
+    //   };
+    // }
+
+
+    // Emit a socket event to notify other participants about the new reply
+    chat.participants.forEach((participantObjectId) => {
+      if (participantObjectId.toString() === req.user._id.toString()) return;
+
+      // Emit the message reply event to the other participants with reply message details
+      emitSocketEvent(
+        req,
+        participantObjectId.toString(),
+        ChatEventEnum.MESSAGE_REPLY_EVENT,
+        receivedMessage
+      );
+    });
+
+  return res
+    .status(201)
+    .json(new ApiResponse(201, receivedMessage, "Reply sent successfully"));
+  } catch (error) {
+    console.error("Error replying to message:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 // Delete Message Controller
 const deleteMessage = asyncHandler(async (req, res) => {
   try {
@@ -330,4 +452,4 @@ const deleteMessage = asyncHandler(async (req, res) => {
 
 
 
-export { getAllMessages, sendMessage, editMessage, deleteMessage };
+export { getAllMessages, sendMessage, editMessage, replyToMessage, deleteMessage };
