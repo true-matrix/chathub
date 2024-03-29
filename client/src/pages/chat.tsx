@@ -978,6 +978,8 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
                 </div> }
                 
 
+
+                  {/* reply */}
                 {isMessageReplying && (<div className="reply-message-container flex flex-row gap-1 p-3 justify-start w-100 ">   
                     <div>
                       <img src={selectedMessage?.data?.sender?.avatar?.url ? selectedMessage?.data?.sender?.avatar?.url : USER_IMG} className="h-16w-10 h-10 rounded-full" />
@@ -997,7 +999,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
                       </div> 
                   <p className="truncate-1 text-sm">{selectedMessage?.content}</p>
                     </div> 
-              </div>)}
+                </div>)}
 
 
 
