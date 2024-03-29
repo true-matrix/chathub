@@ -26,7 +26,21 @@ const chatMessageSchema = new Schema(
     edited: {
       type: Boolean,
       default: false,
-    }
+    },
+    status: {
+    type: String,
+    enum: ['sent', 'messageReceived', 'seenByOne', 'seenByAll'],
+    default: 'sent'
+    },
+    // Array to store users who have seen the message
+    seenBy: [{
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    }],
+    seen: {
+    type: Boolean,
+    default: false
+    },
   },
   { timestamps: true }
 );

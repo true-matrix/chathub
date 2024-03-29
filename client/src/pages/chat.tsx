@@ -54,6 +54,8 @@ const NEW_CHAT_EVENT = "newChat";
 const TYPING_EVENT = "typing";
 const STOP_TYPING_EVENT = "stopTyping";
 const MESSAGE_RECEIVED_EVENT = "messageReceived";
+const MESSAGE_SEEN_BY_ONE_EVENT = "seenByOne";
+const MESSAGE_SEEN_BY_ALL_EVENT = "seenByAll";
 const MESSAGE_EDITED_EVENT = "messageEdited";
 const MESSAGE_DELETED_EVENT = "messageDeleted";
 const LEAVE_CHAT_EVENT = "leaveChat";
@@ -432,11 +434,51 @@ const ChatPage = () => {
     } else {
       // If it belongs to the current chat, update the messages list for the active chat
       setMessages((prev) => [message, ...prev]);
+
+      //  setMessages((prev) => {
+      // // Update the status of the received message to 'messageReceived'
+      // const updatedMessages = prev.map((msg) =>
+      //   msg._id === message._id ? { ...msg, status: 'messageReceived' } : msg
+      // );
+      //    return [message, ...updatedMessages];
+
+    //   setMessages(prev => {
+    //       const updatedMessages = prev.map(message => {
+    //         if(!message.seen){
+    //           return {
+    //             ...message,
+    //             seen:true
+    //         }
+    //       }
+    //       return message
+    //       })
+    //       return [message, ...updatedMessages];
+    // });
     }
 
     // Update the last message for the chat to which the received message belongs
     updateChatLastMessage(message.chat || "", message);
   };
+
+  // Function to handle message seen by one event
+const onMessageSeenByOne = (message : ChatMessageInterface) => {
+  // Update the message in the messages list to reflect the seen status
+  setMessages((prevMessages) =>
+    prevMessages.map((msg) =>
+      msg._id === message._id ? { ...msg, status: "seenByOne" } : msg
+    )
+  );
+  };
+  
+  // Function to handle message seen by all event
+const onMessageSeenByAll = (message : ChatMessageInterface) => {
+  // Update the message in the messages list to reflect the seen status
+  setMessages((prevMessages) =>
+    prevMessages.map((msg) =>
+      msg._id === message._id ? { ...msg, status: "seenByAll" } : msg
+    )
+  );
+};
 
   const onMessageEdited = (message: ChatMessageInterface) => {
       setMessages((prev) => [message, ...prev]);
@@ -569,6 +611,8 @@ const ChatPage = () => {
     socket.on(STOP_TYPING_EVENT, handleOnSocketStopTyping);
     // Listener for when a new message is received.
     socket.on(MESSAGE_RECEIVED_EVENT, onMessageReceived);
+    socket.on(MESSAGE_SEEN_BY_ONE_EVENT, onMessageSeenByOne);
+    socket.on(MESSAGE_SEEN_BY_ALL_EVENT, onMessageSeenByAll)
     // Listener for when a message is edited.
     socket.on(MESSAGE_EDITED_EVENT, onMessageEdited);
     // Listener for when a message is deleted.
@@ -588,6 +632,8 @@ const ChatPage = () => {
       socket.off(TYPING_EVENT, handleOnSocketTyping);
       socket.off(STOP_TYPING_EVENT, handleOnSocketStopTyping);
       socket.off(MESSAGE_RECEIVED_EVENT, onMessageReceived);
+      socket.off(MESSAGE_SEEN_BY_ONE_EVENT, onMessageSeenByOne);
+      socket.off(MESSAGE_SEEN_BY_ALL_EVENT, onMessageSeenByAll)
       socket.off(MESSAGE_EDITED_EVENT, onMessageEdited);
       socket.off(MESSAGE_DELETED_EVENT, onMessageDeleted);
       socket.off(NEW_CHAT_EVENT, onNewChat);

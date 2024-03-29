@@ -90,6 +90,12 @@ export const ChatEventEnum = Object.freeze({
   UPDATE_GROUP_NAME_EVENT: "updateGroupName",
   // ? when new message is received
   MESSAGE_RECEIVED_EVENT: "messageReceived",
+  // ? when new message is send
+  MESSAGE_SENT_EVENT: "sent",
+  // ? when message seen by One participant
+  MESSAGE_SEEN_BY_ONE_EVENT: "seenByOne",
+  // ? when message seen by All
+  MESSAGE_SEEN_BY_ALL_EVENT: "seenByAll",
   // ? when new message is edited
   MESSAGE_EDITED_EVENT: "messageEdited",
   // ? when new message is deleted
