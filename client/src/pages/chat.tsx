@@ -918,7 +918,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
                           message={msg}
                           onMessageClick={handleMessageClick}
                           onMessageReply={handleMessageReply}
-                          onMessageDelete={handleDelete}
+                          onMessageDelete={()=>handleDelete(msg._id)}
                         />
                       );
                     })}

@@ -412,21 +412,28 @@ const updatedParentMessage = await ChatMessage.findByIdAndUpdate(
 
 // Delete Message Controller
 const deleteMessage = asyncHandler(async (req, res) => {
-  try {
+  // try {
     const { chatId, messageId } = req.params;
 
     // Find the chat in the database
     const chat = await Chat.findById(chatId);
 
     if (!chat) {
-      return res.status(404).json({ error: "Chat not found" });
+      throw new ApiError(404, "Chat not found");
+  }
+  
+  // Find the chat in the database
+    const message = await ChatMessage.findById(messageId);
+
+    if (!message) {
+      throw new ApiError(404, "Message not found");
     }
 
     // Find the message to delete
     const deletedMessage = await ChatMessage.findByIdAndDelete(messageId);
 
     if (!deletedMessage) {
-      return res.status(404).json({ error: "Message not found" });
+      throw new ApiError(500, "Internal server error while deleting user");
     }
 
     // Emit a socket event to notify other participants about the deleted message
@@ -443,10 +450,10 @@ const deleteMessage = asyncHandler(async (req, res) => {
     });
 
     return res.status(200).json(new ApiResponse(200, null, 'Message deleted successfully'));
-  } catch (error) {
-    console.error("Error deleting message:", error);
-    return res.status(500).json({ error: "Internal server error" });
-  }
+  // } catch (error) {
+  //   console.error("Error deleting message:", error);
+  //   return res.status(500).json({ error: "Internal server error" });
+  // }
 });
 
 
