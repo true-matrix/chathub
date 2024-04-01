@@ -40,17 +40,17 @@ const ChatItem: React.FC<{
 //    console.log('res',res);
 //    return res;
   //   }
-  const getUserChatsOnlineStatus = () => {
-    const userChats = LocalStorage.get('userChats');
-    const res = userChats.map((group : any) => {
-        if (chat._id === group._id) {
-            return group.participants.some((participant : any) => {
-                return participant._id !== user._id && participant.islogin;
-            });
-        }
-    })
-    return res.some((value:any) => value !== null && value !== undefined);
-}
+//   const getUserChatsOnlineStatus = () => {
+//     const userChats = LocalStorage.get('userChats');
+//     const res = userChats.map((group : any) => {
+//         if (chat._id === group._id) {
+//             return group.participants.some((participant : any) => {
+//                 return participant._id !== user._id && participant.islogin;
+//             });
+//         }
+//     })
+//     return res.some((value:any) => value !== null && value !== undefined);
+// }
   useEffect(() => {
     const userChats = LocalStorage.get('userChats');
     const isChatOnline = userChats.find((group:any) => group._id === chat._id)?.participants.some((participant:any) => participant._id !== user._id && participant.islogin) || false;

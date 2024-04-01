@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import copy from 'copy-to-clipboard';
-import CopyIcon from '../assets/images/copy.png'; // Assuming you have a copy.svg file
 import Copy from '../assets/images/copy.svg'; // Assuming you have a copy.svg file
 
 export const CopyToClipboardButton = ({ text }: any) => {

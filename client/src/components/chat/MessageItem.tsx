@@ -4,14 +4,12 @@ import {
   PaperClipIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
-import { useEffect, useRef, useState } from "react";
-import { ChatListItemInterface, ChatMessageInterface } from "../../interfaces/chat";
-import { LocalStorage, classNames, requestHandler } from "../../utils";
+import { useState } from "react";
+import {  ChatMessageInterface } from "../../interfaces/chat";
+import { classNames } from "../../utils";
 import { getRecentTime } from "../../commonhelper";
 import DOC_PREVIEW from "../../assets/images/doc-preview.png";
 import dropdown_icon from "../../assets/images/dropdown-dots.svg";
-import { createUserChat, editMessage, getChatId, getChatMessages } from "../../api";
-import { useAuth } from "../../context/AuthContext";
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import {PencilIcon, TrashIcon, ArrowUturnLeftIcon } from '@heroicons/react/20/solid';
@@ -27,12 +25,11 @@ const MessageItem: React.FC<{
   onMessageDelete?: any;
 }> = ({ message, isOwnMessage, isGroupChatMessage, onMessageClick, onMessageReply, onMessageDelete }) => {
   const [resizedImage, setResizedImage] = useState<string | null>(null);
-  const [creatingChat, setCreatingChat] = useState(false);
-  const [dataLoading, setDataLoading] = useState(false);
-  const currentChat = useRef<ChatListItemInterface | null>(null);
-  const { user } = useAuth();
+  // const [creatingChat, setCreatingChat] = useState(false);
+  // const [dataLoading, setDataLoading] = useState(false);
+  // const currentChat = useRef<ChatListItemInterface | null>(null);
+  // const { user } = useAuth();
   const { setIsMessageEditing, setIsMessageDeleting, setIsMessageReplying } = useGlobal();
-  const messageItemRef = useRef<HTMLDivElement>(null);
 
 
   const containsLink = (text : string) => {
@@ -45,35 +42,38 @@ const MessageItem: React.FC<{
   };
 
   // Function to create a new chat with a user
-  const createNewChat = async (selectedUserId: string) => {
-    let chatId: string;
-    // Handle the request to create a chat
-    await requestHandler(
-          async () => await getChatId(selectedUserId, user._id),
-          setDataLoading,
-      (res) => {
-        const { data } = res; // Extract data from response
-        chatId = data.chatId;
-          },
-          alert // Display error alerts on request failure
-        );
-    await requestHandler(
-      async () => await getChatMessages(chatId),
-      setCreatingChat, // Callback to handle loading state
-      (res) => {
-        const { data } = res; // Extract data from response
-        if (
-              currentChat.current?._id &&
-              currentChat.current?._id === data._id
-            )
-          return;
-        LocalStorage.set("currentChat", data);
-        LocalStorage.set("unreadMessages", []);
-                      currentChat.current = data;
-      },
-      alert // Use the alert as the error handler
-    );
-  };
+  // const createNewChat = async (selectedUserId: string) => {
+  //   let chatId: string;
+  //   // Handle the request to create a chat
+  //   await requestHandler(
+  //         async () => await getChatId(selectedUserId, user._id),
+  //         setDataLoading,
+  //     (res) => {
+  //       const { data } = res; // Extract data from response
+  //       chatId = data.chatId;
+  //         },
+  //         alert // Display error alerts on request failure
+  //       );
+  //   await requestHandler(
+  //     async () => await getChatMessages(chatId),
+  //     setCreatingChat, // Callback to handle loading state
+  //     (res) => {
+  //       const { data } = res; // Extract data from response
+  //       if (
+  //             currentChat.current?._id &&
+  //             currentChat.current?._id === data._id
+  //           )
+  //         return;
+  //       LocalStorage.set("currentChat", data);
+  //       LocalStorage.set("unreadMessages", []);
+  //                     currentChat.current = data;
+  //     },
+  //     alert // Use the alert as the error handler
+  //   );
+  // };
+  // console.log(dataLoading);
+  // console.log(creatingChat);
+  
   const handleEditMessage = (message: any) => {
     onMessageClick(message);
     setIsMessageEditing(true);
@@ -97,20 +97,20 @@ const MessageItem: React.FC<{
 
   }
 
- const getClassName = (status : string) => {
-    switch (status) {
-      case 'sent':
-        return 'text-sm text-gray-500'; 
-      case 'messageReceived':
-        return 'text-sm text-gray-500'; 
-      case 'seenByOne':
-        return 'text-sm text-yellow-500'; 
-      case 'seenByAll':
-        return 'text-sm text-green-500'; 
-      default:
-        return 'text-sm text-gray-500'; 
-    }
-  };
+//  const getClassName = (status : string) => {
+//     switch (status) {
+//       case 'sent':
+//         return 'text-sm text-gray-500'; 
+//       case 'messageReceived':
+//         return 'text-sm text-gray-500'; 
+//       case 'seenByOne':
+//         return 'text-sm text-yellow-500'; 
+//       case 'seenByAll':
+//         return 'text-sm text-green-500'; 
+//       default:
+//         return 'text-sm text-gray-500'; 
+//     }
+//   };
 
 //  const getSeenClassName = (status : any) => {
 //     switch (status) {
@@ -120,16 +120,16 @@ const MessageItem: React.FC<{
 //         return 'text-sm text-green-500';
 //     }
   //   }; 
-  const getSeenClassName = (status: any) => {
-    switch (true) {
-      case status === 0:
-        return 'text-sm text-gray-500'; 
-      case status >= 1:
-        return 'text-sm text-green-500'; 
-      default:
-        return ''; // Handle other cases as needed
-    }
-};
+//   const getSeenClassName = (status: any) => {
+//     switch (true) {
+//       case status === 0:
+//         return 'text-sm text-gray-500'; 
+//       case status >= 1:
+//         return 'text-sm text-green-500'; 
+//       default:
+//         return ''; // Handle other cases as needed
+//     }
+// };
   return (
     <>
       {resizedImage ? (
