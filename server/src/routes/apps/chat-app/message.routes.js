@@ -49,7 +49,7 @@ router
     replyToMessage
 );
 
-router.delete("/:chatId/:messageId",
+router.delete("/:messageId",
   mongoIdPathVariableValidator("chatId"), // Validate the chat ID path variable
   mongoIdPathVariableValidator("messageId"), // Validate the message ID path variable
   // sendMessageValidator(), // Validate the request body
