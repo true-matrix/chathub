@@ -54,6 +54,7 @@ const NEW_CHAT_EVENT = "newChat";
 const TYPING_EVENT = "typing";
 const STOP_TYPING_EVENT = "stopTyping";
 const MESSAGE_RECEIVED_EVENT = "messageReceived";
+const MESSAGE_SEEN_EVENT = "seen";
 const MESSAGE_SEEN_BY_ONE_EVENT = "seenByOne";
 const MESSAGE_SEEN_BY_ALL_EVENT = "seenByAll";
 const MESSAGE_EDITED_EVENT = "messageEdited";
@@ -109,44 +110,44 @@ const ChatPage = () => {
     }, [socket,isConnected]);
   // const [activeButton, setActiveButton] = useState("chat");
 
-   const onYes = useCallback(async (id:string) => {
-        await requestHandler(
-      // Try to send the chat message with the given message and attached files
-      async () =>
-            await deleteMessage(
-              currentChat.current?._id || "", // Chat ID or empty string if not available
-              selectedMessage.id,
-        ),
-      null,
-      // On successful message sending, clear the message input and attached files, then update the UI
-          async () => {
-            setIsMessageDeleting(false);
-            navigate("/chat"); // Redirect to the login page after successful registration
-            setMessage(""); // Clear the message input
-            setAttachedFiles([]); // Clear the list of attached files
-            await getChats()
-            await getMessages();
+  //  const onYes = useCallback(async (id:string) => {
+  //       await requestHandler(
+  //     // Try to send the chat message with the given message and attached files
+  //     async () =>
+  //           await deleteMessage(
+  //             currentChat.current?._id || "", // Chat ID or empty string if not available
+  //             selectedMessage.id,
+  //       ),
+  //     null,
+  //     // On successful message sending, clear the message input and attached files, then update the UI
+  //         async () => {
+  //           setIsMessageDeleting(false);
+  //           navigate("/chat"); // Redirect to the login page after successful registration
+  //           setMessage(""); // Clear the message input
+  //           setAttachedFiles([]); // Clear the list of attached files
+  //           await getChats()
+  //           await getMessages();
 
-            // setMessages((prev) => [res.data, ...prev]); // Update messages in the UI
-            // updateChatLastMessage(currentChat.current?._id || "", res.data); // Update the last message in the chat
-      },
+  //           // setMessages((prev) => [res.data, ...prev]); // Update messages in the UI
+  //           // updateChatLastMessage(currentChat.current?._id || "", res.data); // Update the last message in the chat
+  //     },
 
-      // If there's an error during the message sending process, raise an alert
-      alert
-      );
-     console.log('delete=>', id);
-     setMessages(messages.filter((message: any) => message.id !== id));
+  //     // If there's an error during the message sending process, raise an alert
+  //     alert
+  //     );
+  //    console.log('delete=>', id);
+  //    setMessages(messages.filter((message: any) => message.id !== id));
         
-    }, []);
-      const handleDelete = useCallback((id:string) => {
-        confirmAlert({
-            customUI: ({ onClose }) => {
-                return (
-                  <ConfirmAlert onClose={onClose} onYes={() => onYes(id)} heading="Are you sure?" subHeading={"You want to delete message?"} onCloseText="Close" onSubmitText="Delete" />
-                );
-            }
-        });
-    }, []);
+  //   }, []);
+  //     const handleDelete = useCallback((id:string) => {
+  //       confirmAlert({
+  //           customUI: ({ onClose }) => {
+  //               return (
+  //                 <ConfirmAlert onClose={onClose} onYes={() => onYes(id)} heading="Are you sure?" subHeading={"You want to delete message?"} onCloseText="Close" onSubmitText="Delete" />
+  //               );
+  //           }
+  //       });
+  //   }, []);
 
   /**
    *  A  function to update the last message of a specified chat to update the chat list
@@ -188,6 +189,9 @@ const ChatPage = () => {
     // Check if a chat is selected, if not, show an alert
     if (!currentChat.current?._id) return alert("No chat is selected");
 
+    console.log('currentChat',currentChat);
+    console.log('user',user);
+    
     // Check if socket is available, if not, show an alert
     if (!socket) return alert("Socket not available");
 
@@ -208,7 +212,28 @@ const ChatPage = () => {
       // After fetching, set the chat messages to the state if available
       (res) => {
         const { data } = res;
-        setMessages(data || []);
+        // setMessages(data || []);
+        // if () {
+        //   socket?.emit(MESSAGE_SEEN_EVENT, data?._id);
+        // }
+      const updatedMessages = data.map((prevMessage : any) => {
+        if (!prevMessage.seen) {
+          return { ...prevMessage, seen: true };
+        }
+        return prevMessage;
+      });
+      setMessages(updatedMessages);
+      //   setMessages((prevMessages) => {
+      // const updatedMessages = prevMessages.map((prevMessage) => {
+      //   if (prevMessage._id === message._id && !prevMessage.seen) {
+      //     return { ...prevMessage, seen: true };
+      //   }
+      //   return prevMessage;
+      // });
+      // return [message,...updatedMessages];
+      // });
+    console.log('data',data);
+      
       },
       // Display any error alerts if they occur during the fetch
       alert
@@ -459,6 +484,11 @@ const ChatPage = () => {
     } else {
       // If it belongs to the current chat, update the messages list for the active chat
       setMessages((prev) => [message, ...prev]);
+          
+//  console.log('ra m', message);
+ 
+    socket?.emit(MESSAGE_SEEN_EVENT, message?._id);
+
 
       //  setMessages((prev) => {
       // // Update the status of the received message to 'messageReceived'
@@ -485,6 +515,25 @@ const ChatPage = () => {
     updateChatLastMessage(message.chat || "", message);
   };
 
+  const onMessageSeen = (message : ChatMessageInterface) => {
+    // setMessages((prev) => [message, ...prev]);
+    // chatId !== currentChat.current?._id
+    console.log('message',message);
+    console.log('currentChat',currentChat);
+    console.log('selectedMessage',selectedMessage);
+    
+  if(currentChat){
+    setMessages((prevMessages) => {
+      const updatedMessages = prevMessages.map((prevMessage) => {
+        if (prevMessage._id === message._id && !prevMessage.seen) {
+          return { ...prevMessage, seen: true };
+        }
+        return prevMessage;
+      });
+      return [message,...updatedMessages];
+      });
+    }
+  };
   // Function to handle message seen by one event
 const onMessageSeenByOne = (message : ChatMessageInterface) => {
   // Update the message in the messages list to reflect the seen status
@@ -640,6 +689,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
     socket.on(STOP_TYPING_EVENT, handleOnSocketStopTyping);
     // Listener for when a new message is received.
     socket.on(MESSAGE_RECEIVED_EVENT, onMessageReceived);
+    socket.on(MESSAGE_SEEN_EVENT, onMessageSeen);
     socket.on(MESSAGE_SEEN_BY_ONE_EVENT, onMessageSeenByOne);
     socket.on(MESSAGE_SEEN_BY_ALL_EVENT, onMessageSeenByAll)
     // Listener for when a message is edited.
@@ -663,6 +713,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
       socket.off(TYPING_EVENT, handleOnSocketTyping);
       socket.off(STOP_TYPING_EVENT, handleOnSocketStopTyping);
       socket.off(MESSAGE_RECEIVED_EVENT, onMessageReceived);
+      socket.off(MESSAGE_SEEN_EVENT, onMessageSeen);
       socket.off(MESSAGE_SEEN_BY_ONE_EVENT, onMessageSeenByOne);
       socket.off(MESSAGE_SEEN_BY_ALL_EVENT, onMessageSeenByAll)
       socket.off(MESSAGE_EDITED_EVENT, onMessageEdited);
@@ -719,6 +770,17 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
       setMessage('');
     }
   };
+
+  const handleDeleteMessage = async (message: any) => {
+    if (message) {
+            setIsMessageDeleting(false);
+            navigate("/chat"); // Redirect to the login page after successful registration
+            setMessage(""); // Clear the message input
+            setAttachedFiles([]); // Clear the list of attached files
+            await getChats()
+            await getMessages();
+    }
+  }
 
 
   console.log('selected msg',selectedMessage);
@@ -917,7 +979,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
                           message={msg}
                           onMessageClick={handleMessageClick}
                           onMessageReply={handleMessageReply}
-                          onMessageDelete={()=>handleDelete(msg._id)}
+                          onMessageDelete={()=>handleDeleteMessage(msg._id)}
                         />
                       );
                     })}
