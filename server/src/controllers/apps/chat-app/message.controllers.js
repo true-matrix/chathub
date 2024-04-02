@@ -413,14 +413,15 @@ const updatedParentMessage = await ChatMessage.findByIdAndUpdate(
 // Delete Message Controller
 const deleteMessage = asyncHandler(async (req, res) => {
   // try {
-    const { chatId, messageId } = req.params;
+  const { messageId } = req.params;
+  console.log('req.params',req.params);
 
     // Find the chat in the database
-    const chat = await Chat.findById(chatId);
+    // const chat = await Chat.findById(chatId);
 
-    if (!chat) {
-      throw new ApiError(404, "Chat not found");
-  }
+  //   if (!chat) {
+  //     throw new ApiError(404, "Chat not found");
+  // }
   
   // Find the chat in the database
     const message = await ChatMessage.findById(messageId);
