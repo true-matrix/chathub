@@ -92,6 +92,8 @@ export const ChatEventEnum = Object.freeze({
   MESSAGE_RECEIVED_EVENT: "messageReceived",
   // ? when new message is send
   MESSAGE_SENT_EVENT: "sent",
+  // ? when new message is seen
+  MESSAGE_SEEN_EVENT: "seen",
   // ? when message seen by One participant
   MESSAGE_SEEN_BY_ONE_EVENT: "seenByOne",
   // ? when message seen by All
