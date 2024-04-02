@@ -4,6 +4,7 @@ import { Server, Socket } from "socket.io";
 import { AvailableChatEvents, ChatEventEnum } from "../constants.js";
 import { User } from "../models/apps/auth/user.models.js";
 import { ApiError } from "../utils/ApiError.js";
+import { ChatMessage } from "../models/apps/chat-app/message.models.js";
 
 /**
  * @description This function is responsible to allow user to join the chat represented by chatId (chatId). event happens when user switches between the chats
@@ -38,6 +39,15 @@ const mountParticipantStoppedTypingEvent = (socket) => {
     socket.in(chatId).emit(ChatEventEnum.STOP_TYPING_EVENT, chatId);
   });
 };
+
+// This function is responsible to emit the message seen by other participants
+const mountMessageSeenEvent = (socket) => {
+  socket.on(ChatEventEnum.MESSAGE_SEEN_EVENT, async (messageId) => {
+    console.log('messageId', messageId);
+    socket.in(messageId).emit(ChatEventEnum.MESSAGE_SEEN_EVENT, messageId);
+     await ChatMessage.findByIdAndUpdate(messageId, { $set: { seen: true } })
+  });
+}
 
 /**
  *
@@ -85,6 +95,7 @@ const initializeSocketIO = (io) => {
       mountJoinChatEvent(socket);
       mountParticipantTypingEvent(socket);
       mountParticipantStoppedTypingEvent(socket);
+      mountMessageSeenEvent(socket);
 
       socket.on(ChatEventEnum.DISCONNECT_EVENT, async () => {
         console.log("user has disconnected 🚫. userId: " + socket.user?._id);
