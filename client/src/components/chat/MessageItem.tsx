@@ -4,9 +4,9 @@ import {
   PaperClipIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
-import { useState } from "react";
-import {  ChatMessageInterface } from "../../interfaces/chat";
-import { classNames } from "../../utils";
+import { useRef, useState } from "react";
+import {  ChatListItemInterface, ChatMessageInterface } from "../../interfaces/chat";
+import { classNames, requestHandler } from "../../utils";
 import { getRecentTime } from "../../commonhelper";
 import DOC_PREVIEW from "../../assets/images/doc-preview.png";
 import dropdown_icon from "../../assets/images/dropdown-dots.svg";
@@ -15,6 +15,7 @@ import 'reactjs-popup/dist/index.css';
 import {PencilIcon, TrashIcon, ArrowUturnLeftIcon } from '@heroicons/react/20/solid';
 import CopyText from "../CopyText";
 import { useGlobal } from "../../context/GlobalContext";
+import { deleteMessage } from "../../api";
 
 const MessageItem: React.FC<{
   isOwnMessage?: boolean;
@@ -30,6 +31,7 @@ const MessageItem: React.FC<{
   // const currentChat = useRef<ChatListItemInterface | null>(null);
   // const { user } = useAuth();
   const { setIsMessageEditing, setIsMessageDeleting, setIsMessageReplying } = useGlobal();
+  const currentChat = useRef<ChatListItemInterface | null>(null);
 
 
   const containsLink = (text : string) => {
@@ -96,6 +98,27 @@ const MessageItem: React.FC<{
 
 
   }
+
+  const deleteChat = async (message: any) => {
+    console.log('currentChat.current?._id',currentChat.current?._id);
+    console.log('currentChat',currentChat);
+    
+    await requestHandler(
+      //  A callback function that performs the deletion of a one-on-one chat by its ID.
+      async () => await deleteMessage(message.id),
+      null,
+      // A callback function to be executed on success. It will call 'onChatDelete'
+      // function with the chat's ID as its parameter.
+      () => {
+        onMessageDelete(message);
+        setIsMessageDeleting(true);
+        setIsMessageReplying(false);
+        setIsMessageEditing(false);
+      },
+      // The 'alert' function (likely to display error messages to the user.
+      alert
+    );
+  };
 
 //  const getClassName = (status : string) => {
 //     switch (status) {
@@ -180,7 +203,16 @@ const MessageItem: React.FC<{
                   <PencilIcon className="w-5 h-5 mr-2" />
                   <span>Edit</span>
                 </div>}
-                {(message.content && isOwnMessage) && <div className="flex items-center" onClick={() => handleDeleteMessage({ 'id': message._id })}>
+                {/* {(message.content && isOwnMessage) && <div className="flex items-center" onClick={() => handleDeleteMessage({ 'id': message._id })}> */}
+                {(message.content && isOwnMessage) && <div className="flex items-center" onClick={(e) => {
+                    e.stopPropagation();
+                    const ok = confirm(
+                      "Are you sure you want to delete this chat?"
+                    );
+                    if (ok) {
+                      deleteChat({ 'id': message._id });
+                    }
+                  }}>
                   <TrashIcon className="w-5 h-5 mr-2" />
                   <span>Delete</span>
                 </div>} 
@@ -314,6 +346,16 @@ const MessageItem: React.FC<{
               {message?.edited ? <span style={{ fontStyle: 'italic' }}>{`edited`} &nbsp;</span> : ''}
               {getRecentTime(message.createdAt)}
               {/* {getRecentTime(message.updatedAt)} */}
+              {/* Tick indicators based on message status */}
+            {isOwnMessage && (
+              <>
+                {!message.seen ? (
+                  <span className="text-white-500">&#10003;</span>
+                ) : (
+                  <span className="text-green-500">&#10003;&#10003;</span>
+                )}
+              </>
+            )}
             </p>
             {/* {(isOwnMessage) && <p className={getSeenClassName(message?.seen)}><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
