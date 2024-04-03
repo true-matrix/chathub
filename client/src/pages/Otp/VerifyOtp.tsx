@@ -8,7 +8,7 @@ import * as Yup from 'yup';
 import logoitem from "../../assets/images/full-logo.png";
 import vector from "../../assets/images/auth-img.png";
 import { LocalStorage } from "../../utils";
-
+import Countdown from "react-countdown";
 
 interface FormValues {
     email: any;
@@ -18,7 +18,8 @@ interface FormValues {
 const VerifyOtp = () => {
     // Accessing the login function from the AuthContext
     const { verifyOtp, user } = useAuth();
-    
+    const targetDate = Date.now() + 5*60*1000; // 5mins
+  
     const formInititalState : FormValues = {
         email: user?.email,
         otp: ''
@@ -41,6 +42,24 @@ const VerifyOtp = () => {
         // console.log("otp values=>",values);
         },
       });
+  
+   // Renderer function to customize how the countdown looks
+  const renderer = ({ minutes, seconds, completed } : any) => {
+    if (completed) {
+      // Render something when countdown is complete
+      return <span style={{ color: '#ec2d2d', alignItems: 'center' }}>OTP Expired!</span>;
+    } else {
+      // Render a countdown component
+      return (
+        <div>
+          <span>Expires in </span>&nbsp;
+          <span>{minutes}</span> min &nbsp;
+          <span>{seconds}</span> secs
+        </div>
+      );
+    }
+  };
+
 const handleResendOtp = () => {
         LocalStorage.clear(); // Clear local storage on logout
 }
@@ -97,6 +116,15 @@ const handleResendOtp = () => {
                 Login
               </Button>
               </form>
+              <div style={{display:'flex', alignItems:'center'}}>
+                <div className="online-indicator"><span className={"blink"}></span></div>&nbsp;
+                <Countdown
+                  date={targetDate}
+                  intervalDelay={0}
+                  precision={3}
+                  renderer={renderer}
+                />
+              </div>
               {/* Link to the registration page */}
               <small className="text-zinc-300 pl-12">
                 Don&apos;t get otp !{" "}
