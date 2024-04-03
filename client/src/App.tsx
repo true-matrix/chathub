@@ -29,25 +29,21 @@ const App = () => {
     const resetTimer = () => {
       clearTimeout(inactivityTimer);
       inactivityTimer = setTimeout(async () => {
-        // await logoutUser(); // Make an API call to logout
-        // // await LocalStorage.clear();
-        // await navigate("/login"); 
-
-            await requestHandler(
-        async () => await logoutUser(),
-        setIsLoading,
-        () => {
-          // Exclude clearing unread messages from local storage
-          const unreadMessages = LocalStorage.get('unreadMessages');
-          LocalStorage.clear();
-          if (unreadMessages) {
-            // Restore unread messages after clearing local storage
-            LocalStorage.set('unreadMessages', unreadMessages);
-          }
-          navigate("/login"); // Redirect to the login page after successful logout
-        clearInterval(inactivityTimer);
-              },
-        alert // Display error alerts on request failure
+        await requestHandler(
+          async () => await logoutUser(),
+          setIsLoading,
+          () => {
+            // Exclude clearing unread messages from local storage
+            const unreadMessages = LocalStorage.get('unreadMessages');
+            LocalStorage.clear();
+            if (unreadMessages) {
+              // Restore unread messages after clearing local storage
+              LocalStorage.set('unreadMessages', unreadMessages);
+            }
+            navigate("/login"); // Redirect to the login page after successful logout
+            clearInterval(inactivityTimer);
+          },
+          alert // Display error alerts on request failure
         );
       }, 3600000); // 1 hour in milliseconds
     };
@@ -63,14 +59,26 @@ const App = () => {
           .replace(/^ +/, "")
           .replace(/=.*/, `=;expires=${new Date().toUTCString()};path=/`);
       });
-       
+      
       // Call resetTimer only once after clearing data
       resetTimer();
 
       // Add event listeners for user activity
       document.addEventListener("mousemove", handleActivity);
       document.addEventListener("keypress", handleActivity);
-    }
+
+      // Add event listener for beforeunload to clear local storage and call logoutUser
+      window.addEventListener("beforeunload", async () => {
+        await logoutUser();
+        const unreadMessages = LocalStorage.get('unreadMessages');
+        LocalStorage.clear();
+        if (unreadMessages) {
+          // Restore unread messages after clearing local storage
+          LocalStorage.set('unreadMessages', unreadMessages);
+        }
+      });
+    };
+
     // Initial setup of the timer
     resetTimer();
     // Call clearDataAndSetTimer to clear data and set timer only once
@@ -82,6 +90,15 @@ const App = () => {
       document.removeEventListener("mousemove", handleActivity);
       document.removeEventListener("keypress", handleActivity);
       clearTimeout(inactivityTimer);
+      window.removeEventListener("beforeunload", async () => {
+        await logoutUser();
+        const unreadMessages = LocalStorage.get('unreadMessages');
+        LocalStorage.clear();
+        if (unreadMessages) {
+          // Restore unread messages after clearing local storage
+          LocalStorage.set('unreadMessages', unreadMessages);
+        }
+      });
     };
   }, []);
 
@@ -118,41 +135,41 @@ const App = () => {
         }
       />
 
-    <Route
-            path="/contacts"
-            element={
-              <PrivateRoute>
-                <ContactsPage />
-              </PrivateRoute>
-            }
-          />
+      <Route
+        path="/contacts"
+        element={
+          <PrivateRoute>
+            <ContactsPage />
+          </PrivateRoute>
+        }
+      />
 
-    <Route
-                path="/profile"
-                element={
-                  <PrivateRoute>
-                    <ProfilePage />
-                  </PrivateRoute>
-                }
-              /> 
+      <Route
+        path="/profile"
+        element={
+          <PrivateRoute>
+            <ProfilePage />
+          </PrivateRoute>
+        }
+      />
 
-    <Route
-                path="/settings"
-                element={
-                  <PrivateRoute>
-                    <SettingsPage />
-                  </PrivateRoute>
-                }
-              />  
+      <Route
+        path="/settings"
+        element={
+          <PrivateRoute>
+            <SettingsPage />
+          </PrivateRoute>
+        }
+      />
 
-     <Route
-                path="/dashboard"
-                element={
-                  <PrivateRoute>
-                    <AdminDashboard />
-                  </PrivateRoute>
-                }
-              />            
+      <Route
+        path="/dashboard"
+        element={
+          <PrivateRoute>
+            <AdminDashboard />
+          </PrivateRoute>
+        }
+      />
 
       {/* Public login route: Accessible by everyone */}
       <Route
@@ -181,9 +198,6 @@ const App = () => {
           </PublicRoute>
         }
       />
-
-      
-
 
       {/* Wildcard route for undefined paths. Shows a 404 error */}
       <Route path="*" element={<p>404 Not found</p>} />
