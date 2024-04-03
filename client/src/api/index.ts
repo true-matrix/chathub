@@ -204,6 +204,10 @@ const logoutUser = () => {
   return apiClient.post("/users/logout");
 };
 
+const updateVerifiedStatus = () => {
+  return apiClient.put("/users/update-verified-status");
+};
+
 const getAvailableUsers = () => {
   return apiClient.get("/chat-app/chats/users");
 };
@@ -339,4 +343,5 @@ export {
   editMessage,
   replyMessage,
   deleteMessage,
+  updateVerifiedStatus,
 };
