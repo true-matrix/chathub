@@ -216,13 +216,13 @@ const ChatPage = () => {
         // if () {
         //   socket?.emit(MESSAGE_SEEN_EVENT, data?._id);
         // }
-      const updatedMessages = data.map((prevMessage : any) => {
+      const updatedMessages = data && data.map((prevMessage : any) => {
         if (!prevMessage.seen) {
           return { ...prevMessage, seen: true };
         }
         return prevMessage;
       });
-      setMessages(updatedMessages);
+      setMessages(updatedMessages || []);
       //   setMessages((prevMessages) => {
       // const updatedMessages = prevMessages.map((prevMessage) => {
       //   if (prevMessage._id === message._id && !prevMessage.seen) {
@@ -232,8 +232,6 @@ const ChatPage = () => {
       // });
       // return [message,...updatedMessages];
       // });
-    console.log('data',data);
-      
       },
       // Display any error alerts if they occur during the fetch
       alert
