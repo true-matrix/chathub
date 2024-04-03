@@ -345,7 +345,21 @@ const verifyOTP = asyncHandler(async (req, res) => {
   // });
 });
 
+// Define the updateUserVerifiedStatus handler function
+const updateUserVerifiedStatus = asyncHandler(async (req, res) => {
+  // Extract the new verified status from the request body
+  // const { verified } = req.body;
 
+  // Update the verified status of the user in the database
+  await User.findByIdAndUpdate(
+    req.user._id,
+    { $set: { verified: false, refreshToken: undefined } },
+    { new: true }
+  );
+
+  // Send a response indicating successful update
+  return res.status(200).json({ success: true, message: "Verified status updated successfully" });
+});
 
 const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
@@ -695,6 +709,7 @@ export {
   sendOTP,
   verifyOTP,
   logoutUser,
+  updateUserVerifiedStatus,
   refreshAccessToken,
   resendEmailVerification,
   resetForgottenPassword,
