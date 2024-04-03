@@ -708,3 +708,34 @@ img.copy-button:hover {
   border-radius: 10px;
   padding: 10px;
 }
+div.online-indicator {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  margin-right: 10px;
+
+  background-color: #ea5c5c;
+  border-radius: 50%;
+
+  position: relative;
+}
+span.blink {
+  display: block;
+  width: 15px;
+  height: 15px;
+
+  background-color: #ec2d2d;
+  opacity: 0.7;
+  border-radius: 50%;
+
+  animation: blink 1s linear infinite;
+}
+
+/*Animations*/
+
+@keyframes blink {
+  100% {
+    transform: scale(2, 2);
+    opacity: 0;
+  }
+}
