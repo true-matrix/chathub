@@ -16,6 +16,7 @@ import {
   resetForgottenPassword,
   updateUserAvatar,
   verifyEmail,
+  updateUserVerifiedStatus,
 } from "../../../controllers/apps/auth/user.controllers.js";
 import {
   verifyJWT,
@@ -58,6 +59,8 @@ router
 
 // Secured routes
 router.route("/logout").post(verifyJWT, logoutUser);
+router.route("/update-verified-status").put(verifyJWT, updateUserVerifiedStatus);
+
 router
   .route("/avatar")
   .patch(verifyJWT, upload.single("avatar"), updateUserAvatar);
