@@ -90,14 +90,14 @@ const MessageItem: React.FC<{
     setIsMessageDeleting(false);
   }
 
-  const handleDeleteMessage = (message: any) => {
-    onMessageDelete(message);
-    setIsMessageDeleting(true);
-    setIsMessageReplying(false);
-    setIsMessageEditing(false);
+  // const handleDeleteMessage = (message: any) => {
+  //   onMessageDelete(message);
+  //   setIsMessageDeleting(true);
+  //   setIsMessageReplying(false);
+  //   setIsMessageEditing(false);
 
 
-  }
+  // }
 
   const deleteChat = async (message: any) => {
     console.log('currentChat.current?._id',currentChat.current?._id);

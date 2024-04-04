@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Countdown from 'react-countdown';
 import moment from 'moment';
 import { LockClosedIcon } from "@heroicons/react/20/solid";

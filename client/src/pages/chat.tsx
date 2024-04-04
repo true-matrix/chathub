@@ -5,13 +5,13 @@ import {
   XCircleIcon,
 } from "@heroicons/react/20/solid";
 /// <reference lib="node" />
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 // import { Link, NavLink, useNavigate } from 'react-router-dom';
 // import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 // import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 // import { Logout } from './Auth/Logout';
-import { deleteMessage, editMessage, getChatMessages, getUserChats, replyMessage, sendMessage } from "../api";
+import { editMessage, getChatMessages, getUserChats, replyMessage, sendMessage } from "../api";
 import AddChatModal from "../components/chat/AddChatModal";
 import ChatItem from "../components/chat/ChatItem";
 import MessageItem from "../components/chat/MessageItem";
@@ -43,8 +43,6 @@ import {
 } from "../utils";
 import { useGlobal } from "../context/GlobalContext";
 import Sidebar from "./Common/Sidebar";
-import { confirmAlert } from "react-confirm-alert";
-import { ConfirmAlert } from "../components/ConfirmAlert";
 import { useNavigate } from "react-router-dom";
 
 const CONNECTED_EVENT = "connected";
