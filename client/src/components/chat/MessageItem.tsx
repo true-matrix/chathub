@@ -175,14 +175,42 @@ const MessageItem: React.FC<{
             "flex relative justify-start items-end gap-3 max-w-lg min-w- w-fit",
             isOwnMessage ? "ml-auto" : ""
           )}
-        >
-          <img
-            src={message.sender?.avatar?.url}
-            className={classNames(
-              "h-8 w-8 object-cover rounded-full flex flex-shrink-0",
-              isOwnMessage ? "order-2" : "order-1"
-            )}
-          />
+        > 
+            <div className={ classNames("shrink-0", 
+                isOwnMessage ? "order-2" : "order-1"
+              )}>
+              <div className="flex justify-center">
+              {isOwnMessage && (
+                <>
+                  {!message.seen ? (
+                    <span className="text-white-500">
+                     
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" className="bg-success-light rounded-full mb-1">
+                    <path d="M14.4665 7.28435C14.6602 7.09995 14.9179 6.99801 15.1853 7.00003C15.4528 7.00205 15.709 7.10789 15.8998 7.2952C16.0907 7.48251 16.2014 7.73665 16.2084 8.00399C16.2155 8.27133 16.1184 8.53097 15.9377 8.7281L10.4515 15.5894C10.3571 15.691 10.2433 15.7725 10.1167 15.8291C9.99013 15.8857 9.85345 15.9162 9.71482 15.9188C9.57619 15.9213 9.43847 15.8959 9.30989 15.844C9.18131 15.7922 9.06451 15.7149 8.96647 15.6169L5.32822 11.9786C5.2269 11.8842 5.14564 11.7703 5.08927 11.6438C5.03291 11.5173 5.0026 11.3808 5.00016 11.2423C4.99772 11.1039 5.02319 10.9663 5.07506 10.8379C5.12692 10.7095 5.20412 10.5929 5.30205 10.4949C5.39997 10.397 5.51662 10.3198 5.64503 10.2679C5.77344 10.2161 5.91098 10.1906 6.04944 10.193C6.18791 10.1955 6.32446 10.2258 6.45096 10.2822C6.57746 10.3385 6.69131 10.4198 6.78572 10.5211L9.66497 13.399L14.439 7.3146L14.4665 7.28435Z" fill="#42AB65"/>
+                    </svg>
+
+
+                    </span>
+                  ) : (
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" className="bg-success-light rounded-full mb-1">
+                    <path d="M12.3337 6.83405C12.5274 6.64965 12.7851 6.54771 13.0525 6.54973C13.32 6.55175 13.5761 6.65759 13.767 6.8449C13.9579 7.03221 14.0686 7.28635 14.0756 7.55369C14.0827 7.82103 13.9856 8.08067 13.8049 8.2778L8.31866 15.1391C8.22432 15.2407 8.11047 15.3222 7.98389 15.3788C7.85732 15.4354 7.72063 15.4659 7.58201 15.4685C7.44338 15.471 7.30566 15.4456 7.17708 15.3937C7.0485 15.3419 6.9317 15.2646 6.83366 15.1666L3.19541 11.5283C3.09409 11.4339 3.01283 11.32 2.95646 11.1935C2.9001 11.067 2.86979 10.9305 2.86735 10.792C2.8649 10.6536 2.89038 10.516 2.94224 10.3876C2.99411 10.2592 3.07131 10.1426 3.16923 10.0446C3.26716 9.9467 3.38381 9.8695 3.51221 9.81763C3.64062 9.76577 3.77816 9.7403 3.91663 9.74274C4.0551 9.74518 4.19165 9.77549 4.31815 9.83185C4.44465 9.88822 4.5585 9.96948 4.65291 10.0708L7.53216 12.9487L12.3062 6.8643L12.3337 6.83405ZM11.0687 13.9016L12.3337 15.1666C12.4317 15.2644 12.5484 15.3415 12.6768 15.3932C12.8053 15.445 12.9429 15.4703 13.0813 15.4678C13.2198 15.4652 13.3563 15.4348 13.4827 15.3783C13.6092 15.3218 13.723 15.2405 13.8173 15.1391L19.3063 8.2778C19.4049 8.18046 19.4829 8.06423 19.5356 7.93608C19.5882 7.80793 19.6146 7.67047 19.6129 7.53192C19.6113 7.39337 19.5818 7.25656 19.5261 7.12968C19.4705 7.00279 19.3898 6.88842 19.289 6.79339C19.1881 6.69837 19.0692 6.62465 18.9392 6.57662C18.8092 6.52859 18.6709 6.50725 18.5325 6.51387C18.3941 6.52049 18.2585 6.55493 18.1337 6.61514C18.0089 6.67535 17.8975 6.76009 17.8062 6.8643L13.0308 12.9487L12.3639 12.2804L11.0687 13.9016Z" fill="#42AB65"/>
+                    </svg> 
+
+                  )}
+                </>
+              )}
+              </div>
+
+              <img
+                src={message.sender?.avatar?.url}
+                className={classNames(
+                  "h-8 w-8 object-cover rounded-full flex flex-shrink-0",
+                  isOwnMessage ? "order-2" : "order-1"
+              )} />
+          </div>
+           
+          
+         
           <div className={classNames(
               "dropdown-icon",
               isOwnMessage
@@ -395,42 +423,7 @@ const MessageItem: React.FC<{
             isOwnMessage ? "ml-auto" : ""
           )}
         >
-          {/* <img
-            src={message.sender?.avatar?.url}
-            className={classNames(
-              "h-8 w-8 object-cover rounded-full flex flex-shrink-0",
-              isOwnMessage ? "order-2" : "order-1"
-            )}
-          />
-          <div className={classNames(
-              "dropdown-icon",
-              isOwnMessage
-                ? "dropdown-icon-left"
-                : "dropdown-icon-right"
-          )}> 
-          </div> */}
-
-          {/* <div
-            className={classNames(
-              "p-4 rounded-3xl flex flex-col break-all",
-              isOwnMessage
-                ? "order-1 rounded-br-none bg-primary"
-                : "order-2 rounded-bl-none bg-white"
-            )}
-          >  
-
-            <div className="reply-message-block bg-white p-2 mb-2  rounded-xl">
-              <p className="text-xs text-green-500  hover:underline underline-offset-1 mb-2">Rajesh</p>
-              <p className="text-sm text-zinc-500  hover:underline underline-offset-1">hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey hey </p>
-            </div>
-            <p className="text-sm text-zinc-50  hover:underline underline-offset-1 mb-2">Rajesh</p>
-
-              
-              <p className="mt-1.5 self-end text-[10px] inline-flex items-center text-zinc-200">Today, 3:06pm</p>
-
-
-
-          </div> */}
+        
         </div>
       </div>
     </>
