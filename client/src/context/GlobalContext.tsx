@@ -8,12 +8,14 @@ const GlobalContext = createContext<{
     isMessageEditing: boolean;
     isMessageReplying: boolean;
     isMessageDeleting: boolean;
+    messageInputFocused: boolean;
     setActiveButton: React.Dispatch<React.SetStateAction<string>>;
     setTabIndex: React.Dispatch<React.SetStateAction<number>>;
     setOpenGroupInfo: React.Dispatch<React.SetStateAction<boolean>>;
     setIsMessageEditing: React.Dispatch<React.SetStateAction<boolean>>;
     setIsMessageReplying: React.Dispatch<React.SetStateAction<boolean>>;
     setIsMessageDeleting: React.Dispatch<React.SetStateAction<boolean>>;
+    setMessageInputFocused: React.Dispatch<React.SetStateAction<boolean>>;
     
 }>({
     activeButton: "",
@@ -22,12 +24,14 @@ const GlobalContext = createContext<{
     isMessageEditing: false,
     isMessageReplying: false,
     isMessageDeleting: false,
+    messageInputFocused: false,
     setActiveButton: () => {},
     setTabIndex: () => { },
     setOpenGroupInfo: () => { },
     setIsMessageEditing: () => { },
     setIsMessageReplying: () => { },
     setIsMessageDeleting: () => { },
+    setMessageInputFocused: () => { },
 });
 
 // Create a hook to access the GlobalContext
@@ -43,13 +47,13 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isMessageEditing, setIsMessageEditing] = useState<boolean>(false);
   const [isMessageReplying, setIsMessageReplying] = useState<boolean>(false);
   const [isMessageDeleting, setIsMessageDeleting] = useState<boolean>(false);
-
+  const [messageInputFocused, setMessageInputFocused] = useState<boolean>(false);
 
 
 // console.log('activeButton',activeButton);
 
   return (
-    <GlobalContext.Provider value={{ isMessageDeleting, activeButton, tabIndex, openGroupInfo, isMessageEditing, isMessageReplying, setActiveButton, setTabIndex, setOpenGroupInfo, setIsMessageEditing, setIsMessageDeleting, setIsMessageReplying }}>
+    <GlobalContext.Provider value={{ isMessageDeleting, activeButton, tabIndex, openGroupInfo,messageInputFocused, isMessageEditing, isMessageReplying, setActiveButton, setTabIndex, setOpenGroupInfo, setIsMessageEditing, setIsMessageDeleting, setIsMessageReplying, setMessageInputFocused }}>
       {children}
     </GlobalContext.Provider>
   );

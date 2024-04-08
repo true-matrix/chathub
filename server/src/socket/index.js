@@ -49,6 +49,9 @@ const mountMessageSeenEvent = (socket) => {
   });
 }
 
+// Define a Map to store connected users
+const connectedUsers = new Map();
+
 /**
  *
  * @param {Server<import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, import("socket.io/dist/typed-events").DefaultEventsMap, any>} io
@@ -83,13 +86,22 @@ const initializeSocketIO = (io) => {
       }
       socket.user = user; // mount te user object to the socket
 
+      connectedUsers.set(socket.user._id.toString(), socket);
+
       // We are creating a room with user id so that if user is joined but does not have any active chat going on.
       // still we want to emit some socket events to the user.
       // so that the client can catch the event and show the notifications.
       socket.join(user._id.toString());
       socket.emit(ChatEventEnum.CONNECTED_EVENT); // emit the connected event so that client is aware
+            
+      // Emit connectedUsers data when it changes
+      const emitConnectedUsers = () => {
+        socket.emit("connectedUsers", Array.from(connectedUsers.keys()));
+      };
+
+      emitConnectedUsers(); // Emit connectedUsers data after adding the user
       console.log("User connected 🗼. userId: ", user._id.toString());
-      await User.findByIdAndUpdate({ _id: decodedToken?._id }, { $set: { islogin: true } })
+      await User.findByIdAndUpdate({ _id: decodedToken?._id }, { $set: { islogin: true, isOnline: true } })
 
       // Common events that needs to be mounted on the initialization
       mountJoinChatEvent(socket);
@@ -99,7 +111,9 @@ const initializeSocketIO = (io) => {
 
       socket.on(ChatEventEnum.DISCONNECT_EVENT, async () => {
         console.log("user has disconnected 🚫. userId: " + socket.user?._id);
-        await User.findByIdAndUpdate({ _id: socket.user?._id }, { $set: { islogin: false } })
+        connectedUsers.delete(socket.user._id.toString());
+        emitConnectedUsers(); // Emit connectedUsers data after removing the user
+        await User.findByIdAndUpdate({ _id: socket.user?._id }, { $set: { verified: false, islogin: false, isOnline: false } })
 
         if (socket.user?._id) {
           socket.leave(socket.user._id);

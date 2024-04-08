@@ -56,6 +56,7 @@ const ChatItem: React.FC<{
     const isChatOnline = userChats.find((group:any) => group._id === chat._id)?.participants.some((participant:any) => participant._id !== user._id && participant.islogin) || false;
     console.log('isChatOnline',isChatOnline)
   },[])
+  
   // Define an asynchronous function named 'deleteChat'.
   const deleteChat = async () => {
     await requestHandler(

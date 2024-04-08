@@ -21,6 +21,7 @@ import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
 import nochat from "../assets/images/main-image.png"
 import USER_IMG from '../assets/images/users/user.png';
+import NOTI_SOUND from '../assets/sound/notification-sound.mp3';
 // import logo from '../assets/images/wolflogo.svg'
 
 // import chat from '../assets/images/chat.svg'
@@ -44,6 +45,7 @@ import {
 import { useGlobal } from "../context/GlobalContext";
 import Sidebar from "./Common/Sidebar";
 import { useNavigate } from "react-router-dom";
+import NotificationComponent from "../components/Notifications";
 
 const CONNECTED_EVENT = "connected";
 const DISCONNECT_EVENT = "disconnect";
@@ -68,7 +70,7 @@ const ChatPage = () => {
   const { user } = useAuth();
   const { socket } = useSocket();
     const navigate = useNavigate();
-  const { activeButton,isMessageEditing, isMessageReplying, setIsMessageEditing, setIsMessageReplying, setIsMessageDeleting } = useGlobal();
+  const { activeButton,isMessageEditing, isMessageReplying, setIsMessageEditing, setIsMessageReplying, setIsMessageDeleting, setMessageInputFocused } = useGlobal();
   const [showPicker, setShowPicker] = useState(false);
   const emojiButtonRef : any = useRef();
   // Create a reference using 'useRef' to hold the currently selected chat.
@@ -101,11 +103,43 @@ const ChatPage = () => {
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]); // To store files attached to messages
   const [selectedMessage, setSelectedMessage] = useState<any>(null);
   const [userChats, setUserChats] = useState<any>([]);
+  const [allConnectedUsers, setAllConnectedUsers] = useState<any>([]);
+  const [notificationShown, setNotificationShown] = useState(false);
   useEffect(() => {
         // Fetch initial userChats data when component mounts
         const initialUserChats = LocalStorage.get('userChats');
-        setUserChats(initialUserChats);
-    }, [socket,isConnected]);
+        const connectedUsers = LocalStorage.get('connectedUsers');
+    setUserChats(initialUserChats);
+    setAllConnectedUsers(connectedUsers)
+  }, [socket, isConnected]);
+  
+   useEffect(() => {
+    // Request permission for notifications
+    if (Notification.permission !== 'granted') {
+      Notification.requestPermission();
+    }
+  }, []);
+
+   const showNotification = (title : any, options : any, duration = 2500) => {
+    // Check if the browser supports notifications
+    if (!('Notification' in window)) {
+      console.log('This browser does not support desktop notification');
+    } else if (Notification.permission === 'granted') {
+      // If it's okay let's create a notification
+      const notification = new Notification(title, options);
+
+      // Close the notification after the specified duration
+      setTimeout(() => {
+        notification.close();
+      }, duration);
+    }
+  };
+
+  const playMessageSound = () => {
+    const audio = new Audio(NOTI_SOUND); // Replace with the path to your sound file
+    audio.play();
+  };
+
   // const [activeButton, setActiveButton] = useState("chat");
 
   //  const onYes = useCallback(async (id:string) => {
@@ -220,7 +254,8 @@ const ChatPage = () => {
         }
         return prevMessage;
       });
-      setMessages(updatedMessages || []);
+        setMessages(updatedMessages || []);
+        setMessageInputFocused(true);
       //   setMessages((prevMessages) => {
       // const updatedMessages = prevMessages.map((prevMessage) => {
       //   if (prevMessage._id === message._id && !prevMessage.seen) {
@@ -408,9 +443,19 @@ const ChatPage = () => {
 
    const updateUserChats = (newUserChats : any) => {
         setUserChats(newUserChats);
+  };
+  const updateConnectedUsersInLocalStorage = (connectedUsers:any) => {
+    LocalStorage.set("connectedUsers", connectedUsers);
+    
     };
-
-    const onConnect = () => {
+    const connectedUsers: any = (connectedUsers: any) => {
+      // console.log('connectedUsers', connectedUsers);
+      //   LocalStorage.set("connectedUsers", connectedUsers);
+      updateConnectedUsersInLocalStorage(connectedUsers);
+    }
+  const onConnect = () => {
+    updateConnectedUsersInLocalStorage(connectedUsers);
+    
         setIsConnected(true);
         const newUserChats = userChats.map((group:any) => {
             if (!group.isGroupChat) {
@@ -425,7 +470,12 @@ const ChatPage = () => {
         updateUserChats(newUserChats);
     };
 
-    const onDisconnect = () => {
+  const onDisconnect = () => {
+       // Remove the disconnected user from localStorage
+      const connectedUsers = JSON.parse(LocalStorage.get('connectedUsers')) || [];
+      const updatedConnectedUsers = connectedUsers.filter((userId : any) => userId !== user._id);
+    updateConnectedUsersInLocalStorage(updatedConnectedUsers);
+    
         setIsConnected(false);
         const newUserChats = userChats.map((group:any) => {
             if (!group.isGroupChat) {
@@ -438,7 +488,8 @@ const ChatPage = () => {
             return group;
         });
         updateUserChats(newUserChats);
-    };
+  };
+
 
   /**
    * Handles the "typing" event on the socket.
@@ -475,6 +526,18 @@ const ChatPage = () => {
       const updatedUnreadMessages = [message, ...prev];
       // Store the updated unread messages in local storage
       LocalStorage.set("unreadMessages", updatedUnreadMessages);
+
+      // Set notificationShown to true
+      setNotificationShown(true);
+      
+      showNotification('New WolfChat Message', {
+      body: 'You have received a new message.',
+      icon: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjPGIbqtNtn1yzk1w1cGmCgFstHk-l2NvevRgw7J7kD3uOT4sjPpn-0CVb5gPGy47z3wtZWY4M5InE_n1zBlBE_PnkDXBydBhU8RCzwijKQYiSGGB1ZJ5umDWXCd4l9TpeiQcsJW2IjwXiOoQxg2M-FhknAF-RmkCOdqJgywWOLw62wSNSCzT1W6cAiZQ0n/s1600/multiwolf100.png' // You can set an icon if needed
+      });
+      
+       // Play message sound
+      playMessageSound();
+
       return updatedUnreadMessages;
     });
     } else {
@@ -666,6 +729,8 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
   setUnreadMessages(_unreadMessages || []);
 
 
+    setMessageInputFocused(true);
+    
     // An empty dependency array ensures this useEffect runs only once, similar to componentDidMount.
   }, []);
 
@@ -677,6 +742,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
     // Set up event listeners for various socket events:
     // Listener for when the socket connects.
     socket.on(CONNECTED_EVENT, onConnect);
+    socket.on('connectedUsers', connectedUsers);
     // Listener for when the socket disconnects.
     socket.on(DISCONNECT_EVENT, onDisconnect);
     // Listener for when a user is typing.
@@ -706,6 +772,8 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
       // Remove all the event listeners we set up to avoid memory leaks and unintended behaviors.
       socket.off(CONNECTED_EVENT, onConnect);
       socket.off(DISCONNECT_EVENT, onDisconnect);
+      socket.off('connectedUsers', connectedUsers);
+
       socket.off(TYPING_EVENT, handleOnSocketTyping);
       socket.off(STOP_TYPING_EVENT, handleOnSocketStopTyping);
       socket.off(MESSAGE_RECEIVED_EVENT, onMessageReceived);
@@ -810,9 +878,6 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
       {/* Left Sidebar Tabs */}
       <Sidebar/>
 
-      
-      
- 
       {/* Chat Sidebar */}
       {activeButton === "chat" && <div className="w-1/3 relative ring-white overflow-y-auto px-0">
           <div className="z-10 w-full sticky top-0 bg-white text-sm flex justify-between items-center gap-3 user-searchbar">
@@ -851,7 +916,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
                 return (
                   <ChatItem
                     chat={chat}
-                    isOnline={userChats?.find((group:any) => group._id === chat._id)?.participants.some((participant:any) => participant._id !== user._id && participant.islogin) || false}
+                    isOnline={userChats?.find((group: any) => group._id === chat._id)?.participants.some((participant: any) => participant._id !== user._id && participant.islogin) || false}
                     isActive={chat._id === currentChat.current?._id}
                     unreadCount={
                       unreadMessages.filter((n) => n.chat === chat._id).length
@@ -867,6 +932,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
                       currentChat.current = chat;
                       setMessage("");
                       getMessages();
+                      setMessageInputFocused(true);
                     }}
                     key={chat._id}
                     onChatDelete={(chatId) => {
