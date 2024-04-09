@@ -21,7 +21,7 @@ import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
 import nochat from "../assets/images/main-image.png"
 import USER_IMG from '../assets/images/users/user.png';
-import NOTI_SOUND from '../assets/sound/notification-sound.mp3';
+import NOTI_SOUND from '../assets/sound/notification-sound1.mp3';
 // import logo from '../assets/images/wolflogo.svg'
 
 // import chat from '../assets/images/chat.svg'
