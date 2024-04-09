@@ -96,7 +96,7 @@ const initializeSocketIO = (io) => {
             
       // Emit connectedUsers data when it changes
       const emitConnectedUsers = () => {
-        socket.emit("connectedUsers", Array.from(connectedUsers.keys()));
+        io.emit("connectedUsers", Array.from(connectedUsers.keys()));
       };
 
       emitConnectedUsers(); // Emit connectedUsers data after adding the user

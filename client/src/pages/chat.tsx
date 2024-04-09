@@ -448,13 +448,35 @@ const ChatPage = () => {
     LocalStorage.set("connectedUsers", connectedUsers);
     
     };
-    const connectedUsers: any = (connectedUsers: any) => {
+    const sendUpdateToOtherUsers: any = (connectedUsers: any) => {
       // console.log('connectedUsers', connectedUsers);
-      //   LocalStorage.set("connectedUsers", connectedUsers);
-      updateConnectedUsersInLocalStorage(connectedUsers);
+        LocalStorage.set("connectedUsers",connectedUsers);
+      // updateConnectedUsersInLocalStorage(connectedUsers);
+  }
+  
+const updateUserOnlineStatus = (chats:any, userId:any, isOnline:any) => {
+  return chats.map((chat:any) => {
+    if (!chat.isGroupChat) {
+      chat.participants.forEach((participant: any) => {
+        if (participant._id === userId) {
+          participant.isOnline = isOnline;
+        }
+      });
     }
+    return chat;
+  });
+};
+
   const onConnect = () => {
-    updateConnectedUsersInLocalStorage(connectedUsers);
+    const updatedConnectedUsers = JSON.parse(LocalStorage.get('connectedUsers')) || [];
+  updatedConnectedUsers.push(user._id);
+  LocalStorage.set('connectedUsers', JSON.stringify(updatedConnectedUsers));
+  setIsConnected(true);
+    setUserChats(updateUserOnlineStatus(userChats, user._id, true));
+    
+  // Broadcast the updated connected users list to other users
+  sendUpdateToOtherUsers(updatedConnectedUsers);
+    // updateConnectedUsersInLocalStorage(connectedUsers);
     
         setIsConnected(true);
         const newUserChats = userChats.map((group:any) => {
@@ -471,12 +493,22 @@ const ChatPage = () => {
     };
 
   const onDisconnect = () => {
-       // Remove the disconnected user from localStorage
-      const connectedUsers = JSON.parse(LocalStorage.get('connectedUsers')) || [];
-      const updatedConnectedUsers = connectedUsers.filter((userId : any) => userId !== user._id);
-    updateConnectedUsersInLocalStorage(updatedConnectedUsers);
+     const connectedUsers = JSON.parse(LocalStorage.get('connectedUsers')) || [];
+  const updatedConnectedUsers = connectedUsers.filter((userId:any) => userId !== user._id);
+  localStorage.setItem('connectedUsers', JSON.stringify(updatedConnectedUsers));
+  setIsConnected(false);
+
+  // Broadcast the updated connected users list to other users
+    sendUpdateToOtherUsers(updatedConnectedUsers);
     
-        setIsConnected(false);
+    setUserChats(updateUserOnlineStatus(userChats, user._id, false));
+
+       // Remove the disconnected user from localStorage
+    //   const connectedUsers = JSON.parse(LocalStorage.get('connectedUsers')) || [];
+    //   const updatedConnectedUsers = connectedUsers.filter((userId : any) => userId !== user._id);
+    // updateConnectedUsersInLocalStorage(updatedConnectedUsers);
+    
+    //     setIsConnected(false);
         const newUserChats = userChats.map((group:any) => {
             if (!group.isGroupChat) {
                 group.participants.forEach((participant:any) => {
@@ -742,7 +774,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
     // Set up event listeners for various socket events:
     // Listener for when the socket connects.
     socket.on(CONNECTED_EVENT, onConnect);
-    socket.on('connectedUsers', connectedUsers);
+    socket.on('connectedUsers', sendUpdateToOtherUsers);
     // Listener for when the socket disconnects.
     socket.on(DISCONNECT_EVENT, onDisconnect);
     // Listener for when a user is typing.
@@ -772,7 +804,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
       // Remove all the event listeners we set up to avoid memory leaks and unintended behaviors.
       socket.off(CONNECTED_EVENT, onConnect);
       socket.off(DISCONNECT_EVENT, onDisconnect);
-      socket.off('connectedUsers', connectedUsers);
+      socket.off('connectedUsers', sendUpdateToOtherUsers);
 
       socket.off(TYPING_EVENT, handleOnSocketTyping);
       socket.off(STOP_TYPING_EVENT, handleOnSocketStopTyping);
@@ -912,7 +944,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
                   : // If there's no localSearchQuery, include all chats
                     true
               )
-              .map((chat) => {
+                .map((chat) => {
                 return (
                   <ChatItem
                     chat={chat}
