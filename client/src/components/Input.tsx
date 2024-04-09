@@ -6,11 +6,11 @@ const Input: React.FC<React.InputHTMLAttributes<HTMLInputElement>> = (
   props
 ) => {
   const { messageInputFocused, setMessageInputFocused } = useGlobal();
-  const handleFocus = () => {
-    if (!messageInputFocused) {
-      setMessageInputFocused(true);
-    }
-  }
+  // const handleFocus = () => {
+  //   if (!messageInputFocused) {
+  //     setMessageInputFocused(true);
+  //   }
+  // }
   const inputRef = useRef<HTMLInputElement>(null);
    useEffect(() => {
     if (messageInputFocused && inputRef.current) {

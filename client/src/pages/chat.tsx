@@ -45,7 +45,6 @@ import {
 import { useGlobal } from "../context/GlobalContext";
 import Sidebar from "./Common/Sidebar";
 import { useNavigate } from "react-router-dom";
-import NotificationComponent from "../components/Notifications";
 
 const CONNECTED_EVENT = "connected";
 const DISCONNECT_EVENT = "disconnect";
@@ -103,14 +102,14 @@ const ChatPage = () => {
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]); // To store files attached to messages
   const [selectedMessage, setSelectedMessage] = useState<any>(null);
   const [userChats, setUserChats] = useState<any>([]);
-  const [allConnectedUsers, setAllConnectedUsers] = useState<any>([]);
-  const [notificationShown, setNotificationShown] = useState(false);
+  // const [allConnectedUsers, setAllConnectedUsers] = useState<any>([]);
+  // const [notificationShown, setNotificationShown] = useState(false);
   useEffect(() => {
         // Fetch initial userChats data when component mounts
         const initialUserChats = LocalStorage.get('userChats');
-        const connectedUsers = LocalStorage.get('connectedUsers');
+        // const connectedUsers = LocalStorage.get('connectedUsers');
     setUserChats(initialUserChats);
-    setAllConnectedUsers(connectedUsers)
+    // setAllConnectedUsers(connectedUsers)
   }, [socket, isConnected]);
   
    useEffect(() => {
@@ -444,10 +443,10 @@ const ChatPage = () => {
    const updateUserChats = (newUserChats : any) => {
         setUserChats(newUserChats);
   };
-  const updateConnectedUsersInLocalStorage = (connectedUsers:any) => {
-    LocalStorage.set("connectedUsers", connectedUsers);
+  // const updateConnectedUsersInLocalStorage = (connectedUsers:any) => {
+  //   LocalStorage.set("connectedUsers", connectedUsers);
     
-    };
+  //   };
     const sendUpdateToOtherUsers: any = (connectedUsers: any) => {
       // console.log('connectedUsers', connectedUsers);
         LocalStorage.set("connectedUsers",connectedUsers);
@@ -560,7 +559,7 @@ const updateUserOnlineStatus = (chats:any, userId:any, isOnline:any) => {
       LocalStorage.set("unreadMessages", updatedUnreadMessages);
 
       // Set notificationShown to true
-      setNotificationShown(true);
+      // setNotificationShown(true);
       
       showNotification('New WolfChat Message', {
       body: 'You have received a new message.',
