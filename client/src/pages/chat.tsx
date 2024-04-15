@@ -69,7 +69,7 @@ const ChatPage = () => {
   const { user } = useAuth();
   const { socket } = useSocket();
     const navigate = useNavigate();
-  const { activeButton,isMessageEditing, isMessageReplying, setIsMessageEditing, setIsMessageReplying, setIsMessageDeleting, setMessageInputFocused } = useGlobal();
+  const { activeButton,isMessageEditing, isMessageReplying, unreadMessages,messages, setMessages, setUnreadMessages, setIsMessageEditing, setIsMessageReplying, setIsMessageDeleting, setMessageInputFocused } = useGlobal();
   const [showPicker, setShowPicker] = useState(false);
   const emojiButtonRef : any = useRef();
   // Create a reference using 'useRef' to hold the currently selected chat.
@@ -88,10 +88,10 @@ const ChatPage = () => {
   const [loadingMessages, setLoadingMessages] = useState(false); // To indicate loading of messages
 
   const [chats, setChats] = useState<ChatListItemInterface[]>([]); // To store user's chats
-  const [messages, setMessages] = useState<ChatMessageInterface[]>([]); // To store chat messages
-  const [unreadMessages, setUnreadMessages] = useState<ChatMessageInterface[]>(
-    []
-  ); // To track unread messages
+  // const [messages, setMessages] = useState<ChatMessageInterface[]>([]); // To store chat messages
+  // const [unreadMessages, setUnreadMessages] = useState<ChatMessageInterface[]>(
+  //   []
+  // ); // To track unread messages
 
   const [isTyping, setIsTyping] = useState(false); // To track if someone is currently typing
   const [selfTyping, setSelfTyping] = useState(false); // To track if the current user is typing
@@ -102,6 +102,9 @@ const ChatPage = () => {
   const [attachedFiles, setAttachedFiles] = useState<File[]>([]); // To store files attached to messages
   const [selectedMessage, setSelectedMessage] = useState<any>(null);
   const [userChats, setUserChats] = useState<any>([]);
+  const [highlightedMessageId, setHighlightedMessageId] = useState("");
+  const messageRefs : any = useRef({});
+
   // const [allConnectedUsers, setAllConnectedUsers] = useState<any>([]);
   // const [notificationShown, setNotificationShown] = useState(false);
   useEffect(() => {
@@ -117,7 +120,46 @@ const ChatPage = () => {
     if (Notification.permission !== 'granted') {
       Notification.requestPermission();
     }
-  }, []);
+   }, []);
+  
+  const scrollToPrevMessage = (id : any) => {
+    const keys = Object.keys(messageRefs.current);
+    const index = keys.indexOf(id);
+    // console.log('keys',keys);
+    // console.log('index', index);
+    // console.log('id',id);
+    
+    if (index > 0) {
+      const prevMessageId : any = keys[index];
+      const prevMessageRef : any = messageRefs.current[prevMessageId];
+      window.scrollTo({
+        top: prevMessageRef.offsetTop,
+        behavior: "smooth",
+      });
+      // Highlight the message for 3 seconds
+      setHighlightedMessageId(prevMessageId);
+      setTimeout(() => {
+        setHighlightedMessageId("");
+      }, 3000);
+    }
+    else if (index === 0) {
+      // If already at the first message, scroll to the top of the page
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+      // Highlight the message for 3 seconds
+      setHighlightedMessageId(keys[0]);
+      setTimeout(() => {
+        setHighlightedMessageId("");
+      }, 3000);
+    }
+  };
+
+  // Function to handle ref assignment for each message
+  const setMessageRef = (id : any, element : any) => {
+    messageRefs.current[id] = element;
+  };
 
    const showNotification = (title : any, options : any, duration = 2500) => {
     // Check if the browser supports notifications
@@ -549,34 +591,43 @@ const updateUserOnlineStatus = (chats:any, userId:any, isOnline:any) => {
    */
   const onMessageReceived = (message: ChatMessageInterface) => {
     // Check if the received message belongs to the currently active chat
-    if (message?.chat !== currentChat.current?._id) {
-      // If not, update the list of unread messages
-      // setUnreadMessages((prev) => [message, ...prev]);
-      // If not, update the list of unread messages
-    setUnreadMessages((prev) => {
-      const updatedUnreadMessages = [message, ...prev];
-      // Store the updated unread messages in local storage
-      LocalStorage.set("unreadMessages", updatedUnreadMessages);
+    console.log('currentChat',currentChat);
+    
+    if (message?.chat === currentChat.current?._id) {
+    //   // If not, update the list of unread messages
+    //   // setUnreadMessages((prev) => [message, ...prev]);
 
-      // Set notificationShown to true
-      // setNotificationShown(true);
-      
-      showNotification('New WolfChat Message', {
-      body: 'You have received a new message.',
-      icon: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjPGIbqtNtn1yzk1w1cGmCgFstHk-l2NvevRgw7J7kD3uOT4sjPpn-0CVb5gPGy47z3wtZWY4M5InE_n1zBlBE_PnkDXBydBhU8RCzwijKQYiSGGB1ZJ5umDWXCd4l9TpeiQcsJW2IjwXiOoQxg2M-FhknAF-RmkCOdqJgywWOLw62wSNSCzT1W6cAiZQ0n/s1600/multiwolf100.png' // You can set an icon if needed
-      });
-      
-       // Play message sound
-      playMessageSound();
+    //   // If not, update the list of unread messages
+    // setUnreadMessages((prev) => {
+    //   const updatedUnreadMessages = [message, ...prev];
+    //   // Store the updated unread messages in local storage
+    //   LocalStorage.set("unreadMessages", updatedUnreadMessages);
 
-      return updatedUnreadMessages;
-    });
-    } else {
+    //   // Set notificationShown to true
+    //   // setNotificationShown(true);
+      
+    //   showNotification('New WolfChat Message', {
+    //   body: 'You have received a new message.',
+    //   icon: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjPGIbqtNtn1yzk1w1cGmCgFstHk-l2NvevRgw7J7kD3uOT4sjPpn-0CVb5gPGy47z3wtZWY4M5InE_n1zBlBE_PnkDXBydBhU8RCzwijKQYiSGGB1ZJ5umDWXCd4l9TpeiQcsJW2IjwXiOoQxg2M-FhknAF-RmkCOdqJgywWOLw62wSNSCzT1W6cAiZQ0n/s1600/multiwolf100.png' // You can set an icon if needed
+    //   });
+      
+    //    // Play message sound
+    //   playMessageSound();
+
+    //   return updatedUnreadMessages;
+    // });
+    // } else {
       // If it belongs to the current chat, update the messages list for the active chat
       setMessages((prev) => [message, ...prev]);
           
-//  console.log('ra m', message);
- 
+      // showNotification('New WolfChat Message', {
+      // body: 'You have received a new message.',
+      // icon: 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjPGIbqtNtn1yzk1w1cGmCgFstHk-l2NvevRgw7J7kD3uOT4sjPpn-0CVb5gPGy47z3wtZWY4M5InE_n1zBlBE_PnkDXBydBhU8RCzwijKQYiSGGB1ZJ5umDWXCd4l9TpeiQcsJW2IjwXiOoQxg2M-FhknAF-RmkCOdqJgywWOLw62wSNSCzT1W6cAiZQ0n/s1600/multiwolf100.png' // You can set an icon if needed
+      // });
+      
+      //  // Play message sound
+      // playMessageSound();
+
     socket?.emit(MESSAGE_SEEN_EVENT, message?._id);
 
 
@@ -1072,7 +1123,10 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
                           message={msg}
                           onMessageClick={handleMessageClick}
                           onMessageReply={handleMessageReply}
-                          onMessageDelete={()=>handleDeleteMessage(msg._id)}
+                          onMessageDelete={() => handleDeleteMessage(msg._id)}
+                          messageRef={(element:any) => setMessageRef(msg.parentMessage, element)} 
+                          scrollToPrevMessage={scrollToPrevMessage} 
+                          highlightedMessageId={highlightedMessageId}
                         />
                       );
                     })}

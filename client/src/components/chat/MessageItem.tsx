@@ -24,7 +24,10 @@ const MessageItem: React.FC<{
   onMessageClick?: any;
   onMessageReply?: any;
   onMessageDelete?: any;
-}> = ({ message, isOwnMessage, isGroupChatMessage, onMessageClick, onMessageReply, onMessageDelete }) => {
+  scrollToPrevMessage?: any; // Add scrollToPrevMessage prop
+  highlightedMessageId?: string; // Add highlightedMessageId prop
+  messageRef?: any;
+}> = ({ message, isOwnMessage, isGroupChatMessage, onMessageClick, onMessageReply, onMessageDelete, messageRef, highlightedMessageId, scrollToPrevMessage }) => {
   const [resizedImage, setResizedImage] = useState<string | null>(null);
   // const [creatingChat, setCreatingChat] = useState(false);
   // const [dataLoading, setDataLoading] = useState(false);
@@ -32,6 +35,13 @@ const MessageItem: React.FC<{
   // const { user } = useAuth();
   const { setIsMessageEditing, setIsMessageDeleting, setIsMessageReplying } = useGlobal();
   const currentChat = useRef<ChatListItemInterface | null>(null);
+  
+  // const [highlightedMessageId, setHighlightedMessageId] = useState(null);
+  // const messageRefs = useRef<any>([]);
+  //  const [highlightedMessageId, setHighlightedMessageId] = useState("");
+  // const messageRefs : any = useRef({});
+  // const messageRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
 
 
   const containsLink = (text : string) => {
@@ -153,6 +163,48 @@ const MessageItem: React.FC<{
 //         return ''; // Handle other cases as needed
 //     }
 // };
+
+  // Function to scroll to the previous message
+  // const scrollToPrevMessage = (id : any) => {
+  //   const keys = Object.keys(messageRefs.current);
+  //   const index = 0;
+  //   console.log('keys',keys);
+  //   console.log('index', index);
+  //   console.log('id',id);
+  //   // keys.push(id)
+    
+  //   if (index > 0) {
+  //     const prevMessageId : any = keys[index - 1];
+  //     const prevMessageRef : any = messageRefs.current[prevMessageId];
+  //     window.scrollTo({
+  //       top: prevMessageRef.offsetTop,
+  //       behavior: "smooth",
+  //     });
+  //     // Highlight the message for 3 seconds
+  //     setHighlightedMessageId(prevMessageId);
+  //     setTimeout(() => {
+  //       setHighlightedMessageId("");
+  //     }, 3000);
+  //   }
+  //   else if (index === 0) {
+  //     // If already at the first message, scroll to the top of the page
+  //     window.scrollTo({
+  //       top: 0,
+  //       behavior: "smooth",
+  //     });
+  //     // Highlight the message for 3 seconds
+  //     setHighlightedMessageId(keys[0]);
+  //     setTimeout(() => {
+  //       setHighlightedMessageId("");
+  //     }, 3000);
+  //   }
+  // };
+
+  
+ // Function to handle ref assignment for each message
+  // const setMessageRef = (id : any, element : any) => {
+  //   messageRefs.current[id] = element;
+  // };
   return (
     <>
       {resizedImage ? (
@@ -169,7 +221,11 @@ const MessageItem: React.FC<{
         </div>
       ) : null}
 
-      <div className="message-wraper">
+      {/* <div className="message-wraper active bg-success-light p-4 rounded-lg"> */}
+      <div key={message?.parentMessage} ref={() =>messageRef(message?.parentMessage)} className={classNames(
+        "message-wraper",
+        (message.parentMessage === highlightedMessageId) ? "active bg-success-light p-4 rounded-lg" : ""
+      )}>
         <div
           className={classNames(
             "flex relative justify-start items-end gap-3 max-w-lg min-w- w-fit",
@@ -276,7 +332,7 @@ const MessageItem: React.FC<{
               </p>
             ) : null}
 
-            {(message.updatedParentMessage && message.updatedParentMessage !==null) && (<div className="reply-message-block bg-gray-100 p-2 mb-2  rounded-xl">
+            {(message.updatedParentMessage && message.updatedParentMessage !==null) && (<div className="reply-message-block bg-gray-100 p-2 mb-2  rounded-xl" onClick={() => scrollToPrevMessage(message?.parentMessage)}>
               <p className="text-xs text-green-500 ">{message.updatedParentMessage?.senderName ? message.updatedParentMessage?.senderName : ''}</p>
               <p className="truncate-1 text-sm text-zinc-500  hover:underline underline-offset-1">{message.updatedParentMessage?.content ? message.updatedParentMessage?.content : (message.updatedParentMessage.attachments.length > 0 ? <img
                         className="h-8 w-8 object-contain"

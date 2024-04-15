@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
+import { ChatMessageInterface } from "../interfaces/chat";
 
 // Create a context to store global values
 const GlobalContext = createContext<{
@@ -9,6 +10,8 @@ const GlobalContext = createContext<{
     isMessageReplying: boolean;
     isMessageDeleting: boolean;
     messageInputFocused: boolean;
+    unreadMessages: ChatMessageInterface[];
+    messages: ChatMessageInterface[];
     setActiveButton: React.Dispatch<React.SetStateAction<string>>;
     setTabIndex: React.Dispatch<React.SetStateAction<number>>;
     setOpenGroupInfo: React.Dispatch<React.SetStateAction<boolean>>;
@@ -16,6 +19,10 @@ const GlobalContext = createContext<{
     setIsMessageReplying: React.Dispatch<React.SetStateAction<boolean>>;
     setIsMessageDeleting: React.Dispatch<React.SetStateAction<boolean>>;
     setMessageInputFocused: React.Dispatch<React.SetStateAction<boolean>>;
+    
+    setUnreadMessages: React.Dispatch<React.SetStateAction<ChatMessageInterface[]>>;
+    setMessages: React.Dispatch<React.SetStateAction<ChatMessageInterface[]>>;
+
     
 }>({
     activeButton: "",
@@ -25,6 +32,9 @@ const GlobalContext = createContext<{
     isMessageReplying: false,
     isMessageDeleting: false,
     messageInputFocused: false,
+    unreadMessages: [],
+    messages: [],
+    
     setActiveButton: () => {},
     setTabIndex: () => { },
     setOpenGroupInfo: () => { },
@@ -32,6 +42,9 @@ const GlobalContext = createContext<{
     setIsMessageReplying: () => { },
     setIsMessageDeleting: () => { },
     setMessageInputFocused: () => { },
+    
+    setUnreadMessages: () => [],
+    setMessages: () => [],
 });
 
 // Create a hook to access the GlobalContext
@@ -49,11 +62,17 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isMessageDeleting, setIsMessageDeleting] = useState<boolean>(false);
   const [messageInputFocused, setMessageInputFocused] = useState<boolean>(false);
 
+  const [unreadMessages, setUnreadMessages] = useState<ChatMessageInterface[]>(
+    []
+  );
+  const [messages, setMessages] = useState<ChatMessageInterface[]>([]); // To store chat messages
+  
+
 
 // console.log('activeButton',activeButton);
 
   return (
-    <GlobalContext.Provider value={{ isMessageDeleting, activeButton, tabIndex, openGroupInfo,messageInputFocused, isMessageEditing, isMessageReplying, setActiveButton, setTabIndex, setOpenGroupInfo, setIsMessageEditing, setIsMessageDeleting, setIsMessageReplying, setMessageInputFocused }}>
+    <GlobalContext.Provider value={{ isMessageDeleting, activeButton, tabIndex, openGroupInfo,messageInputFocused, isMessageEditing, isMessageReplying, unreadMessages, messages, setActiveButton, setTabIndex, setOpenGroupInfo, setIsMessageEditing, setIsMessageDeleting, setIsMessageReplying, setMessageInputFocused, setUnreadMessages, setMessages }}>
       {children}
     </GlobalContext.Provider>
   );
