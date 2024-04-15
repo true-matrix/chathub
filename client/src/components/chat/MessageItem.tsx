@@ -374,7 +374,7 @@ const MessageItem: React.FC<{
                         </a>
                       </button>
                       <img
-                        className="h-full w-full object-contain"
+                        className="h-full w-full object-contain chat-image"
                         src={file.url.toLowerCase().endsWith('.pdf') ? DOC_PREVIEW : file.url}
                         alt="msg_img"
                       />
