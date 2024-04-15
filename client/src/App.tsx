@@ -30,7 +30,7 @@ const App = () => {
   const navigate = useNavigate();
   console.log(isLoading);
   const { socket } = useSocket();
-  const { messages, setUnreadMessages, activeButton } = useGlobal();
+  const { setUnreadMessages, activeButton } = useGlobal();
   const currentChat = useRef<ChatListItemInterface | null>(null);
   
 
@@ -160,7 +160,6 @@ const App = () => {
     }
 
   };
-console.log('activeButton',activeButton);
 
    useEffect(() => {
     // If the socket isn't initialized, we don't set up listeners.

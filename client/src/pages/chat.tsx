@@ -21,7 +21,7 @@ import { useAuth } from "../context/AuthContext";
 import { useSocket } from "../context/SocketContext";
 import nochat from "../assets/images/main-image.png"
 import USER_IMG from '../assets/images/users/user.png';
-import NOTI_SOUND from '../assets/sound/notification-sound1.mp3';
+// import NOTI_SOUND from '../assets/sound/notification-sound1.mp3';
 // import logo from '../assets/images/wolflogo.svg'
 
 // import chat from '../assets/images/chat.svg'
@@ -161,25 +161,25 @@ const ChatPage = () => {
     messageRefs.current[id] = element;
   };
 
-   const showNotification = (title : any, options : any, duration = 2500) => {
-    // Check if the browser supports notifications
-    if (!('Notification' in window)) {
-      console.log('This browser does not support desktop notification');
-    } else if (Notification.permission === 'granted') {
-      // If it's okay let's create a notification
-      const notification = new Notification(title, options);
+  //  const showNotification = (title : any, options : any, duration = 2500) => {
+  //   // Check if the browser supports notifications
+  //   if (!('Notification' in window)) {
+  //     console.log('This browser does not support desktop notification');
+  //   } else if (Notification.permission === 'granted') {
+  //     // If it's okay let's create a notification
+  //     const notification = new Notification(title, options);
 
-      // Close the notification after the specified duration
-      setTimeout(() => {
-        notification.close();
-      }, duration);
-    }
-  };
+  //     // Close the notification after the specified duration
+  //     setTimeout(() => {
+  //       notification.close();
+  //     }, duration);
+  //   }
+  // };
 
-  const playMessageSound = () => {
-    const audio = new Audio(NOTI_SOUND); // Replace with the path to your sound file
-    audio.play();
-  };
+  // const playMessageSound = () => {
+  //   const audio = new Audio(NOTI_SOUND); // Replace with the path to your sound file
+  //   audio.play();
+  // };
 
   // const [activeButton, setActiveButton] = useState("chat");
 
@@ -591,7 +591,7 @@ const updateUserOnlineStatus = (chats:any, userId:any, isOnline:any) => {
    */
   const onMessageReceived = (message: ChatMessageInterface) => {
     // Check if the received message belongs to the currently active chat
-    console.log('currentChat',currentChat);
+    // console.log('currentChat',currentChat);
     
     if (message?.chat === currentChat.current?._id) {
     //   // If not, update the list of unread messages
