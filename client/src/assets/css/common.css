@@ -730,7 +730,12 @@ span.blink {
 
   animation: blink 1s linear infinite;
 }
-
+.chat-image {
+  height: 200px;
+  width: 200px;
+  object-fit: cover;
+  object-position: center;
+}
 /*Animations*/
 
 @keyframes blink {
