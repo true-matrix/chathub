@@ -7,7 +7,11 @@ export let dbInstance = undefined;
 const connectDB = async () => {
   try {
     const connectionInstance = await mongoose.connect(
-      `${process.env.MONGODB_URI}/${DB_NAME}`
+      // `${process.env.MONGODB_URI}/${DB_NAME}`, {
+      `${process.env.MONGODB_URI}`, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    }
     );
     dbInstance = connectionInstance;
     console.log(
