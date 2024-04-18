@@ -69,7 +69,7 @@ const ChatPage = () => {
   const { user } = useAuth();
   const { socket } = useSocket();
     const navigate = useNavigate();
-  const { activeButton,isMessageEditing, isMessageReplying, unreadMessages,messages, setMessages, setUnreadMessages, setIsMessageEditing, setIsMessageReplying, setIsMessageDeleting, setMessageInputFocused } = useGlobal();
+  const { activeButton,isMessageEditing, isMessageReplying, unreadMessages, setUnreadMessages, setIsMessageEditing, setIsMessageReplying, setIsMessageDeleting, setMessageInputFocused } = useGlobal();
   const [showPicker, setShowPicker] = useState(false);
   const emojiButtonRef : any = useRef();
   // Create a reference using 'useRef' to hold the currently selected chat.
@@ -88,7 +88,7 @@ const ChatPage = () => {
   const [loadingMessages, setLoadingMessages] = useState(false); // To indicate loading of messages
 
   const [chats, setChats] = useState<ChatListItemInterface[]>([]); // To store user's chats
-  // const [messages, setMessages] = useState<ChatMessageInterface[]>([]); // To store chat messages
+  const [messages, setMessages] = useState<ChatMessageInterface[]>([]); // To store chat messages
   // const [unreadMessages, setUnreadMessages] = useState<ChatMessageInterface[]>(
   //   []
   // ); // To track unread messages
