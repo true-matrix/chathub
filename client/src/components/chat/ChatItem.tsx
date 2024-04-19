@@ -143,36 +143,18 @@ const ChatItem: React.FC<{
               )}
             </div>
           </button>
-          <div className="flex justify-center items-center flex-shrink-0">
+          <div className="flex justify-center items-center flex-shrink-0 position-relative">
             {chat.isGroupChat ? (
+              <> 
             <img
                 src={getChatObjectMetadata(chat, user!).avatar}
                 className="w-12 h-12 rounded-full object-cover"
-              />
-              // <div className="w-12 relative h-12 flex-shrink-0 flex justify-start items-center flex-nowrap">
-              //   {chat.participants.slice(0, 3).map((participant, i) => {
-              //     return (
-              //       <img
-              //         key={participant._id}
-              //         src={participant.avatar.url}
-              //         className={classNames(
-              //           "w-9 h-9 border-[1px] border-white rounded-full absolute outline outline-1 outline-white group-hover:outline-white object-cover",
-              //           i === 0
-              //             ? "left-0 z-[3]"
-              //             : i === 1
-              //             ? "left-2.5 z-[2]"
-              //             : i === 2
-              //             ? "left-[18px] z-[1]"
-              //             : ""
-              //         )}
-              //       />
-              //     );
-              //   })}
-              // </div>
+              /> 
+              <span className="user-active"></span>
+              </>
             ) : (<>
               <img
-                  src={getChatObjectMetadata(chat, user!).avatar}
-                  // className="w-12 h-12 rounded-full object-cover"
+                  src={getChatObjectMetadata(chat, user!).avatar} 
                   className={`w-12 h-12 rounded-full object-cover border-4 ${isOnline ? 'border-green-500' : 'border-red-500'}`}
                 />
             </>)}
@@ -198,6 +180,11 @@ const ChatItem: React.FC<{
               {getRecentTime(chat.updatedAt)}
               {/* {getRecentTime(chat.updatedAt)} */}
             </small>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.75 8.75V5.625C13.75 4.63044 13.3549 3.67661 12.6516 2.97335C11.9484 2.27009 10.9946 1.875 10 1.875C9.00544 1.875 8.05161 2.27009 7.34835 2.97335C6.64509 3.67661 6.25 4.63044 6.25 5.625V8.75M5.625 18.125H14.375C14.8723 18.125 15.3492 17.9275 15.7008 17.5758C16.0525 17.2242 16.25 16.7473 16.25 16.25V10.625C16.25 10.1277 16.0525 9.65081 15.7008 9.29917C15.3492 8.94754 14.8723 8.75 14.375 8.75H5.625C5.12772 8.75 4.65081 8.94754 4.29917 9.29917C3.94754 9.65081 3.75 10.1277 3.75 10.625V16.25C3.75 16.7473 3.94754 17.2242 4.29917 17.5758C4.65081 17.9275 5.12772 18.125 5.625 18.125Z" stroke="#71717ab0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+
+
 
             {/* Unread count will be > 0 when user is on another chat and there is new message in a chat which is not currently active on user's screen */}
             {unreadCount <= 0 ? null : (
