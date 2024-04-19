@@ -737,6 +737,18 @@ span.blink {
 }
 /*Animations*/
 
+span.user-active {
+  display: block;
+  height: 10px;
+  width: 10px;
+  background: green;
+  border-radius: 50px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+
 @keyframes blink {
   100% {
     transform: scale(2, 2);
