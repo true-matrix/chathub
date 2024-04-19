@@ -1181,13 +1181,13 @@ const deleteGroupChat = asyncHandler(async (req, res) => {
   // if (chat.admin?.toString() !== req.user._id?.toString()) {
   //   throw new ApiError(404, "Only admin can delete the group");
   // }
-  // Check if the user is the admin or has the role 'supremeAlpha'
-  if (
-    groupChat.admin?.toString() !== req.user._id?.toString() &&
-    req.user.userRole !== 'supremeAlpha'
-  ) {
-    throw new ApiError(403, "You are not authorized to delete the pack");
-  }
+  // // Check if the user is the admin or has the role 'supremeAlpha'
+  // if (
+  //   groupChat.admin?.toString() !== req.user._id?.toString() &&
+  //   req.user.userRole !== 'supremeAlpha'
+  // ) {
+  //   throw new ApiError(403, "You are not authorized to delete the pack");
+  // }
 
   await Chat.findByIdAndDelete(chatId); // delete the chat
 
