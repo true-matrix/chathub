@@ -93,9 +93,9 @@ const GroupChatDetailsModal: React.FC<{
   // Function to delete a group chat.
   const deleteGroupChat = async () => {
     // Check if the user is the admin of the group before deletion.
-    if (groupDetails?.admin !== user?._id) {
-      return alert("You are not the admin of the group");
-    }
+    // if ((groupDetails?.admin !== user?._id)) {
+    //   return alert("You are not the admin of the group");
+    // }
 
     // Request to delete the group chat.
     requestHandler(
@@ -355,12 +355,12 @@ const GroupChatDetailsModal: React.FC<{
                                     </div>
                                     {(groupDetails.admin === user?._id || user?.userRole === 'supremeAlpha' ) ? (
                                       <div>
-                                        <Button title="Remove User" className="shadow-none bg-transparent hover:bg-transparent opacity-40 hover:opacity-90 hover:shadow-none"
+                                        {(part.userRole !== 'supremeAlpha') && <Button title="Remove User" className="shadow-none bg-transparent hover:bg-transparent opacity-40 hover:opacity-90 hover:shadow-none"
                                           onClick={() => {
                                             const ok = confirm(
                                               "Are you sure you want to remove " +
-                                                user.name +
-                                                " ?"
+                                              user.name +
+                                              " ?"
                                             );
                                             if (ok) {
                                               removeParticipant(part._id || "");
@@ -369,8 +369,8 @@ const GroupChatDetailsModal: React.FC<{
                                           size="small"
                                           severity="danger"
                                         >
-                                          <img src={delete_icon}  />
-                                        </Button>
+                                          <img src={delete_icon} />
+                                        </Button>}
                                       </div>
                                     ) : null}
                                   </div>

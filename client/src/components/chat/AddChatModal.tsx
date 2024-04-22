@@ -26,7 +26,10 @@ const AddChatModal: React.FC<{
   // State to determine if the chat is a group chat, initialized as false
   const [isGroupChat, setIsGroupChat] = useState(false);
   // State to store the list of participants in a group chat, initialized as an empty array
-  const [groupParticipants, setGroupParticipants] = useState<string[]>([]);
+  // const [groupParticipants, setGroupParticipants] = useState<string[]>([]);
+  const [groupParticipants, setGroupParticipants] = useState<string[]>(
+  user.userRole !== 'supremeAlpha' ? [user.parentId] : []
+);
   // State to store the ID of a selected user, initialized as null
   const [selectedUserId, setSelectedUserId] = useState<null | string>(null);
   // State to determine if a chat is currently being created, initialized as false
@@ -82,6 +85,14 @@ const AddChatModal: React.FC<{
     if (!groupParticipants.length || groupParticipants.length < 2)
       return alert("There must be at least 2 group participants");
 
+    // // Adding user.parentId conditionally based on user role
+    // const updatedParticipants = user.userRole !== 'supremeAlpha'
+    //   ? [...groupParticipants, user.parentId]
+    //   : groupParticipants;
+
+    // // Setting the updated list of participants
+    // setGroupParticipants(updatedParticipants);
+
     // Handle the request to create a group chat
     await requestHandler(
       // Callback to create a group chat with name and participants
@@ -110,7 +121,7 @@ const AddChatModal: React.FC<{
     // Clear the group name
     setGroupName("");
     // Clear the group participants list
-    setGroupParticipants([]);
+    setGroupParticipants([user.parentId]);
     // Set the chat type to not be a group chat
     setIsGroupChat(false);
     // Execute the onClose callback/function
@@ -254,7 +265,11 @@ const AddChatModal: React.FC<{
                       >
                         <UserGroupIcon className="h-5 w-5 mr-2" /> Selected
                         participants
-                      </span>{" "}
+                      </span> {" "}
+                      {/* {(user.userRole !== 'supremeAlpha' || user.userRole !== 'admin') && <p className={classNames(
+                        "font-medium text-red-500 inline-flex items-center"
+                      )}>(you can't remove supreme alpha)</p>} */}
+                      
                       <div className="flex justify-start items-center flex-wrap gap-2 mt-3">
                         {users
                           .filter((user) =>
@@ -273,7 +288,7 @@ const AddChatModal: React.FC<{
                                 <p className="text-dark">
                                   {participant.name}
                                 </p>
-                                <XCircleIcon
+                                {participant.userRole !== 'supremeAlpha' && <XCircleIcon
                                   role="button"
                                   className="w-6 h-6 hover:text-primary cursor-pointer"
                                   onClick={() => {
@@ -283,7 +298,7 @@ const AddChatModal: React.FC<{
                                       )
                                     );
                                   }}
-                                />
+                                />}
                               </div>
                             );
                           })}
