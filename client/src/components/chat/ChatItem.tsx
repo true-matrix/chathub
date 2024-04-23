@@ -143,7 +143,7 @@ const ChatItem: React.FC<{
               )}
             </div>
           </button>
-          <div className="flex justify-center items-center flex-shrink-0 position-relative">
+          <div className="flex justify-center items-center flex-shrink-0 relative">
             {chat.isGroupChat ? (
               <> 
             <img
@@ -155,8 +155,9 @@ const ChatItem: React.FC<{
             ) : (<>
               <img
                   src={getChatObjectMetadata(chat, user!).avatar} 
-                  className={`w-12 h-12 rounded-full object-cover border-4 ${isOnline ? 'border-green-500' : 'border-red-500'}`}
+                  className={`w-12 h-12 rounded-full object-cover border-2 ${isOnline ? 'border-green-500' : 'border-red-500'}`}
                 />
+                 {isOnline ? <span className="user-active"></span>: <span className="user-inactive"></span>}
             </>)}
           </div>
           <div className="w-full">
