@@ -261,7 +261,7 @@ const GroupChatDetailsModal: React.FC<{
       alert("Pack image updated successfully"); // Alert the user about the update.
     } catch (error) {
       // Handle errors
-      alert(error?.response?.data?.message)
+      // alert(error?.response?.data?.message)
       console.error('Error updating profile image:', error);
       }
   }
