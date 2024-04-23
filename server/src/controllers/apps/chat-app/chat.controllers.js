@@ -1157,6 +1157,51 @@ const renameGroupChat = asyncHandler(async (req, res) => {
     );
 });
 
+const updateGroupImage = asyncHandler(async (req, res) => {
+  const { chatId } = req.params;
+// console.log('req.file',req.file);
+  const profileImageUrl = getStaticFilePath(req, req.file?.filename);
+  const profileImageLocalPath = getLocalPath(req.file?.filename);
+
+  // check for chat existence
+  const groupChat = await Chat.findOne({
+    _id: new mongoose.Types.ObjectId(chatId),
+    isGroupChat: true,
+  });
+  // console.log('groupChat',groupChat);
+
+  // if (!groupChat) {
+  //   throw new ApiError(404, "Group chat does not exist");
+  // }
+  // if (!req.file?.filename) {
+  //   throw new ApiError(400, "Group image is required");
+  // }
+
+  let updatedProfile = await Chat.findOneAndUpdate(
+    {
+      _id: new mongoose.Types.ObjectId(chatId),
+    },
+    {
+      $set: {
+        // set the newly uploaded image
+        avatar: {
+          url: profileImageUrl ,
+          localPath: profileImageLocalPath ,
+        },
+      },
+    },
+    { new: true }
+  );
+  // console.log('updatedProfile',updatedProfile);
+  removeLocalFile(groupChat.avatar.localPath);
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, updatedProfile, "Group image updated successfully")
+    );
+
+});
+
 const deleteGroupChat = asyncHandler(async (req, res) => {
   const { chatId } = req.params;
 
@@ -1546,5 +1591,6 @@ export {
   updateProfile,
   updateProfileImage,
   getAllGroups,
-  getChatIdByParticipants
+  getChatIdByParticipants,
+  updateGroupImage
 };

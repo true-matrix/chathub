@@ -14,6 +14,7 @@ import {
   getAllContacts,
   getGroupInfo,
   removeParticipantFromGroup,
+  updateGroupImage,
   updateGroupName,
 } from "../../api";
 import { useAuth } from "../../context/AuthContext";
@@ -50,6 +51,12 @@ const GroupChatDetailsModal: React.FC<{
 
   // State to manage a list of users, initially set as an empty array
   const [users, setUsers] = useState<any[]>([]);
+
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [isImageEditing, setIsImageEditing] = useState(false);
+  const [imgFormData, setImgFormData] = useState(null);
+
+
 
   // Function to handle the update of the group name.
   const handleGroupNameUpdate = async () => {
@@ -191,6 +198,7 @@ const GroupChatDetailsModal: React.FC<{
   // Function to handle modal or component closure
   const handleClose = () => {
     onClose();
+    setIsImageEditing(false)
   };
 
   // React's effect hook to perform side effects, here to fetch group information and users
@@ -203,6 +211,61 @@ const GroupChatDetailsModal: React.FC<{
     getUsers();
   }, [open]); // The effect is dependent on the 'open' state or prop, so it re-runs whenever 'open' changes
 
+    const handleFileChange = (e:any) => {
+      const file = e.target.files[0];
+      console.log(file);
+      
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = (e: any) => {
+        const dataUrl = e.target.result;
+        setSelectedFile(dataUrl);
+        setIsImageEditing(true);
+        // console.log("e.target.result",dataUrl)
+        // console.log("file",file)
+      };
+
+      reader.readAsDataURL(file);
+    }
+    setImgFormData(file)
+  };
+
+  const handleImageClick = () => {
+    if (!isImageEditing) {
+      document.getElementById('avatar')?.click();
+    }
+  };
+
+  const handleSaveClick = async () => {
+    if (selectedFile) {
+    // console.log('imgFormData',imgFormData);
+    
+    const formData : any = new FormData();
+    formData.append('avatar', imgFormData);
+
+    try {
+      const response = await updateGroupImage(chatId, formData);
+      // Handle the response as needed
+      // console.log('response', response);
+      // console.log('groupDetails',groupDetails);
+      setGroupDetails(response.data.data); // Set the new group details.
+      
+      // const { avatar } = response.data.data;
+      // user.avatar.localPath = avatar.localPath;
+      // user.avatar.url = avatar.url;
+      // user.avatar._id = avatar._id;
+      // LocalStorage.set("user", user);
+      setIsImageEditing(false);
+      alert("Pack image updated successfully"); // Alert the user about the update.
+    } catch (error) {
+      // Handle errors
+      alert(error?.response?.data?.message)
+      console.error('Error updating profile image:', error);
+      }
+  }
+};
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-40" onClose={handleClose}>
@@ -264,13 +327,53 @@ const GroupChatDetailsModal: React.FC<{
                             <p>+{groupDetails?.participants.length - 3}</p>
                           ) : null}
                         </div> */}
-                        <div className="flex pl-16 justify-center items-center relative w-full h-max gap-3">
-                          <img
+                        <div className="flex pl-16 justify-center items-center relative w-full h-max gap-3" onClick={handleImageClick}>
+                          {/* <img
                                 className="w-24 h-24 -ml-16 rounded-xl outline outline-4 outline-white"
-                                src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjPGIbqtNtn1yzk1w1cGmCgFstHk-l2NvevRgw7J7kD3uOT4sjPpn-0CVb5gPGy47z3wtZWY4M5InE_n1zBlBE_PnkDXBydBhU8RCzwijKQYiSGGB1ZJ5umDWXCd4l9TpeiQcsJW2IjwXiOoQxg2M-FhknAF-RmkCOdqJgywWOLw62wSNSCzT1W6cAiZQ0n/s1600/multiwolf100.png"
-                                alt="avatar"
-                              />
+                                // src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjPGIbqtNtn1yzk1w1cGmCgFstHk-l2NvevRgw7J7kD3uOT4sjPpn-0CVb5gPGy47z3wtZWY4M5InE_n1zBlBE_PnkDXBydBhU8RCzwijKQYiSGGB1ZJ5umDWXCd4l9TpeiQcsJW2IjwXiOoQxg2M-FhknAF-RmkCOdqJgywWOLw62wSNSCzT1W6cAiZQ0n/s1600/multiwolf100.png"
+                                src={isImageEditing && selectedFile !== null ? selectedFile : groupDetails?.avatar?.url}
+                                alt="avataraj"
+                              /> */}
+                          <img
+                          className="w-24 h-24 -ml-16 rounded-xl outline outline-4 outline-white"
+                          src={isImageEditing && selectedFile !== null ? selectedFile : (groupDetails?.avatar?.url ? groupDetails.avatar.url : 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjPGIbqtNtn1yzk1w1cGmCgFstHk-l2NvevRgw7J7kD3uOT4sjPpn-0CVb5gPGy47z3wtZWY4M5InE_n1zBlBE_PnkDXBydBhU8RCzwijKQYiSGGB1ZJ5umDWXCd4l9TpeiQcsJW2IjwXiOoQxg2M-FhknAF-RmkCOdqJgywWOLw62wSNSCzT1W6cAiZQ0n/s1600/multiwolf100.png')}
+                          alt="avatar"
+                        />
+                          {/* {isImageEditing && selectedFile !== null ? (
+                            <img
+                              className="w-24 h-24 -ml-16 rounded-xl outline outline-4 outline-white"
+                              src={selectedFile} alt="Selected Image"
+                            />
+                          ) : (
+                              <img
+                                className="w-24 h-24 -ml-16 rounded-xl outline outline-4 outline-white"
+                                src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjPGIbqtNtn1yzk1w1cGmCgFstHk-l2NvevRgw7J7kD3uOT4sjPpn-0CVb5gPGy47z3wtZWY4M5InE_n1zBlBE_PnkDXBydBhU8RCzwijKQYiSGGB1ZJ5umDWXCd4l9TpeiQcsJW2IjwXiOoQxg2M-FhknAF-RmkCOdqJgywWOLw62wSNSCzT1W6cAiZQ0n/s1600/multiwolf100.png" alt="Default Image" />
+                            )} */}
+
                         </div>
+                        {isImageEditing ? (
+                            <div>
+                              <button
+                                onClick={handleSaveClick}
+                                className="bg-success hover:bg-success/80 text-white px-4 py-2 rounded cursor-pointer"
+                              >
+                                Save Changes
+                              </button>
+                            </div>
+                          ) : (
+                            <div>
+                              <label htmlFor="avatar" className="cursor-pointer bg-success hover:bg-success/80 text-white px-4 py-2 rounded avatar-img">
+                                Change pack image
+                              </label>
+                              <input
+                                type="file"
+                                id="avatar"
+                                className="hidden"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                              />
+                            </div>
+                          )}
                         {/* <img
                 src={getChatObjectMetadata(groupDetails, user!).avatar}
                 className="w-12 h-12 rounded-full object-cover"
@@ -337,7 +440,7 @@ const GroupChatDetailsModal: React.FC<{
                                     <div className="flex justify-start items-start gap-3 w-full">
                                       <img
                                         className="h-12 w-12 rounded-full"
-                                        src={part.avatar.url}
+                                        src={part?.avatar?.url}
                                       />
                                       <div>
                                         <p className="text-dark font-semibold text-sm inline-flex items-center w-full">
@@ -467,7 +570,7 @@ const GroupChatDetailsModal: React.FC<{
     </div>
                         </TabPanel>
                           <TabPanel>
-                            {groupDetails?.contentLinks.length === 0 ? (
+                            {groupDetails?.contentLinks?.length === 0 ? (
                                 <p>No links found!</p>
                               ) : (
                                 <div className="w-full mt-6">

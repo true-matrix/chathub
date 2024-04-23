@@ -236,6 +236,18 @@ const updateGroupName = (chatId: string, name: string) => {
   return apiClient.patch(`/chat-app/chats/group/${chatId}`, { name });
 };
 
+const updateGroupImage = (chatId: string, imageData: FormData) => {
+  return apiClient.patch(
+    `/chat-app/chats/group/updatepack/${chatId}`,
+    imageData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+};
+
 const deleteGroup = (chatId: string) => {
   return apiClient.delete(`/chat-app/chats/group/${chatId}`);
 };
@@ -344,4 +356,5 @@ export {
   replyMessage,
   deleteMessage,
   updateVerifiedStatus,
+  updateGroupImage,
 };

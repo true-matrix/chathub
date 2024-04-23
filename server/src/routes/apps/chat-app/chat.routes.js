@@ -26,6 +26,7 @@ import {
   renameGroupChat,
   searchAvailableUsers,
   updateAlpha,
+  updateGroupImage,
   updateOmega,
   updateProfile,
   updateProfileImage,
@@ -109,6 +110,10 @@ router
     renameGroupChat
   )
   .delete(mongoIdPathVariableValidator("chatId"), validate, deleteGroupChat);
+
+router
+  .route("/group/updatepack/:chatId")
+  .patch(upload.single("avatar"), updateGroupImage);
 
 router
   .route("/group/:chatId/:participantId")
