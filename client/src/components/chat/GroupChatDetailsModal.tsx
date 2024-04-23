@@ -327,32 +327,15 @@ const GroupChatDetailsModal: React.FC<{
                             <p>+{groupDetails?.participants.length - 3}</p>
                           ) : null}
                         </div> */}
-                        <div className="flex pl-16 justify-center items-center relative w-full h-max gap-3" onClick={handleImageClick}>
-                          {/* <img
-                                className="w-24 h-24 -ml-16 rounded-xl outline outline-4 outline-white"
-                                // src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjPGIbqtNtn1yzk1w1cGmCgFstHk-l2NvevRgw7J7kD3uOT4sjPpn-0CVb5gPGy47z3wtZWY4M5InE_n1zBlBE_PnkDXBydBhU8RCzwijKQYiSGGB1ZJ5umDWXCd4l9TpeiQcsJW2IjwXiOoQxg2M-FhknAF-RmkCOdqJgywWOLw62wSNSCzT1W6cAiZQ0n/s1600/multiwolf100.png"
-                                src={isImageEditing && selectedFile !== null ? selectedFile : groupDetails?.avatar?.url}
-                                alt="avataraj"
-                              /> */}
+                        <div className="flex pl-16 justify-center items-center relative w-full h-max gap-3" onClick={handleImageClick}> 
                           <img
-                          className="w-24 h-24 -ml-16 rounded-xl outline outline-4 outline-white"
+                          className="w-24 h-24 -ml-16 rounded-xl outline outline-4 outline-white object-cover"
                           src={isImageEditing && selectedFile !== null ? selectedFile : (groupDetails?.avatar?.url ? groupDetails.avatar.url : 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjPGIbqtNtn1yzk1w1cGmCgFstHk-l2NvevRgw7J7kD3uOT4sjPpn-0CVb5gPGy47z3wtZWY4M5InE_n1zBlBE_PnkDXBydBhU8RCzwijKQYiSGGB1ZJ5umDWXCd4l9TpeiQcsJW2IjwXiOoQxg2M-FhknAF-RmkCOdqJgywWOLw62wSNSCzT1W6cAiZQ0n/s1600/multiwolf100.png')}
                           alt="avatar"
-                        />
-                          {/* {isImageEditing && selectedFile !== null ? (
-                            <img
-                              className="w-24 h-24 -ml-16 rounded-xl outline outline-4 outline-white"
-                              src={selectedFile} alt="Selected Image"
-                            />
-                          ) : (
-                              <img
-                                className="w-24 h-24 -ml-16 rounded-xl outline outline-4 outline-white"
-                                src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjPGIbqtNtn1yzk1w1cGmCgFstHk-l2NvevRgw7J7kD3uOT4sjPpn-0CVb5gPGy47z3wtZWY4M5InE_n1zBlBE_PnkDXBydBhU8RCzwijKQYiSGGB1ZJ5umDWXCd4l9TpeiQcsJW2IjwXiOoQxg2M-FhknAF-RmkCOdqJgywWOLw62wSNSCzT1W6cAiZQ0n/s1600/multiwolf100.png" alt="Default Image" />
-                            )} */}
-
+                        /> 
                         </div>
                         {isImageEditing ? (
-                            <div>
+                            <div className="flex justify-center mt-3 w-full">
                               <button
                                 onClick={handleSaveClick}
                                 className="bg-success hover:bg-success/80 text-white px-4 py-2 rounded cursor-pointer"
@@ -361,7 +344,7 @@ const GroupChatDetailsModal: React.FC<{
                               </button>
                             </div>
                           ) : (
-                            <div>
+                            <div className="flex justify-center mt-3 w-full">
                               <label htmlFor="avatar" className="cursor-pointer bg-success hover:bg-success/80 text-white px-4 py-2 rounded avatar-img">
                                 Change pack image
                               </label>
