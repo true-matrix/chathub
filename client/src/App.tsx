@@ -19,6 +19,8 @@ import { useSocket } from "./context/SocketContext";
 import NOTI_SOUND from '../src/assets/sound/notification-sound1.mp3';
 import { ChatListItemInterface, ChatMessageInterface } from "./interfaces/chat";
 import { useGlobal } from "./context/GlobalContext";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const MESSAGE_RECEIVED_EVENT = "messageReceived";
 
@@ -54,9 +56,11 @@ const App = () => {
             navigate("/login"); // Redirect to the login page after successful logout
             clearInterval(inactivityTimer);
           },
-          alert // Display error alerts on request failure
+          // alert // Display error alerts on request failure
+          (error: string) => toast.error(error)
+          
         );
-      }, 3600000); // 1 hour in milliseconds
+      }, 60000); // 1 hour = 3600000 milliseconds
     };
 
     const handleActivity = () => {

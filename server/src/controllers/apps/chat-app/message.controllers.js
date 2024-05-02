@@ -167,37 +167,37 @@ const sendMessage = asyncHandler(async (req, res) => {
     );
     
   //  // Update the message seen status for the recipient
-    ChatMessage.updateOne(
-      { _id: new mongoose.Types.ObjectId(receivedMessage._id), sender: participantObjectId.toString() },
-      { $set: { seen: true } }
-  ).exec();
+  //   ChatMessage.updateOne(
+  //     { _id: new mongoose.Types.ObjectId(receivedMessage._id), sender: participantObjectId.toString() },
+  //     { $set: { seen: true } }
+  // ).exec();
   });
 
-  //Case-3
-  // When a user reads the message, emit a socket event
-  // to inform other participants that the message has been seen by at least one user
-  chat.participants.forEach(async (participantObjectId) => {
-    // here the chat is the raw instance of the chat in which participants is the array of object ids of users
-    // avoid emitting event to the user who is sending the message
-    if (participantObjectId.toString() === req.user._id.toString()) return;
+  // //Case-3
+  // // When a user reads the message, emit a socket event
+  // // to inform other participants that the message has been seen by at least one user
+  // chat.participants.forEach(async (participantObjectId) => {
+  //   // here the chat is the raw instance of the chat in which participants is the array of object ids of users
+  //   // avoid emitting event to the user who is sending the message
+  //   if (participantObjectId.toString() === req.user._id.toString()) return;
 
 
-    // emit the receive message event to the other participants with received message as the payload
-    emitSocketEvent(
-      req,
-      participantObjectId.toString(),
-      ChatEventEnum.MESSAGE_SEEN_BY_ONE_EVENT,
-      receivedMessage
-    );
-    // Update seenBy array in the message model
-    message.seenBy.push(participantObjectId); // Add the participant to seenBy array
-  });
+  //   // emit the receive message event to the other participants with received message as the payload
+  //   emitSocketEvent(
+  //     req,
+  //     participantObjectId.toString(),
+  //     ChatEventEnum.MESSAGE_SEEN_BY_ONE_EVENT,
+  //     receivedMessage
+  //   );
+  //   // Update seenBy array in the message model
+  //   message.seenBy.push(participantObjectId); // Add the participant to seenBy array
+  // });
 
-  //Case-4
-  // Check if all participants have seen the message
-  const allParticipantsSeen = chat.participants.every(participantObjectId => {
-    return message.seenBy.includes(participantObjectId);
-  });
+  // //Case-4
+  // // Check if all participants have seen the message
+  // const allParticipantsSeen = chat.participants.every(participantObjectId => {
+  //   return message.seenBy.includes(participantObjectId);
+  // });
 
   // If all participants have seen the message, emit a socket event
   if (allParticipantsSeen) {

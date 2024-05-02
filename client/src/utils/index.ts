@@ -1,7 +1,8 @@
 // Importing necessary modules and interfaces
 import { AxiosResponse } from "axios";
 import { FreeAPISuccessResponseInterface } from "../interfaces/api";
-
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 // A utility function for handling API requests with loading, success, and error handling
 export const requestHandler = async (
   api: () => Promise<AxiosResponse<FreeAPISuccessResponseInterface, any>>,
@@ -25,7 +26,11 @@ export const requestHandler = async (
       localStorage.clear(); // Clear local storage on authentication issues
       if (isBrowser) window.location.href = "/login"; // Redirect to login page
     }
-    onError(error?.response?.data?.message || "Something went wrong");
+    if (error?.response?.data?.message === "jwt malformed") {
+      toast.error("Your session has expired! Please refresh and login again");
+    } else {
+      onError(error?.response?.data?.message || "Something went wrong");
+    }
   } finally {
     // Hide loading state if setLoading function is provided
     setLoading && setLoading(false);
