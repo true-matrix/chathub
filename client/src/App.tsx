@@ -205,11 +205,11 @@ const App = () => {
       {/* Private chat route: Can only be accessed by authenticated users */}
       <Route
         path="/chat"
-        element={
+        element={ user?.verified && (
           <PrivateRoute>
             <ChatPage />
           </PrivateRoute>
-        }
+      )}
       />
 
       <Route
