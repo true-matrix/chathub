@@ -60,7 +60,7 @@ const App = () => {
           (error: string) => toast.error(error)
           
         );
-      }, 60000); // 1 hour = 3600000 milliseconds
+      }, 3600000); // 1 hour = 3600000 milliseconds, 1 min = 60000 milliseconds
     };
 
     const handleActivity = () => {
