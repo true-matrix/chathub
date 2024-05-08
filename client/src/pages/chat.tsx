@@ -103,7 +103,9 @@ const ChatPage = () => {
   const [selectedMessage, setSelectedMessage] = useState<any>(null);
   const [userChats, setUserChats] = useState<any>([]);
   const [highlightedMessageId, setHighlightedMessageId] = useState("");
-  const messageRefs : any = useRef({});
+  const messageRefs: any = useRef({});
+  let isSending = false; // this flag to indicate if the message is currently being sent
+
 
   // const [allConnectedUsers, setAllConnectedUsers] = useState<any>([]);
   // const [notificationShown, setNotificationShown] = useState(false);
@@ -315,6 +317,8 @@ const ChatPage = () => {
   // Function to send a chat message
   const sendChatMessage = async () => {
     setShowPicker(false);
+    if (isSending) return;
+    isSending = true;
     // If no current chat ID exists or there's no socket connection, exit the function
     if (!currentChat.current?._id || !socket) return;
 
@@ -357,6 +361,7 @@ const ChatPage = () => {
           setSelectedMessage(null); // Reset selected message
           setMessage(""); // Clear the message input
           setAttachedFiles([]); // Clear the list of attached files
+          isSending = false;
         },
 
       // If there's an error during the message sending process, raise an alert
@@ -381,6 +386,7 @@ const ChatPage = () => {
           setAttachedFiles([]); // Clear the list of attached files
           setMessages((prev) => [res.data, ...prev]); // Update messages in the UI
           updateChatLastMessage(currentChat.current?._id || "", res.data); // Update the last message in the chat
+          isSending = false;
         },
 
       // If there's an error during the message sending process, raise an alert
@@ -405,6 +411,7 @@ const ChatPage = () => {
         setAttachedFiles([]); // Clear the list of attached files
         setMessages((prev) => [res.data, ...prev]); // Update messages in the UI
         updateChatLastMessage(currentChat.current?._id || "", res.data); // Update the last message in the chat
+        isSending = false;
       },
 
       // If there's an error during the message sending process, raise an alert
@@ -1256,7 +1263,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
                   value={message}
                   onChange={handleOnMessageChange}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter") {
+                    if ((message || attachedFiles.length > 0) && e.key === "Enter") {
                       sendChatMessage();
                     }
                   }}
@@ -1264,7 +1271,8 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
                 <button
                   onClick={sendChatMessage}
                   disabled={!message && attachedFiles.length <= 0}
-                  className="p-4 rounded-full bg-success text-white cursor-pointer" 
+                  // className="p-4 rounded-full bg-success text-white cursor-pointer" 
+                  className={`p-4 rounded-full ${!message && attachedFiles.length <= 0 ? 'bg-secondary' : 'bg-success'} text-white cursor-pointer`}
                 >
                   <PaperAirplaneIcon className="w-6 h-6" />
                 </button>
