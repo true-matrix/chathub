@@ -4,11 +4,11 @@ import {
   TrashIcon,
 } from "@heroicons/react/20/solid";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { deleteOneOnOneChat } from "../../api";
 import { useAuth } from "../../context/AuthContext";
 import { ChatListItemInterface } from "../../interfaces/chat";
-import { LocalStorage, classNames, getChatObjectMetadata, requestHandler } from "../../utils";
+import { classNames, getChatObjectMetadata, requestHandler } from "../../utils";
 import GroupChatDetailsModal from "./GroupChatDetailsModal";
 import { getRecentTime } from "../../commonhelper";
 
