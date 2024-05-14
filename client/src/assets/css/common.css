@@ -588,7 +588,9 @@ ul.pagination li:first-child a:hover, ul.pagination li:last-child a:hover {
   transition-duration: .4s;
 }
 
-
+.border-2 {
+  border-width: 3px;
+}
 .update-popup {  
   max-width: 500px;
   width: 100%;
