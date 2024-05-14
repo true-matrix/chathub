@@ -51,6 +51,7 @@ const mountMessageSeenEvent = (socket) => {
 
 // Define a Map to store connected users
 const connectedUsers = new Map();
+let activeUsers = [];
 
 /**
  *
@@ -94,6 +95,19 @@ const initializeSocketIO = (io) => {
       socket.join(user._id.toString());
       socket.emit(ChatEventEnum.CONNECTED_EVENT); // emit the connected event so that client is aware
             
+      socket.on('new-user-add', (newUserId) => {
+          //if user is not added previously
+            if(!activeUsers.some((user)=> user.userId === newUserId))
+            {
+                activeUsers.push({
+                userId: newUserId,
+                socketId: socket.user?._id.toString()
+              })
+        }
+        // console.log('Connected Users',activeUsers);
+          io.emit('get-users', activeUsers)
+      })
+      
       // Emit connectedUsers data when it changes
       const emitConnectedUsers = () => {
         io.emit("connectedUsers", Array.from(connectedUsers.keys()));
@@ -111,8 +125,14 @@ const initializeSocketIO = (io) => {
 
       socket.on(ChatEventEnum.DISCONNECT_EVENT, async () => {
         console.log("user has disconnected 🚫. userId: " + socket.user?._id);
-        connectedUsers.delete(socket.user._id.toString());
-        emitConnectedUsers(); // Emit connectedUsers data after removing the user
+        // connectedUsers.delete(socket.user._id.toString());
+
+        // activeUsers = activeUsers.filter((user) => user.socketId !== socket.id)
+        activeUsers = activeUsers.filter((user) => user.userId !== socket.user?._id.toString())
+        // console.log('User Disconnected',activeUsers);
+        io.emit('get-users', activeUsers)
+        
+        // emitConnectedUsers(); // Emit connectedUsers data after removing the user
         await User.findByIdAndUpdate({ _id: socket.user?._id }, { $set: { verified: false, islogin: false, isOnline: false } })
 
         if (socket.user?._id) {

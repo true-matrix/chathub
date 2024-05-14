@@ -51,11 +51,11 @@ const ChatItem: React.FC<{
 //     })
 //     return res.some((value:any) => value !== null && value !== undefined);
 // }
-  useEffect(() => {
-    const userChats = LocalStorage.get('userChats');
-    const isChatOnline = userChats.find((group:any) => group._id === chat._id)?.participants.some((participant:any) => participant._id !== user._id && participant.islogin) || false;
-    console.log('isChatOnline',isChatOnline)
-  },[])
+  // useEffect(() => {
+  //   const userChats = LocalStorage.get('userChats');
+  //   const isChatOnline = userChats.find((group:any) => group._id === chat._id)?.participants.some((participant:any) => participant._id !== user._id && participant.islogin) || false;
+  //   console.log('isChatOnline',isChatOnline)
+  // },[])
   
   // Define an asynchronous function named 'deleteChat'.
   const deleteChat = async () => {
@@ -150,7 +150,7 @@ const ChatItem: React.FC<{
                 src={getChatObjectMetadata(chat, user!).avatar}
                 className="w-12 h-12 rounded-full object-cover"
               /> 
-              <span className="user-active"></span>
+              {/* <span className="user-active"></span> */}
               </>
             ) : (<>
               <img

@@ -104,6 +104,7 @@ const ChatPage = () => {
   const [userChats, setUserChats] = useState<any>([]);
   const [highlightedMessageId, setHighlightedMessageId] = useState("");
   const messageRefs: any = useRef({});
+  const [onlineUsers, setOnlineUsers] = useState([])
   let isSending = false; // this flag to indicate if the message is currently being sent
 
 
@@ -115,6 +116,15 @@ const ChatPage = () => {
         // const connectedUsers = LocalStorage.get('connectedUsers');
     setUserChats(initialUserChats);
     // setAllConnectedUsers(connectedUsers)
+
+    // if (!socket) return alert("Please try after sometime! Socket not available");
+    // socket?.emit("new-user-add", user._id)
+    // socket?.on('get-users', (users) => {
+    //   setOnlineUsers(users);
+    //   console.log('onlineUsers',onlineUsers);
+      
+    // })
+
   }, [socket, isConnected]);
   
    useEffect(() => {
@@ -832,6 +842,10 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
     // Listener for when the socket connects.
     socket.on(CONNECTED_EVENT, onConnect);
     socket.on('connectedUsers', sendUpdateToOtherUsers);
+    socket.emit("new-user-add", user._id)
+    socket.on('get-users', (users) => {
+      setOnlineUsers(users);
+    })
     // Listener for when the socket disconnects.
     socket.on(DISCONNECT_EVENT, onDisconnect);
     // Listener for when a user is typing.
@@ -950,6 +964,16 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
     setSelectedMessage(null); // Reset selected message
     setMessage("");
   };
+
+  const checkOnlineStatus = (chat: any) => {
+    if (!chat.isGroupChat) {
+      const chatMember = chat.participants.find((member: any) => member._id !== user._id);
+      const online = onlineUsers.find((user : any)=> user.userId === chatMember._id)
+    return (online || online !== undefined ) ? true : false
+      
+    }
+  }
+  
   return (
     <>
       {/* {isMessageDeleting && handleDelete(selectedMessage?.id)} */}
@@ -1005,7 +1029,8 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
                 return (
                   <ChatItem
                     chat={chat}
-                    isOnline={userChats?.find((group: any) => group._id === chat._id)?.participants.some((participant: any) => participant._id !== user._id && participant.islogin) || false}
+                    isOnline={checkOnlineStatus(chat)}
+                    // isOnline={userChats?.find((group: any) => group._id === chat._id)?.participants.some((participant: any) => participant._id !== user._id && participant.islogin) || false}
                     isActive={chat._id === currentChat.current?._id}
                     unreadCount={
                       unreadMessages.filter((n) => n.chat === chat._id).length
