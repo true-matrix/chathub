@@ -513,7 +513,7 @@ const ChatPage = () => {
   }
   
 const updateUserOnlineStatus = (chats:any, userId:any, isOnline:any) => {
-  return chats.map((chat:any) => {
+  return chats?.map((chat:any) => {
     if (!chat.isGroupChat) {
       chat.participants.forEach((participant: any) => {
         if (participant._id === userId) {
@@ -537,10 +537,10 @@ const updateUserOnlineStatus = (chats:any, userId:any, isOnline:any) => {
     // updateConnectedUsersInLocalStorage(connectedUsers);
     
         setIsConnected(true);
-        const newUserChats = userChats.map((group:any) => {
+        const newUserChats = userChats?.map((group:any) => {
             if (!group.isGroupChat) {
                 group.participants.forEach((participant:any) => {
-                    if (participant._id !== user._id) {
+                    if (participant?._id !== user?._id) {
                         participant.islogin = true;
                     }
                 });
@@ -967,8 +967,8 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
 
   const checkOnlineStatus = (chat: any) => {
     if (!chat.isGroupChat) {
-      const chatMember = chat.participants.find((member: any) => member._id !== user._id);
-      const online = onlineUsers.find((user : any)=> user.userId === chatMember._id)
+      const chatMember = chat.participants.find((member: any) => member?._id !== user?._id);
+      const online = onlineUsers?.find((user : any)=> user?.userId === chatMember?._id)
     return (online || online !== undefined ) ? true : false
       
     }
