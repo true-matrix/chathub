@@ -105,7 +105,7 @@ const ChatItem: React.FC<{
             }}
             className="self-center  relative"
           >
-            <EllipsisVerticalIcon className="h-6 group-hover:w-6 group-hover:opacity-100 w-0 opacity-0 transition-all ease-in-out duration-100 text-zinc-300" />
+            <EllipsisVerticalIcon className="h-6 group-hover:w-6 group-hover:opacity-100 w-0 opacity-0 transition-all ease-in-out duration-100 text-zinc-500" />
             <div
               className={classNames(
                 "z-20 text-left absolute bottom-0 translate-y-full text-sm w-52 bg-white rounded-2xl p-2 shadow-md ",
