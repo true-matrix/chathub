@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { loginUser, loginUserOtp, verifyUserOtp, logoutUser } from "../api";
 import Loader from "../components/Loader";
 import { LocalStorage, requestHandler } from "../utils";
+import { useSocket } from "./SocketContext";
 
 // Create a context to manage authentication-related data and functions
 const AuthContext = createContext<{
@@ -36,6 +37,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [token, setToken] = useState<string | null>(null);
 
   const navigate = useNavigate();
+    const { socket } = useSocket();
+
 
   // Function to handle user login
   const login = async (data: { email: string; password: string }) => {
@@ -99,6 +102,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setToken(data.accessToken);
         LocalStorage.set("user", data.user);
         LocalStorage.set("token", data.accessToken);
+        socket?.on('connect', () => {
+                    console.log('Yah! Connected to the socket server');
+                });
         navigate("/chat");
       }
 
