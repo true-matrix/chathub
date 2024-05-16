@@ -7,15 +7,19 @@ import 'react-confirm-alert/src/react-confirm-alert.css';
 import logout_img from '../../assets/images/logout.svg'
 // import { requestHandler } from "../../utils";
 import { useAuth } from "../../context/AuthContext";
+import { useSocket } from "../../context/SocketContext";
 
 export const Logout = () => {
     const { logout } = useAuth();
+    const { socket } = useSocket();
+
     // const [loadingLogout, setLoadingLogout] = useState(false)
     const onYes = useCallback(async() => {
         // await dispatch(setIsAdmin(false))
         // await dispatch(setIsAdminView(false))
         // await logout({ url: `auth/logout` });
         await logout();
+        socket?.disconnect();
         console.log('logout');
     }, []);
     const logoutMe = useCallback(() => {
