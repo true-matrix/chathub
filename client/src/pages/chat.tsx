@@ -62,6 +62,13 @@ const MESSAGE_DELETED_EVENT = "messageDeleted";
 const LEAVE_CHAT_EVENT = "leaveChat";
 const UPDATE_GROUP_NAME_EVENT = "updateGroupName";
 // const SOCKET_ERROR_EVENT = "socketError";
+const UPDATE_STATUS = 'updateStatus';
+
+declare global {
+  interface Window {
+    activityTimeout: NodeJS.Timeout;
+  }
+}
 
 const ChatPage = () => {
 
@@ -870,6 +877,42 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
     // Listener for when a group's name is updated.
     socket.on(UPDATE_GROUP_NAME_EVENT, onGroupNameChange);
 
+   const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        socket.emit(UPDATE_STATUS, 'away');
+
+      } else {
+        socket.emit(UPDATE_STATUS, 'online');
+
+      }
+    };
+
+    const handleWindowBlur = () => {
+        socket.emit(UPDATE_STATUS, 'away');
+      
+    };
+
+    const handleWindowFocus = () => {
+        socket.emit(UPDATE_STATUS, 'online');
+
+    };
+
+    const resetActivityTimeout = () => {
+      clearTimeout(window.activityTimeout);
+        socket.emit(UPDATE_STATUS, 'online');
+      window.activityTimeout = setTimeout(() => {
+        socket.emit(UPDATE_STATUS, 'away');
+
+      }, 30000); // 30 secs
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('blur', handleWindowBlur);
+    window.addEventListener('focus', handleWindowFocus);
+    document.addEventListener('mousemove', resetActivityTimeout);
+    document.addEventListener('keydown', resetActivityTimeout);
+
+
     // When the component using this hook unmounts or if `socket` or `chats` change:
     return () => {
       // Remove all the event listeners we set up to avoid memory leaks and unintended behaviors.
@@ -889,6 +932,13 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
       socket.off(NEW_CHAT_EVENT, onNewChat);
       socket.off(LEAVE_CHAT_EVENT, onChatLeave);
       socket.off(UPDATE_GROUP_NAME_EVENT, onGroupNameChange);
+
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('blur', handleWindowBlur);
+      window.removeEventListener('focus', handleWindowFocus);
+      document.removeEventListener('mousemove', resetActivityTimeout);
+      document.removeEventListener('keydown', resetActivityTimeout);
+      // socket.disconnect();?]
     };
 
     // Note:
@@ -965,14 +1015,23 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
     setMessage("");
   };
 
-  const checkOnlineStatus = (chat: any) => {
+  // const checkOnlineStatus = (chat: any) => {
+  //   if (!chat.isGroupChat) {
+  //     const chatMember = chat.participants.find((member: any) => member?._id !== user?._id);
+  //     const online = onlineUsers?.find((user : any)=> user?.userId === chatMember?._id)
+  //   return (online || online !== undefined ) ? true : false
+      
+  //   }
+  // }
+
+ const checkOnlineStatus = (chat : any) => {
     if (!chat.isGroupChat) {
       const chatMember = chat.participants.find((member: any) => member?._id !== user?._id);
-      const online = onlineUsers?.find((user : any)=> user?.userId === chatMember?._id)
-    return (online || online !== undefined ) ? true : false
-      
+      const onlineUser : any = onlineUsers.find((u: any) => u.userId === chatMember?._id);
+      return onlineUser ? onlineUser.status : 'offline';
     }
-  }
+    return 'offline';
+  };
   
   return (
     <>

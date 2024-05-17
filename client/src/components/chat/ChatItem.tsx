@@ -56,6 +56,19 @@ const ChatItem: React.FC<{
   //   const isChatOnline = userChats.find((group:any) => group._id === chat._id)?.participants.some((participant:any) => participant._id !== user._id && participant.islogin) || false;
   //   console.log('isChatOnline',isChatOnline)
   // },[])
+
+  const getBorderColor = (isOnline : any) => {
+  switch (isOnline) {
+    case "online":
+      return "border-green-500";
+    case "away":
+      return "border-yellow-300";
+    case "offline":
+      return "border-red-500";
+    default:
+      return "border-red-500"; // Default to red if the status is unknown
+  }
+}
   
   // Define an asynchronous function named 'deleteChat'.
   const deleteChat = async () => {
@@ -155,9 +168,11 @@ const ChatItem: React.FC<{
             ) : (<>
               <img
                   src={getChatObjectMetadata(chat, user!).avatar} 
-                  className={`w-12 h-12 rounded-full object-cover border-2 ${isOnline ? 'border-green-500' : 'border-red-500'}`}
+                  className={`w-12 h-12 rounded-full object-cover border-2 ${getBorderColor(isOnline)}`}
                 />
-                 {isOnline ? <span className="user-active"></span>: <span className="user-inactive"></span>}
+                {isOnline === "online" && <span className="user-active"></span>}
+                {isOnline === "away" && <span className="user-away"></span>}
+                {isOnline === "offline" && <span className="user-inactive"></span>}
             </>)}
           </div>
           <div className="w-full">

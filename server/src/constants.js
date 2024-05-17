@@ -112,6 +112,8 @@ export const ChatEventEnum = Object.freeze({
   STOP_TYPING_EVENT: "stopTyping",
   // ? when participant starts typing
   TYPING_EVENT: "typing",
+  // ? participants online status
+  UPDATE_STATUS: 'updateStatus',
 });
 
 export const AvailableChatEvents = Object.values(ChatEventEnum);

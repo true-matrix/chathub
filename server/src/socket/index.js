@@ -101,7 +101,9 @@ const initializeSocketIO = (io) => {
             {
                 activeUsers.push({
                 userId: newUserId,
-                socketId: socket.user?._id.toString()
+                socketId: socket.user?._id.toString(),
+                status: 'online',
+                lastActive: new Date()
               })
         }
         // console.log('Connected Users',activeUsers);
@@ -112,6 +114,25 @@ const initializeSocketIO = (io) => {
       const emitConnectedUsers = () => {
         io.emit("connectedUsers", Array.from(connectedUsers.keys()));
       };
+
+       const updateUserStatus = (userId, status) => {
+        const userIndex = activeUsers.findIndex(user => user.userId === userId);
+        if (userIndex !== -1) {
+          activeUsers[userIndex].status = status;
+          activeUsers[userIndex].lastActive = new Date();
+        } 
+        io.emit('get-users', activeUsers);
+      };
+
+      updateUserStatus(user._id.toString(), 'online');
+
+            // socket.on('new-user-add', (newUserId) => {
+            //   updateUserStatus(newUserId, 'online');
+            // });
+
+            socket.on(ChatEventEnum.UPDATE_STATUS, (status) => {
+              updateUserStatus(socket.user._id.toString(), status);
+            });
 
       emitConnectedUsers(); // Emit connectedUsers data after adding the user
       console.log("User connected 🗼. userId: ", user._id.toString());
@@ -139,6 +160,18 @@ const initializeSocketIO = (io) => {
           socket.leave(socket.user._id);
         }
       });
+      const checkAwayStatus = () => {
+        const now = new Date();
+        activeUsers.forEach((user, index) => {
+          if (user.status === 'online' && (now - new Date(user.lastActive)) > 30000) { // 30 seconds
+            activeUsers[index].status = 'away';
+            io.to(user.socketId).emit(ChatEventEnum.UPDATE_STATUS, 'away');
+          }
+        });
+        io.emit('get-users', activeUsers);
+      };
+
+      setInterval(checkAwayStatus, 30000); // Check every 30 secs
     } catch (error) {
       socket.emit(
         ChatEventEnum.SOCKET_ERROR_EVENT,
