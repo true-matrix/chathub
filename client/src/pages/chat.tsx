@@ -64,11 +64,11 @@ const UPDATE_GROUP_NAME_EVENT = "updateGroupName";
 // const SOCKET_ERROR_EVENT = "socketError";
 const UPDATE_STATUS = 'updateStatus';
 
-declare global {
-  interface Window {
-    activityTimeout: NodeJS.Timeout;
-  }
-}
+// declare global {
+//   interface Window {
+//     activityTimeout: NodeJS.Timeout;
+//   }
+// }
 
 const ChatPage = () => {
 
@@ -879,36 +879,48 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
 
    const handleVisibilityChange = () => {
       if (document.visibilityState === 'hidden') {
-        socket.emit(UPDATE_STATUS, 'away');
+        // socket.emit(UPDATE_STATUS, 'away');
+        (window as any).activityTimeout = setTimeout(() => socket.emit(UPDATE_STATUS, 'away'), 30000);
 
       } else {
+        clearTimeout((window as any).activityTimeout);
         socket.emit(UPDATE_STATUS, 'online');
 
       }
     };
 
     const handleWindowBlur = () => {
-        socket.emit(UPDATE_STATUS, 'away');
+        // socket.emit(UPDATE_STATUS, 'away');
+        (window as any).activityTimeout = setTimeout(() => socket.emit(UPDATE_STATUS, 'away'), 30000);
       
     };
 
     const handleWindowFocus = () => {
+        clearTimeout((window as any).activityTimeout);
         socket.emit(UPDATE_STATUS, 'online');
 
     };
 
+    const handleWindowClose = () => {
+
+      socket.emit(UPDATE_STATUS, 'away');
+
+
+    };
+
     const resetActivityTimeout = () => {
-      clearTimeout(window.activityTimeout);
+      clearTimeout((window as any).activityTimeout);
         socket.emit(UPDATE_STATUS, 'online');
-      window.activityTimeout = setTimeout(() => {
+      (window as any).activityTimeout = setTimeout(() => {
         socket.emit(UPDATE_STATUS, 'away');
 
-      }, 30000); // 30 secs
+      }, 30000); // 30 secs of inactivity
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('blur', handleWindowBlur);
     window.addEventListener('focus', handleWindowFocus);
+    window.addEventListener('beforeunload', handleWindowClose);
     document.addEventListener('mousemove', resetActivityTimeout);
     document.addEventListener('keydown', resetActivityTimeout);
 
@@ -936,6 +948,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('blur', handleWindowBlur);
       window.removeEventListener('focus', handleWindowFocus);
+      window.removeEventListener('beforeunload', handleWindowClose);
       document.removeEventListener('mousemove', resetActivityTimeout);
       document.removeEventListener('keydown', resetActivityTimeout);
       // socket.disconnect();?]
