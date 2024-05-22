@@ -163,7 +163,7 @@ const initializeSocketIO = (io) => {
       const checkAwayStatus = () => {
         const now = new Date();
         activeUsers.forEach((user, index) => {
-          if (user.status === 'online' && (now - new Date(user.lastActive)) > 30000) { // 30 seconds
+          if (user.status === 'online' && (now - new Date(user.lastActive)) > 30000) { // 30 secs
             activeUsers[index].status = 'away';
             io.to(user.socketId).emit(ChatEventEnum.UPDATE_STATUS, 'away');
           }
