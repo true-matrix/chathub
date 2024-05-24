@@ -880,7 +880,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
    const handleVisibilityChange = () => {
       if (document.visibilityState === 'hidden') {
         // socket.emit(UPDATE_STATUS, 'away');
-        (window as any).activityTimeout = setTimeout(() => socket.emit(UPDATE_STATUS, 'away'), 30000);
+        (window as any).activityTimeout = setTimeout(() => socket.emit(UPDATE_STATUS, 'away'), 60000);
 
       } else {
         clearTimeout((window as any).activityTimeout);
@@ -891,7 +891,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
 
     const handleWindowBlur = () => {
         // socket.emit(UPDATE_STATUS, 'away');
-        (window as any).activityTimeout = setTimeout(() => socket.emit(UPDATE_STATUS, 'away'), 30000);
+        (window as any).activityTimeout = setTimeout(() => socket.emit(UPDATE_STATUS, 'away'), 60000);
       
     };
 
@@ -914,7 +914,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
       (window as any).activityTimeout = setTimeout(() => {
         socket.emit(UPDATE_STATUS, 'away');
 
-      }, 30000); // 30 secs of inactivity
+      }, 60000); // 60 secs of inactivity
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
