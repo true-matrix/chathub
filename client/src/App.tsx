@@ -117,6 +117,20 @@ const App = () => {
     };
   }, []);
 
+
+// Clear localstorage data on tab close
+  useEffect(() => {
+    const clearLocalStorage = () => {
+      localStorage.clear();
+    };
+
+    window.addEventListener('beforeunload', clearLocalStorage);
+
+    return () => {
+      window.removeEventListener('beforeunload', clearLocalStorage);
+    };
+  }, []);
+
   
    const showNotification = (title : any, options : any, duration = 2500) => {
     // Check if the browser supports notifications
