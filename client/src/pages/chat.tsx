@@ -280,7 +280,7 @@ const ChatPage = () => {
 
   const getMessages = async () => {
     // Check if a chat is selected, if not, show an alert
-    if (!currentChat.current?._id) return alert("No chat is selected");
+    if (!currentChat?.current?._id) return alert("No chat is selected");
 
     console.log('currentChat',currentChat);
     console.log('user',user);
@@ -822,7 +822,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
 
 
   useEffect(() => {
-    getMessages();
+    // getMessages();
 
     const lastMessageFromOtherUser =
       currentChat?.current?.lastMessage?.sender._id !== user._id;
