@@ -5,7 +5,7 @@ import {
   XCircleIcon,
 } from "@heroicons/react/20/solid";
 /// <reference lib="node" />
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 // import { Link, NavLink, useNavigate } from 'react-router-dom';
 // import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 // import Popup from 'reactjs-popup';
@@ -45,6 +45,7 @@ import {
 import { useGlobal } from "../context/GlobalContext";
 import Sidebar from "./Common/Sidebar";
 import { useNavigate } from "react-router-dom";
+import { useIntersectionObserver } from "../commonhelper";
 
 const CONNECTED_EVENT = "connected";
 const DISCONNECT_EVENT = "disconnect";
@@ -140,7 +141,7 @@ const ChatPage = () => {
       Notification.requestPermission();
     }
    }, []);
-  
+
   const scrollToPrevMessage = (id : any) => {
     const keys = Object.keys(messageRefs.current);
     const index = keys.indexOf(id);
@@ -304,27 +305,19 @@ const ChatPage = () => {
       // After fetching, set the chat messages to the state if available
       (res) => {
         const { data } = res;
-        // setMessages(data || []);
+        setMessages(data || []);
         // if () {
         //   socket?.emit(MESSAGE_SEEN_EVENT, data?._id);
         // }
-      const updatedMessages = data && data.map((prevMessage : any) => {
-        if (!prevMessage.seen) {
-          return { ...prevMessage, seen: true };
-        }
-        return prevMessage;
-      });
-        setMessages(updatedMessages || []);
-        setMessageInputFocused(true);
-      //   setMessages((prevMessages) => {
-      // const updatedMessages = prevMessages.map((prevMessage) => {
-      //   if (prevMessage._id === message._id && !prevMessage.seen) {
+
+      // const updatedMessages = data && data.map((prevMessage : any) => {
+      //   if (!prevMessage.seen) {
       //     return { ...prevMessage, seen: true };
       //   }
       //   return prevMessage;
       // });
-      // return [message,...updatedMessages];
-      // });
+      //   setMessages(updatedMessages || []);
+        setMessageInputFocused(true);
       },
       // Display any error alerts if they occur during the fetch
       alert
@@ -652,7 +645,11 @@ const updateUserOnlineStatus = (chats:any, userId:any, isOnline:any) => {
       //  // Play message sound
       // playMessageSound();
 
-    socket?.emit(MESSAGE_SEEN_EVENT, message?._id);
+    // socket?.emit(MESSAGE_SEEN_EVENT, message?._id);
+    if (message.status === 'unread' || message.status === 'delivered') {
+      // Emit message delivered event for each received message if it was unread
+      socket?.emit('read', { messageId: message._id, chatId: currentChat.current?._id });
+    }
 
 
       //  setMessages((prev) => {
@@ -680,25 +677,23 @@ const updateUserOnlineStatus = (chats:any, userId:any, isOnline:any) => {
     updateChatLastMessage(message.chat || "", message);
   };
 
-  const onMessageSeen = (message : ChatMessageInterface) => {
-    // setMessages((prev) => [message, ...prev]);
-    // chatId !== currentChat.current?._id
-    console.log('message',message);
-    console.log('currentChat',currentChat);
-    console.log('selectedMessage',selectedMessage);
-    
-  if(currentChat){
-    setMessages((prevMessages) => {
-      const updatedMessages = prevMessages.map((prevMessage) => {
-        if (prevMessage._id === message._id && !prevMessage.seen) {
-          return { ...prevMessage, seen: true };
-        }
-        return prevMessage;
-      });
-      return [message,...updatedMessages];
-      });
-    }
+  const onMessageStatusUpdate = (message : ChatMessageInterface) => {
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) =>
+        msg._id === message._id ? { ...msg, status: message.status } : msg
+      )
+    );
   };
+
+  const markAsRead = useCallback((messageId : any) => {
+    socket?.emit('readMessage', { messageId, receiverId: user._id });
+  }, [user._id]);
+
+  const { observe } = useIntersectionObserver((element:any) => {
+    const messageId = element.getAttribute('data-message-id');
+    markAsRead(messageId);
+  });
+
   // Function to handle message seen by one event
 const onMessageSeenByOne = (message : ChatMessageInterface) => {
   // Update the message in the messages list to reflect the seen status
@@ -795,21 +790,6 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
   };
 
 
-  // Function to handle button click
-  // const handleButtonClick = (buttonId : any) => {  
-  //   // if(buttonId !== "chat") {
-  //   //     setActiveButton(buttonId === activeButton ? "chat" : buttonId);
-  //   // }
-  //   if(buttonId === "chat"){
-  //       setActiveButton(buttonId);
-  //   }
-  //   if(buttonId === "contacts" || buttonId === "profile" || buttonId === "settings"){
-  //     setActiveButton(buttonId);
-  //   }
-  //   else {
-  //       setActiveButton("chat")
-  //   }
-  // };
 
 
   useEffect(() => {
@@ -829,7 +809,6 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
       getMessages();
     }
 
-
      // Fetch unread messages from local storage and update the unread count
   const _unreadMessages = LocalStorage.get("unreadMessages");
   setUnreadMessages(_unreadMessages || []);
@@ -840,6 +819,45 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
     // An empty dependency array ensures this useEffect runs only once, similar to componentDidMount.
   }, []);
 
+
+
+  useEffect(() => {
+    getMessages();
+
+    const lastMessageFromOtherUser =
+      currentChat?.current?.lastMessage?.sender._id !== user._id;
+
+    if (lastMessageFromOtherUser) {
+      socket?.emit("markMessagesAsSeen", {
+        conversationId: currentChat.current?._id,
+        userId: currentChat?.current?.lastMessage?.sender._id,
+      });
+    }
+
+    socket?.on('messagesSeen', ({ conversationId }) => {
+      if (currentChat?.current?._id === conversationId) {
+        updateMessagesAsSeen();
+      }
+    });
+
+    return () => {
+      socket?.off('messagesSeen');
+    };
+  }, [socket, currentChat?.current?._id]);
+
+  const updateMessagesAsSeen = () => {
+    const updatedMessages = messages.map(message => ({
+      ...message,
+      seen: true,
+    }));
+    setMessages(updatedMessages);
+    LocalStorage.set('currentChat', JSON.stringify({
+      ...currentChat.current,
+      messages: updatedMessages,
+    }));
+  };
+
+ 
   // This useEffect handles the setting up and tearing down of socket event listeners.
   useEffect(() => {
     // If the socket isn't initialized, we don't set up listeners.
@@ -861,7 +879,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
     socket.on(STOP_TYPING_EVENT, handleOnSocketStopTyping);
     // Listener for when a new message is received.
     socket.on(MESSAGE_RECEIVED_EVENT, onMessageReceived);
-    socket.on(MESSAGE_SEEN_EVENT, onMessageSeen);
+    socket.on('messageStatusUpdate', onMessageStatusUpdate);
     socket.on(MESSAGE_SEEN_BY_ONE_EVENT, onMessageSeenByOne);
     socket.on(MESSAGE_SEEN_BY_ALL_EVENT, onMessageSeenByAll)
     // Listener for when a message is edited.
@@ -935,7 +953,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
       socket.off(TYPING_EVENT, handleOnSocketTyping);
       socket.off(STOP_TYPING_EVENT, handleOnSocketStopTyping);
       socket.off(MESSAGE_RECEIVED_EVENT, onMessageReceived);
-      socket.off(MESSAGE_SEEN_EVENT, onMessageSeen);
+      socket.off('messageStatusUpdate', onMessageStatusUpdate);
       socket.off(MESSAGE_SEEN_BY_ONE_EVENT, onMessageSeenByOne);
       socket.off(MESSAGE_SEEN_BY_ALL_EVENT, onMessageSeenByAll)
       socket.off(MESSAGE_EDITED_EVENT, onMessageEdited);
@@ -1044,6 +1062,11 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
       return onlineUser ? onlineUser.status : 'offline';
     }
     return 'offline';
+  };
+
+  let tempChatId = currentChat.current?._id;
+  const handleSeen = (messageId : any) => {
+    socket?.emit('read', { messageId, tempChatId });
   };
   
   return (
@@ -1222,15 +1245,19 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
                       return (
                         <MessageItem
                           key={msg._id}
+                          data-message-id={msg._id}
+                          messageRef={(element:any) => observe(element)}
                           isOwnMessage={msg.sender?._id === user?._id}
                           isGroupChatMessage={currentChat.current?.isGroupChat}
                           message={msg}
                           onMessageClick={handleMessageClick}
                           onMessageReply={handleMessageReply}
                           onMessageDelete={() => handleDeleteMessage(msg._id)}
-                          messageRef={(element:any) => setMessageRef(msg.parentMessage, element)} 
+                          // messageRef={(element:any) => setMessageRef(msg.parentMessage, element)} 
                           scrollToPrevMessage={scrollToPrevMessage} 
                           highlightedMessageId={highlightedMessageId}
+                          // onSeen={handleSeen}
+                          onSeen={msg.seen}
                         />
                       );
                     })}

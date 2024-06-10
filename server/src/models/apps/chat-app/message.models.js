@@ -32,8 +32,8 @@ const chatMessageSchema = new Schema(
     },
     status: {
     type: String,
-    enum: ['sent', 'messageReceived', 'seenByOne', 'seenByAll'],
-    default: 'sent'
+    // enum: ['sent', 'messageReceived', 'seenByOne', 'seenByAll'],
+    // default: 'unread'
     },
     // Array to store users who have seen the message
     seenBy: [{

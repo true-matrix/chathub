@@ -7,6 +7,7 @@ import { ApiError } from "../../../utils/ApiError.js";
 import { ApiResponse } from "../../../utils/ApiResponse.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
 import { getLocalPath, getStaticFilePath } from "../../../utils/helpers.js";
+import { User } from "../../../models/apps/auth/user.models.js";
 
 /**
  * @description Utility function which returns the pipeline stages to structure the chat message schema with common lookups
@@ -40,6 +41,208 @@ const chatMessageCommonAggregation = () => {
   ];
 };
 
+// const getAllMessages = asyncHandler(async (req, res) => {
+//   const { chatId } = req.params;
+
+//   const selectedChat = await Chat.findById(chatId);
+
+//   if (!selectedChat) {
+//     throw new ApiError(404, "Chat does not exist");
+//   }
+
+//   // Only send messages if the logged in user is a part of the chat he is requesting messages of
+//   if (!selectedChat.participants?.includes(req.user?._id)) {
+//     throw new ApiError(400, "User is not a part of this chat");
+//   }
+
+//   const otherParticipantId = selectedChat.participants.find(participantId => !participantId.equals(req.user._id));
+//   const recipient = await User.findById(otherParticipantId);
+
+//   const messages = await ChatMessage.aggregate([
+//     {
+//       $match: {
+//         chat: new mongoose.Types.ObjectId(chatId),
+//       },
+//     },
+//     ...chatMessageCommonAggregation(),
+//     {
+//       $sort: {
+//         createdAt: -1,
+//       },
+//     },
+//   ]);
+
+//   // Add status to each message based on the recipient's online status and if the current user is the recipient
+//   const messagesWithStatus = messages.map(message => {
+//     let status;
+//     if (req.user._id == recipient._id.toString()) {
+//       // Message was sent by the recipient
+//       status = 'read';
+//     } else {
+//       // Message was sent by other participants
+//       status = recipient.isOnline ? 'delivered' : 'unread';
+//     }
+//     return { ...message, status };
+//   });
+
+//   return res
+//     .status(200)
+//     .json(
+//       new ApiResponse(200, messagesWithStatus || [], "Messages fetched successfully")
+//     );
+// });
+
+// const sendMessage = asyncHandler(async (req, res) => {
+//   const { chatId } = req.params;
+//   const { content } = req.body;
+
+//   if (!content && !req.files?.attachments?.length) {
+//     throw new ApiError(400, "Message content or attachment is required");
+//   }
+
+//   const selectedChat = await Chat.findById(chatId);
+
+//   if (!selectedChat) {
+//     throw new ApiError(404, "Chat does not exist");
+//   }
+
+//   const messageFiles = [];
+
+//   if (req.files && req.files.attachments?.length > 0) {
+//     req.files.attachments?.map((attachment) => {
+//       messageFiles.push({
+//         url: getStaticFilePath(req, attachment.filename),
+//         localPath: getLocalPath(attachment.filename),
+//       });
+//     });
+//   }
+
+//   // Create a new message instance with appropriate metadata
+//   const message = await ChatMessage.create({
+//     sender: new mongoose.Types.ObjectId(req.user._id),
+//     senderName: req.user.name,
+//     content: content || "",
+//     chat: new mongoose.Types.ObjectId(chatId),
+//     attachments: messageFiles,
+//   });
+
+//   const chatData = await Chat.findById(chatId);
+//   const otherParticipantId = chatData.participants.find(participantId => !participantId.equals(req.user._id));
+//   const receiver = await User.findById(otherParticipantId)
+//   // console.log('receiver',receiver);
+//   const status = receiver.isOnline ? 'delivered' : 'unread';
+
+//   // update the chat's last message which could be utilized to show last message in the list item
+//   const chat = await Chat.findByIdAndUpdate(
+//     chatId,
+//     {
+//       $set: {
+//         lastMessage: message._id,
+//       },
+//     },
+//     { new: true }
+//   );
+
+//   // structure the message
+//   let messages = await ChatMessage.aggregate([
+//     {
+//       $match: {
+//         _id: new mongoose.Types.ObjectId(message._id),
+//       },
+//     },
+//     ...chatMessageCommonAggregation(),
+//   ]);
+
+//   // Store the aggregation result
+//   let receivedMessage = messages[0];
+//   receivedMessage.status = status;
+
+//   // console.log("message=>", message);
+//   // console.log("chat=>", chat);
+//   // console.log("messages=>", messages);
+//   // console.log("receivedMessage=>", receivedMessage);
+
+//   if (!receivedMessage) {
+//     throw new ApiError(500, "Internal server error");
+//   }
+
+//   //Case-1
+//   // Emit a socket event to indicate that the message has been sent
+//   emitSocketEvent(
+//     req,
+//     chatId, // Emit to the chat room
+//     ChatEventEnum.MESSAGE_SENT_EVENT,
+//     receivedMessage
+//   );
+
+//   //Case-2
+//   // logic to emit socket event about the new message created to the other participants
+//   chat.participants.forEach((participantObjectId) => {
+//     // here the chat is the raw instance of the chat in which participants is the array of object ids of users
+//     // avoid emitting event to the user who is sending the message
+//     if (participantObjectId.toString() === req.user._id.toString()) return;
+
+//     // emit the receive message event to the other participants with received message as the payload
+//     emitSocketEvent(
+//       req,
+//       participantObjectId.toString(),
+//       ChatEventEnum.MESSAGE_RECEIVED_EVENT,
+//       receivedMessage
+//     );
+    
+//   //  // Update the message seen status for the recipient
+//   //   ChatMessage.updateOne(
+//   //     { _id: new mongoose.Types.ObjectId(receivedMessage._id), sender: participantObjectId.toString() },
+//   //     { $set: { seen: true } }
+//   // ).exec();
+//   });
+
+//   //Case-3
+//   // When a user reads the message, emit a socket event
+//   // to inform other participants that the message has been seen by at least one user
+//   chat.participants.forEach(async (participantObjectId) => {
+//     // here the chat is the raw instance of the chat in which participants is the array of object ids of users
+//     // avoid emitting event to the user who is sending the message
+//     if (participantObjectId.toString() === req.user._id.toString()) return;
+
+
+//     // emit the receive message event to the other participants with received message as the payload
+//     emitSocketEvent(
+//       req,
+//       participantObjectId.toString(),
+//       ChatEventEnum.MESSAGE_SEEN_BY_ONE_EVENT,
+//       receivedMessage
+//     );
+//     // Update seenBy array in the message model
+//     message.seenBy.push(participantObjectId); // Add the participant to seenBy array
+//   });
+
+//   //Case-4
+//   // Check if all participants have seen the message
+//   const allParticipantsSeen = chat.participants.every(participantObjectId => {
+//     return message.seenBy.includes(participantObjectId);
+//   });
+
+//   // If all participants have seen the message, emit a socket event
+//   if (allParticipantsSeen) {
+//     emitSocketEvent(
+//       req,
+//       chatId, // Emit to the chat room
+//       ChatEventEnum.MESSAGE_SEEN_BY_ALL_EVENT,
+//       receivedMessage
+//     );
+//   }
+
+  
+//   // Save the message with updated seenBy array
+//   await message.save();
+
+
+//   return res
+//     .status(201)
+//     .json(new ApiResponse(201, receivedMessage, "Message saved successfully"));
+// });
+
 const getAllMessages = asyncHandler(async (req, res) => {
   const { chatId } = req.params;
 
@@ -49,10 +252,12 @@ const getAllMessages = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Chat does not exist");
   }
 
-  // Only send messages if the logged in user is a part of the chat he is requesting messages of
   if (!selectedChat.participants?.includes(req.user?._id)) {
     throw new ApiError(400, "User is not a part of this chat");
   }
+
+  const otherParticipantId = selectedChat.participants.find(participantId => !participantId.equals(req.user._id));
+  const recipient = await User.findById(otherParticipantId);
 
   const messages = await ChatMessage.aggregate([
     {
@@ -68,12 +273,48 @@ const getAllMessages = asyncHandler(async (req, res) => {
     },
   ]);
 
-  return res
-    .status(200)
-    .json(
-      new ApiResponse(200, messages || [], "Messages fetched successfully")
-    );
+  // Update message statuses to 'delivered' or 'read' if applicable
+  const messageUpdates = [];
+  const socketEvents = [];
+
+  for (const message of messages) {
+    if (
+      message.status !== 'read' &&
+      message.sender.toString() !== req.user._id.toString() && 
+      selectedChat.participants.includes(req.user._id) &&
+      req.user._id.toString() === recipient._id.toString()
+    ) {
+      message.status = 'read';
+      messageUpdates.push({ _id: message._id, status: 'read' });
+      socketEvents.push({ event: 'read', payload: { messageId: message._id, status: 'read' } });
+    }
+
+    if (message.status === 'unread' && recipient.isOnline) {
+      message.status = 'delivered';
+      messageUpdates.push({ _id: message._id, status: 'delivered' });
+      socketEvents.push({ event: 'delivered', payload: { messageId: message._id, status: 'delivered' } });
+    }
+  }
+
+  // Perform the updates in the database
+  await Promise.all(messageUpdates.map(update =>
+    ChatMessage.findByIdAndUpdate(update._id, { $set: { status: update.status } })
+  ));
+
+  // Emit the socket events
+  socketEvents.forEach(({ event, payload }) => {
+    emitSocketEvent(req, chatId, event, payload);
+  });
+
+  return res.status(200).json(new ApiResponse(200, messages || [], "Messages fetched successfully"));
 });
+
+const activeUsers = {}; // This should be maintained somewhere in your server code
+
+const isUserViewingChat = (userId, chatId) => {
+  return activeUsers[userId] && activeUsers[userId].includes(chatId);
+};
+
 
 const sendMessage = asyncHandler(async (req, res) => {
   const { chatId } = req.params;
@@ -92,13 +333,36 @@ const sendMessage = asyncHandler(async (req, res) => {
   const messageFiles = [];
 
   if (req.files && req.files.attachments?.length > 0) {
-    req.files.attachments?.map((attachment) => {
+    req.files.attachments.forEach((attachment) => {
       messageFiles.push({
         url: getStaticFilePath(req, attachment.filename),
         localPath: getLocalPath(attachment.filename),
       });
     });
   }
+
+  const chatData = await Chat.findById(chatId);
+  const otherParticipantId = chatData.participants.find(participantId => !participantId.equals(req.user._id));
+  const receiver = await User.findById(otherParticipantId);
+
+  // Determine the initial status of the message
+  // let status = 'unread';
+  // if (receiver.isOnline) {
+  //   status = 'delivered';
+  //   if (isUserViewingChat(receiver._id.toString(), chatId)) {
+  //     status = 'read';
+  //   }
+  // }
+  // emitSocketEvent(
+  //         req,
+  //         chatId, // Emit to the chat room
+  //         'read',
+  //         receivedMessage
+  //       );
+  // let tempres=isUserViewingChat(receiver._id.toString(), chatId)
+  // console.log('receiver._id ',receiver._id.toString());
+  //     console.log('chatId ',chatId);
+  //     console.log('tempres',tempres);
 
   // Create a new message instance with appropriate metadata
   const message = await ChatMessage.create({
@@ -107,117 +371,66 @@ const sendMessage = asyncHandler(async (req, res) => {
     content: content || "",
     chat: new mongoose.Types.ObjectId(chatId),
     attachments: messageFiles,
+    status: 'sent',
   });
 
-  // update the chat's last message which could be utilized to show last message in the list item
-  const chat = await Chat.findByIdAndUpdate(
+  // Update the chat's last message
+  await Chat.findByIdAndUpdate(
     chatId,
-    {
-      $set: {
-        lastMessage: message._id,
-      },
-    },
+    { $set: { lastMessage: message._id } },
     { new: true }
   );
 
-  // structure the message
-  let messages = await ChatMessage.aggregate([
-    {
-      $match: {
-        _id: new mongoose.Types.ObjectId(message._id),
-      },
-    },
+  // Structure the message
+  const messages = await ChatMessage.aggregate([
+    { $match: { _id: new mongoose.Types.ObjectId(message._id) } },
     ...chatMessageCommonAggregation(),
   ]);
 
-  // Store the aggregation result
   let receivedMessage = messages[0];
-
-  // console.log("message=>", message);
-  // console.log("chat=>", chat);
-  // console.log("messages=>", messages);
-  // console.log("receivedMessage=>", receivedMessage);
+  receivedMessage.status = message.status;
 
   if (!receivedMessage) {
     throw new ApiError(500, "Internal server error");
   }
 
-  //Case-1
-  // Emit a socket event to indicate that the message has been sent
-  emitSocketEvent(
-    req,
-    chatId, // Emit to the chat room
-    ChatEventEnum.MESSAGE_SENT_EVENT,
-    receivedMessage
-  );
+  // Emit socket events for the new message
+  emitSocketEvent(req, chatId, ChatEventEnum.MESSAGE_SENT_EVENT, receivedMessage);
 
-  //Case-2
-  // logic to emit socket event about the new message created to the other participants
-  chat.participants.forEach((participantObjectId) => {
-    // here the chat is the raw instance of the chat in which participants is the array of object ids of users
-    // avoid emitting event to the user who is sending the message
+  chatData.participants.forEach((participantObjectId) => {
     if (participantObjectId.toString() === req.user._id.toString()) return;
 
-    // emit the receive message event to the other participants with received message as the payload
-    emitSocketEvent(
-      req,
-      participantObjectId.toString(),
-      ChatEventEnum.MESSAGE_RECEIVED_EVENT,
-      receivedMessage
-    );
-    
-  //  // Update the message seen status for the recipient
-  //   ChatMessage.updateOne(
-  //     { _id: new mongoose.Types.ObjectId(receivedMessage._id), sender: participantObjectId.toString() },
-  //     { $set: { seen: true } }
-  // ).exec();
+    emitSocketEvent(req, participantObjectId.toString(), ChatEventEnum.MESSAGE_RECEIVED_EVENT, receivedMessage);
+
+     // Check if receiver is online
+     if (receiver.isOnline) {
+      receivedMessage.status = 'delivered';
+      // receivedMessage.save();
+      emitSocketEvent(req,req.user._id,'messageStatusUpdate', receivedMessage) // Notify sender about delivery
+    } else {
+      emitSocketEvent(req,req.user._id,'messageStatusUpdate', receivedMessage) // Notify sender about delivery
+    }
+    // if (receiver.isOnline) {
+    //   emitSocketEvent(req, participantObjectId.toString(), 'delivered', {
+    //     messageId: receivedMessage._id,
+    //     status: 'delivered'
+    //   });
+
+    //   if (status === 'read') {
+    //     emitSocketEvent(req, participantObjectId.toString(), 'read', {
+    //       messageId: receivedMessage._id,
+    //       status: 'read'
+    //     });
+    //   }
+    // }
+
   });
 
-  //Case-3
-  // When a user reads the message, emit a socket event
-  // to inform other participants that the message has been seen by at least one user
-  chat.participants.forEach(async (participantObjectId) => {
-    // here the chat is the raw instance of the chat in which participants is the array of object ids of users
-    // avoid emitting event to the user who is sending the message
-    if (participantObjectId.toString() === req.user._id.toString()) return;
-
-
-    // emit the receive message event to the other participants with received message as the payload
-    emitSocketEvent(
-      req,
-      participantObjectId.toString(),
-      ChatEventEnum.MESSAGE_SEEN_BY_ONE_EVENT,
-      receivedMessage
-    );
-    // Update seenBy array in the message model
-    message.seenBy.push(participantObjectId); // Add the participant to seenBy array
-  });
-
-  //Case-4
-  // Check if all participants have seen the message
-  const allParticipantsSeen = chat.participants.every(participantObjectId => {
-    return message.seenBy.includes(participantObjectId);
-  });
-
-  // If all participants have seen the message, emit a socket event
-  if (allParticipantsSeen) {
-    emitSocketEvent(
-      req,
-      chatId, // Emit to the chat room
-      ChatEventEnum.MESSAGE_SEEN_BY_ALL_EVENT,
-      receivedMessage
-    );
-  }
-
-  
-  // Save the message with updated seenBy array
-  await message.save();
-
-
-  return res
-    .status(201)
-    .json(new ApiResponse(201, receivedMessage, "Message saved successfully"));
+  return res.status(201).json(new ApiResponse(201, receivedMessage, "Message saved successfully"));
 });
+
+
+
 
 // Define a route handler to handle message editing
 const editMessage = asyncHandler(async (req, res) => {

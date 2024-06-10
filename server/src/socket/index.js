@@ -1,10 +1,12 @@
 import cookie from "cookie";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 import { Server, Socket } from "socket.io";
 import { AvailableChatEvents, ChatEventEnum } from "../constants.js";
 import { User } from "../models/apps/auth/user.models.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ChatMessage } from "../models/apps/chat-app/message.models.js";
+const { ObjectId } = mongoose.Types;
 
 /**
  * @description This function is responsible to allow user to join the chat represented by chatId (chatId). event happens when user switches between the chats
@@ -124,6 +126,62 @@ const initializeSocketIO = (io) => {
         io.emit('get-users', activeUsers);
       };
 
+      socket.on("markMessagesAsSeen", async (conversationId, userId) => {
+        try {
+    
+            let convoId = conversationId.conversationId;
+            let usrId = conversationId.userId;
+            // Ensure conversationId and userId are strings
+            if (typeof conversationId === 'object' && conversationId.conversationId && conversationId.userId) {
+                conversationId = conversationId.conversationId;
+                userId = conversationId.userId;
+            }
+            await ChatMessage.updateMany(
+                { chat: convoId, seen: false },
+                { $set: { seen: true } }
+            );
+    
+            let user = activeUsers.find(user => user.userId === usrId);
+    
+            if (user) {
+                io.emit('messagesSeen', conversationId);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    });
+
+      socket.on('readMessage', async (data) => {
+        const { messageId, receiverId } = data;
+        const message = await ChatMessage.findById(messageId);
+        console.log('message.seenBy',message.seenBy);
+        if (message && message.seenBy === receiverId) {
+          message.status = 'read';
+          await message.save();
+    
+          io.to(message.senderId).emit('messageStatusUpdate', message); // Notify sender about read receipt
+        }
+      });
+
+      // Message seen
+      const mountMessageSeenEvent = (socket) => {
+        socket.on('read', async ({ messageId, chatId }) => {
+          console.log('Message seen:', messageId);
+          await ChatMessage.findByIdAndUpdate(messageId, { $set: { status: 'read' } });
+          socket.to(chatId).emit('read', { messageId, status: 'read' });
+        });
+      };
+
+    // Message delivered
+    const mountMessageDeliveredEvent = (socket) => {
+      socket.on('delivered', async ({ messageId, chatId }) => {
+        await ChatMessage.findByIdAndUpdate(messageId, { $set: { status: 'delivered' } });
+        socket.to(chatId).emit('delivered', { messageId, status: 'delivered' });
+      });
+    };
+
+
+
       updateUserStatus(user._id.toString(), 'online');
 
             // socket.on('new-user-add', (newUserId) => {
@@ -143,6 +201,7 @@ const initializeSocketIO = (io) => {
       mountParticipantTypingEvent(socket);
       mountParticipantStoppedTypingEvent(socket);
       mountMessageSeenEvent(socket);
+      mountMessageDeliveredEvent(socket);
 
       socket.on(ChatEventEnum.DISCONNECT_EVENT, async () => {
         console.log("user has disconnected 🚫. userId: " + socket.user?._id);

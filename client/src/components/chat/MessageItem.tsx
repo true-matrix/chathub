@@ -4,7 +4,7 @@ import {
   PaperClipIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {  ChatListItemInterface, ChatMessageInterface } from "../../interfaces/chat";
 import { classNames, requestHandler } from "../../utils";
 import { getRecentTime } from "../../commonhelper";
@@ -27,7 +27,8 @@ const MessageItem: React.FC<{
   scrollToPrevMessage?: any; // Add scrollToPrevMessage prop
   highlightedMessageId?: string; // Add highlightedMessageId prop
   messageRef?: any;
-}> = ({ message, isOwnMessage, isGroupChatMessage, onMessageClick, onMessageReply, onMessageDelete, messageRef, highlightedMessageId, scrollToPrevMessage }) => {
+  onSeen?: any;
+}> = ({ message, isOwnMessage, isGroupChatMessage, onMessageClick, onMessageReply, onMessageDelete, messageRef, highlightedMessageId, scrollToPrevMessage, onSeen }) => {
   const [resizedImage, setResizedImage] = useState<string | null>(null);
   // const [creatingChat, setCreatingChat] = useState(false);
   // const [dataLoading, setDataLoading] = useState(false);
@@ -205,6 +206,30 @@ const MessageItem: React.FC<{
   // const setMessageRef = (id : any, element : any) => {
   //   messageRefs.current[id] = element;
   // };
+
+  // useEffect(() => {
+  //   const observer = new IntersectionObserver(
+  //     (entries) => {
+  //       entries.forEach((entry) => {
+  //         if (entry.isIntersecting) {
+  //           onSeen(message._id);
+  //         }
+  //       });
+  //     },
+  //     { threshold: 1.0 }
+  //   );
+
+  //   if (messageRef.current) {
+  //     observer.observe(messageRef.current);
+  //   }
+
+  //   return () => {
+  //     if (messageRef.current) {
+  //       observer.unobserve(messageRef.current);
+  //     }
+  //   };
+  // }, [message._id, onSeen]);
+
   return (
     <>
       {resizedImage ? (
@@ -238,7 +263,11 @@ const MessageItem: React.FC<{
               <div className="flex justify-center">
               {isOwnMessage && (
                 <>
-                  {!message.seen ? (
+                {/* {message.status ? message.status : '-'} */}
+                {JSON.stringify(onSeen)}
+
+                 
+                 {!onSeen ? (
                     <span className="text-white-500">
                      
                     <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg" className="bg-success-light rounded-full mb-1">

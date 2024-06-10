@@ -1,4 +1,6 @@
 import moment from "moment";
+import { useEffect, useRef } from 'react';
+
 // import moment from "moment-timezone";
 
 export const generateUniqueId = () => {
@@ -163,3 +165,43 @@ export const getRecentTime = (date: string | any) => {
 //     return indianDateTime.format('MMMM DD, YYYY - hh:mm a');
 //   }
 // }
+
+
+
+export const useIntersectionObserver = (callback:any) => {
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          callback(entry.target);
+        }
+      });
+    });
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [callback]);
+
+  const observe = (element:any) => {
+    if (element instanceof Element && observerRef.current) {
+      observerRef.current.observe(element);
+    } else {
+      console.warn('The element to be observed is not a valid DOM element.');
+    }
+  };
+
+  const unobserve = (element:any) => {
+    if (element instanceof Element && observerRef.current) {
+      observerRef.current.unobserve(element);
+    } else {
+      console.warn('The element to be unobserved is not a valid DOM element.');
+    }
+  };
+
+  return { observe, unobserve };
+};
