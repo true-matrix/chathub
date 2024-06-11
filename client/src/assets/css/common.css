@@ -344,6 +344,7 @@ transition-duration: .3s;
 
 .error-msg{
   color: red;
+  float: left;
 }
 
 .user-image-poppup img{
@@ -777,8 +778,34 @@ span.user-away {
   font-size: 0.875rem;
 }
 
-.password-strength0 {
-  background: red;
+.password-strength0 { 
+  background: #e00707;
+  border-radius: 5px;
+  padding: 2px 10px;
+  font-size: 12px;
+  color: #fff;
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  }
+  .password-strength3,.password-strength1{
+    border-radius: 5px;
+    padding: 2px 10px;
+    font-size: 12px;
+    color: #fff;
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+  }
+
+.pwd-eye{
+  border-radius: 5px;
+    padding: 2px 10px;
+    font-size: 12px;
+    color: #fff;
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
 }
 
 .password-strength1 {

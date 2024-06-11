@@ -117,6 +117,8 @@ const ChangePassword = () => {
                 </Button>
               </div>
 
+
+              <div className="wrapper relative mb-4">
               <Input
                 type={isPasswordHide ? "password" : "text"}
                 id="newPassword"
@@ -132,10 +134,12 @@ const ChangePassword = () => {
               ) : null}
               {passwordStrengthResult && (
                 <div className={`password-strength${passwordStrengthResult.id}`}>
-                  {passwordStrengthResult.value}
+                  <span>{passwordStrengthResult.value}</span>
                 </div>
               )}
+              </div>
 
+              <div className="wrapper relative">
               <Input
                 type={isPasswordHide ? "password" : "text"}
                 id="confirmPassword"
@@ -143,24 +147,26 @@ const ChangePassword = () => {
                 placeholder="Confirm Password"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                value={formik.values.confirmPassword}
-                className="mt-2"
+                value={formik.values.confirmPassword} 
               />
               {formik.touched.confirmPassword && typeof formik.errors.confirmPassword === 'string' ? (
                 <div className='error-msg'>{formik.errors.confirmPassword}</div>
               ) : null}
+              
+
 
               <Button
-                className="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted mt-3"
+                className="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted rounded-full p-0 mt-3 pwd-eye"
                 type="button"
                 onClick={handlePasswordHide}
               >
                 <img
                   src={isPasswordHide ? hidden : view}
                   alt={isPasswordHide ? "Hide Password" : "Show Password"}
-                  className="align-middle"
+                  className="align-middle h-4 w-4"
                 />
               </Button>
+              </div>
 
               <Button
                 fullWidth
