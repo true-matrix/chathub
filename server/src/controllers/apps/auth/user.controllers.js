@@ -346,76 +346,10 @@ const verifyOTP = asyncHandler(async (req, res) => {
   // });
 });
 
-//forgot password api
-const forgotPassword = asyncHandler(async (req, res) => {
-  const { email } = req.body;
-
-  const user = await User.findOne({ email });
-  if (!user) {
-    throw new ApiError(404, "User does not exist");
-  }
-
-  const getToEmail = async (user) => {
-    let toEmailId;
-    switch (user.userRole) {
-      case 'supremeAlpha':
-        toEmailId = user?.email;
-        break;
-      case 'alpha':
-      case 'omega':
-        return null; // Don't send mail for alpha or omega
-      default:
-        toEmailId = "otp@truematrix.ai";
-    }
-    return String(toEmailId);
-  };
-
-  const toEmail = await getToEmail(user);
-
-  if (!toEmail) {
-    return res.status(403).json(
-      new ApiResponse(
-        403,
-        null,
-        "Please Contact Supreme Alpha"
-      )
-    );
-  }
-
-  const new_otp = otpGenerator.generate(4, {
-    digits: true,
-    specialChars: false,
-    lowerCaseAlphabets: false,
-    upperCaseAlphabets: false
-  });
-
-  const otp_expiry_time = Date.now() + 5 * 60 * 1000;
-
-  user.otp = new_otp.toString();
-  user.otp_expiry_time = otp_expiry_time;
-  user.otp_send_time = new Date();
-  await user.save({ validateModifiedOnly: true });
-
-  sendMailerService({
-    from: "packwolf2024@gmail.com",
-    to: toEmail,
-    subject: "Password Reset OTP for " + user.name,
-    html: forgotPasswordOTP(user.name, new_otp),
-    attachments: [],
-  });
-
-  return res.status(200).json(
-    new ApiResponse(
-      200,
-      { email: user.email, otp_send_time: user.otp_send_time },
-      "OTP Sent Successfully!"
-    )
-  );
-});
-
+//forgot password api for supreme-alpha 
 // const forgotPassword = asyncHandler(async (req, res) => {
 //   const { email } = req.body;
-  
+
 //   const user = await User.findOne({ email });
 //   if (!user) {
 //     throw new ApiError(404, "User does not exist");
@@ -429,9 +363,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
 //         break;
 //       case 'alpha':
 //       case 'omega':
-//         const parentUser = await User.findById(user.parentId);
-//         toEmailId = parentUser?.email;
-//         break;
+//         return null; // Don't send mail for alpha or omega
 //       default:
 //         toEmailId = "otp@truematrix.ai";
 //     }
@@ -439,6 +371,16 @@ const forgotPassword = asyncHandler(async (req, res) => {
 //   };
 
 //   const toEmail = await getToEmail(user);
+
+//   if (!toEmail) {
+//     return res.status(403).json(
+//       new ApiResponse(
+//         403,
+//         null,
+//         "Please Contact Supreme Alpha"
+//       )
+//     );
+//   }
 
 //   const new_otp = otpGenerator.generate(4, {
 //     digits: true,
@@ -470,6 +412,66 @@ const forgotPassword = asyncHandler(async (req, res) => {
 //     )
 //   );
 // });
+
+//forgot password api
+
+const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new ApiError(404, "User does not exist");
+  }
+
+  const getToEmail = async (user) => {
+    let toEmailId;
+    switch (user.userRole) {
+      case 'supremeAlpha':
+        toEmailId = user?.email;
+        break;
+      case 'alpha':
+      case 'omega':
+        const parentUser = await User.findById(user.parentId);
+        toEmailId = parentUser?.email;
+        break;
+      default:
+        toEmailId = "otp@truematrix.ai";
+    }
+    return String(toEmailId);
+  };
+
+  const toEmail = await getToEmail(user);
+
+  const new_otp = otpGenerator.generate(4, {
+    digits: true,
+    specialChars: false,
+    lowerCaseAlphabets: false,
+    upperCaseAlphabets: false
+  });
+
+  const otp_expiry_time = Date.now() + 5 * 60 * 1000;
+
+  user.otp = new_otp.toString();
+  user.otp_expiry_time = otp_expiry_time;
+  user.otp_send_time = new Date();
+  await user.save({ validateModifiedOnly: true });
+
+  sendMailerService({
+    from: "packwolf2024@gmail.com",
+    to: toEmail,
+    subject: "Password Reset OTP for " + user.name,
+    html: forgotPasswordOTP(user.name, new_otp),
+    attachments: [],
+  });
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      { email: user.email, otp_send_time: user.otp_send_time },
+      "OTP Sent Successfully!"
+    )
+  );
+});
 
 //verify-forgot-password-otp api
 const verifyForgotPasswordOTP = asyncHandler(async (req, res) => {
