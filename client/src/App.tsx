@@ -21,6 +21,8 @@ import { ChatListItemInterface, ChatMessageInterface } from "./interfaces/chat";
 import { useGlobal } from "./context/GlobalContext";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import EmailVerifyOtp from "./pages/Auth/EmailVerifyOtp";
+import ChangePassword from "./pages/Auth/ChangePassword";
 
 const MESSAGE_RECEIVED_EVENT = "messageReceived";
 
@@ -279,6 +281,24 @@ const App = () => {
           </PublicRoute>
         }
       />
+
+    <Route
+          path="/email-verify-otp"
+          element={
+            <PublicRoute>
+              <EmailVerifyOtp />
+            </PublicRoute>
+          }
+        />
+
+    <Route
+          path="/change-password"
+          element={
+            <PublicRoute>
+              <ChangePassword />
+            </PublicRoute>
+          }
+        />
 
       {/* This should be private Route */}
       <Route

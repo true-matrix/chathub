@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser, loginUserOtp, verifyUserOtp, logoutUser } from "../api";
+import { loginUser, loginUserOtp, verifyUserOtp, logoutUser, forgotPassword, verifyForgotPasswordOTP, changePassword } from "../api";
 import Loader from "../components/Loader";
 import { LocalStorage, requestHandler } from "../utils";
 import { useSocket } from "./SocketContext";
@@ -13,6 +13,9 @@ const AuthContext = createContext<{
   login: (data: { email: string; password: string }) => Promise<void>;
   sendOtp: (data: { email: string; otp: string }) => Promise<void>;
   verifyOtp: (data: { email: string; otp: string }) => Promise<void>;
+  forgotPasswordAPi: (data: { email: string }) => Promise<void>;
+  verifyForgotPasswordOTPApi: (data: { email: string; otp: string }) => Promise<void>;
+  changePasswordApi: (data: { email: string; newPassword: string }) => Promise<void>;
   logout: () => Promise<void>;
 }>({
   user: null,
@@ -21,6 +24,9 @@ const AuthContext = createContext<{
   login: async () => {},
   sendOtp: async () => {},
   verifyOtp: async () => {},
+  forgotPasswordAPi: async () => {},
+  verifyForgotPasswordOTPApi: async () => {},
+  changePasswordApi:  async () => {},
   logout: async () => {},
 });
 
@@ -113,6 +119,65 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     );
   };
 
+  // Function to handle forgot password request
+const forgotPasswordAPi = async (data: { email: string }) => {
+  await requestHandler(
+    async () => await forgotPassword(data), // Your API request function
+    setIsLoading,
+    (res) => {
+      if (res.success) {
+        const { data } = res;
+        setUser(data);
+        // alert('OTP sent successfully to your email.');
+        navigate('/email-verify-otp'); // Redirect to OTP verification page
+      } else {
+        alert(res.message || 'Failed to send OTP. Please try again.');
+      }
+    },
+    alert // Display error alerts on request failure
+  );
+};
+
+// Function to handle verify forgot password OTP
+const verifyForgotPasswordOTPApi = async (data: { email: string; otp: string }) => {
+  await requestHandler(
+    async () => await verifyForgotPasswordOTP(data), // Your API request function
+    setIsLoading,
+    (res) => {
+      const { data } = res;
+      setOtp(data);
+      if (res.success) {
+        setUser(data);
+        // alert('OTP verified successfully.');
+        navigate('/change-password'); // Redirect to reset password page
+      } else {
+        alert(res.message || 'Failed to verify OTP. Please try again.');
+      }
+    },
+    alert // Display error alerts on request failure
+  );
+};
+
+// Function to handle change password request
+const changePasswordApi = async (data: { email: string; newPassword: string }) => {
+  await requestHandler(
+    async () => await changePassword(data), // Your API request function
+    setIsLoading,
+    (res) => {
+      const { data } = res;
+      console.log('cp 888',res);
+      
+      if (res.success) {
+        // alert('Password changed successfully.');
+        navigate('/login'); // Redirect to login page
+      } else {
+        alert(res.message || 'Failed to change password. Please try again.');
+      }
+    },
+    alert // Display error alerts on request failure
+  );
+};
+
   // // Function to handle user logout
   // const logout = async () => {
   //   await requestHandler(
@@ -163,7 +228,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Provide authentication-related data and functions through the context
   return (
-    <AuthContext.Provider value={{ user, otp, login, sendOtp, verifyOtp, logout, token }}>
+    <AuthContext.Provider value={{ user, otp, login, sendOtp, verifyOtp, forgotPasswordAPi, verifyForgotPasswordOTPApi, changePasswordApi, logout, token }}>
       {isLoading ? <Loader /> : children} {/* Display a loader while loading */}
     </AuthContext.Provider>
   );

@@ -772,6 +772,29 @@ span.user-away {
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 
+.password-strength {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.password-strength0 {
+  background: red;
+}
+
+.password-strength1 {
+  background: orange;
+}
+
+.password-strength2 {
+  background: yellow;
+}
+
+.password-strength3 {
+  color: rgb(255, 255, 255);
+  background: green;
+}
+
+
 @keyframes blink {
   100% {
     transform: scale(2, 2);

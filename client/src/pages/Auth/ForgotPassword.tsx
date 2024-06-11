@@ -6,31 +6,31 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import logoitem from "../../assets/images/full-logo.png";
 import vector from "../../assets/images/auth-img.png";
+import { useAuth } from "../../context/AuthContext";
 
 interface FormValues {
   email: string;
 }
 // Component for the Login page
 const ForgotPassword = () => {
-  // const [isPasswordHide, setIsPasswordHide] = useState(false);
-  // Accessing the login function from the AuthContext
+  const { forgotPasswordAPi } = useAuth();
+
   const formInititalState : FormValues = {
     email: '',
   };
 
-  const LoginSchema = Yup.object({
+  const ForgotPasswordSchema = Yup.object({
       email: Yup.string().email("Invalid Email").required('Email is required'),
-      password: Yup.string().required('Password is required'),
     });  
 
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: formInititalState,
-    validationSchema:LoginSchema,
+    validationSchema:ForgotPasswordSchema,
     onSubmit: async (values) => {
       // Handle the form submission here
-      console.log(values);
-      // await login(values);
+      // console.log(values);
+      await forgotPasswordAPi(values);
     },
   });
 
@@ -50,6 +50,10 @@ const ForgotPassword = () => {
               <h1 className="inline-flex items-center text-2xl mb-4 flex-col">
                 <LockClosedIcon className="h-8 w-8 mb-2 text-success" /> Forgot your password? 
               </h1>
+              {/* <p className="inline-flex items-center text-md text-danger mb-2 flex-col" style={{ backgroundColor: 'rgba(255, 255, 0, 0.5)' }}>
+                  Please Contact Your Supreme Alpha
+              </p> */}
+
               {/* Input for entering the email */}
             <form onSubmit={formik.handleSubmit}>
 

@@ -36,6 +36,21 @@ const verifyUserOtp = (data: { email: string; otp: string }) => {
   return apiClient.post("/users/verify-otp", data);
 };
 
+// ****************************************************Forgot/Reset Password API********************************************************************************//
+const forgotPassword = (data: { email: string }) => {
+  return apiClient.post("/users/forgot-password", data);
+};
+
+const verifyForgotPasswordOTP = (data: { email: string; otp: string }) => {
+  return apiClient.post("/users/email-verify-otp", data);
+};
+
+const changePassword = (data: { email: string; newPassword: string }) => {
+  return apiClient.post("/users/change-password", data);
+};
+
+// ************************************************************************************************************************************//
+
 // const registerUser = (data: {
 //   email: string;
 //   password: string;
@@ -330,6 +345,9 @@ export {
   loginUser,
   loginUserOtp,
   verifyUserOtp,
+  forgotPassword,
+  verifyForgotPasswordOTP,
+  changePassword,
   logoutUser,
   removeParticipantFromGroup,
   sendMessage,

@@ -24,6 +24,13 @@ const verifyOtpValidator = () => {
   ];
 };
 
+const changePasswordValidator = () => {
+  return [
+    body("email").optional(),
+    body("newPassword").notEmpty().withMessage("New password is required"),
+  ];
+};
+
 const userChangeCurrentPasswordValidator = () => {
   return [
     body("oldPassword").notEmpty().withMessage("Old password is required"),
@@ -61,5 +68,6 @@ export {
   sendOtpValidator,
   verifyOtpValidator,
   userResetForgottenPasswordValidator,
-  userAssignRoleValidator
+  userAssignRoleValidator,
+  changePasswordValidator
 };

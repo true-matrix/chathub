@@ -17,6 +17,9 @@ import {
   updateUserAvatar,
   verifyEmail,
   updateUserVerifiedStatus,
+  forgotPassword,
+  verifyForgotPasswordOTP,
+  changePassword,
 } from "../../../controllers/apps/auth/user.controllers.js";
 import {
   verifyJWT,
@@ -31,6 +34,7 @@ import {
   userLoginValidator,
   userResetForgottenPasswordValidator,
   verifyOtpValidator,
+  changePasswordValidator
 } from "../../../validators/apps/auth/user.validators.js";
 import { validate } from "../../../validators/validate.js";
 import { upload } from "../../../middlewares/multer.middlewares.js";
@@ -46,9 +50,15 @@ router.route("/verify-otp").post(verifyOtpValidator(), validate, verifyOTP);
 router.route("/refresh-token").post(refreshAccessToken);
 router.route("/verify-email/:verificationToken").get(verifyEmail);
 
-router
-  .route("/forgot-password")
-  .post(userForgotPasswordValidator(), validate, forgotPasswordRequest);
+router.route("/forgot-password").post(userForgotPasswordValidator(), validate, forgotPassword);
+router.route("/email-verify-otp").post(verifyOtpValidator(), validate, verifyForgotPasswordOTP);
+router.route("/change-password").post(changePasswordValidator(), validate, changePassword);
+
+
+
+// router
+//   .route("/forgot-password")
+//   .post(userForgotPasswordValidator(), validate, forgotPasswordRequest);
 router
   .route("/reset-password/:resetToken")
   .post(
