@@ -164,9 +164,6 @@ const changePasswordApi = async (data: { email: string; newPassword: string }) =
     async () => await changePassword(data), // Your API request function
     setIsLoading,
     (res) => {
-      const { data } = res;
-      console.log('cp 888',res);
-      
       if (res.success) {
         // alert('Password changed successfully.');
         navigate('/login'); // Redirect to login page

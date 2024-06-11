@@ -46,7 +46,6 @@ const ChangePassword = () => {
     validationSchema: PasswordSchema,
     onSubmit: async (values: any) => {
       // Handle the form submission here
-      console.log('values PPP', values);
       await changePasswordApi(values);
     },
   });
