@@ -4,7 +4,7 @@ import {
   PaperClipIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {  ChatListItemInterface, ChatMessageInterface } from "../../interfaces/chat";
 import { classNames, requestHandler } from "../../utils";
 import { getRecentTime } from "../../commonhelper";

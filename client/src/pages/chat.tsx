@@ -54,7 +54,7 @@ const NEW_CHAT_EVENT = "newChat";
 const TYPING_EVENT = "typing";
 const STOP_TYPING_EVENT = "stopTyping";
 const MESSAGE_RECEIVED_EVENT = "messageReceived";
-const MESSAGE_SEEN_EVENT = "seen";
+// const MESSAGE_SEEN_EVENT = "seen";
 const MESSAGE_SEEN_BY_ONE_EVENT = "seenByOne";
 const MESSAGE_SEEN_BY_ALL_EVENT = "seenByAll";
 const MESSAGE_EDITED_EVENT = "messageEdited";
@@ -177,9 +177,9 @@ const ChatPage = () => {
   };
 
   // Function to handle ref assignment for each message
-  const setMessageRef = (id : any, element : any) => {
-    messageRefs.current[id] = element;
-  };
+  // const setMessageRef = (id : any, element : any) => {
+  //   messageRefs.current[id] = element;
+  // };
 
   //  const showNotification = (title : any, options : any, duration = 2500) => {
   //   // Check if the browser supports notifications
@@ -1064,11 +1064,6 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
     return 'offline';
   };
 
-  let tempChatId = currentChat.current?._id;
-  const handleSeen = (messageId : any) => {
-    socket?.emit('read', { messageId, tempChatId });
-  };
-  
   return (
     <>
       {/* {isMessageDeleting && handleDelete(selectedMessage?.id)} */}
