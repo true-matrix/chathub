@@ -782,13 +782,13 @@ span.user-away {
   background: #e00707;
   border-radius: 5px;
   padding: 2px 10px;
-  font-size: 12px;
-  color: #fff;
+  font-size: 12px; 
   position: absolute;
   right: 12px;
+  color: #fff;
   bottom: 12px;
   }
-  .password-strength3,.password-strength1{
+  .password-strength3,.password-strength1,.password-strength2 {
     border-radius: 5px;
     padding: 2px 10px;
     font-size: 12px;
@@ -797,6 +797,11 @@ span.user-away {
     right: 12px;
     bottom: 12px;
   }
+
+  .password-strength2 {
+    color: #242424;
+  }
+
 
 .pwd-eye{
   border-radius: 5px;
