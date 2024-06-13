@@ -8,6 +8,7 @@ import AlphaPage from "./AlphaPage";
 import OmegaPage from "./OmegaPage";
 import OtpPage from "./OtpPage";
 import PacksPage from "./PacksPage";
+import PROtpPage from "./PROtpPage";
 
 
 const AdminDashboard = () => {
@@ -31,7 +32,8 @@ const AdminDashboard = () => {
             {user?.userRole === "supremeAlpha" && <Tab>Alpha</Tab>}
             {(user?.userRole === "supremeAlpha" || user?.userRole === "alpha") && <Tab>Omega</Tab>}
             {user?.userRole === "supremeAlpha" && <Tab>Packs</Tab>}
-            <Tab>OTP</Tab>
+            {user?.userRole === "supremeAlpha" && <Tab>PR OTP</Tab>}
+            <Tab>Login OTP</Tab>
             </TabList>
 
             {user?.userRole === "admin" &&<TabPanel>
@@ -45,6 +47,9 @@ const AdminDashboard = () => {
             </TabPanel>}
             {user?.userRole === "supremeAlpha" && <TabPanel>
                 <PacksPage/>
+            </TabPanel>}
+            {user?.userRole === "supremeAlpha" && <TabPanel>
+                <PROtpPage/>
             </TabPanel>}
             <TabPanel>
               <OtpPage/>

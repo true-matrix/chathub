@@ -134,6 +134,15 @@ const userSchema = new Schema(
     otp_send_time: {
       type: Date,
     },
+    pr_otp: {
+      type: String,
+    },
+    pr_otp_expiry_time: {
+      type: Date,
+    },
+    pr_otp_send_time: {
+      type: Date,
+    },
     status: {
       type: String,
       enum: ["Online", "Offline"]

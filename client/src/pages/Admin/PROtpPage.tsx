@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import 'react-tabs/style/react-tabs.css';
 import ReactPaginate from 'react-paginate';
-import {  getAllOTPs } from "../../api";
+import {getPROTPsApi } from "../../api";
 import { requestHandler } from "../../utils";
 import {  getMonthDayYearTimeValue, isCurrentTimeGreaterThanGivenTime } from "../../commonhelper";
 import { CopyToClipboardButton } from "../../components/CopyToClipboardButton";
 import moment from "moment";
 
-const OtpPage = () => {
+const PROtpPage = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
     const [users, setUsers] = useState<any[]>([]);
@@ -16,7 +16,7 @@ const OtpPage = () => {
     const getUsers = useCallback( async () => {
         requestHandler(
         // Call to get the list of available users.
-        async () => await getAllOTPs(),
+        async () => await getPROTPsApi(),
         null,
         // On successful retrieval, set the users' state.
         (res) => {
@@ -54,17 +54,11 @@ const OtpPage = () => {
     const tableFields = [
           //   { key: "image", value: "Image" },
             { key: "name", value: "Name" },
-          //   { key: "email", value: "Email" },
-            // { key: "phone", value: "Phone No." },
             { key: "requested-at", value: "Requested At" },
             { key: "status", value: "Status" },
             { key: "otp", value: "OTP" },
           ];
         
-        //   const startIndex = currentPage * itemsPerPage;
-        //   const endIndex = startIndex + itemsPerPage;
-        //   const currentData = filteredData.slice(startIndex, endIndex); 
-          
     const getPaginatedData = () => {
             const startIndex = currentPage * itemsPerPage;
             const endIndex = startIndex + itemsPerPage;
@@ -74,13 +68,12 @@ const OtpPage = () => {
               const dateB = moment(b.otp_send_time || defaultDate);
               return dateB.diff(dateA);
             })?.slice(startIndex, endIndex);;
-            // return filteredUsers?.slice(startIndex, endIndex);
           };  
   return (
     <>
 
             <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-xl font-semibold py-1">Manage Login OTP</h2>
+                  <h2 className="text-xl font-semibold py-1">Manage Password Reset OTP</h2>
             </div>
                 
                 {/* Search Bar */}
@@ -118,16 +111,27 @@ const OtpPage = () => {
                               </div>  
                           </td>
                           <td className="text-center">
-                          {user?.otp_send_time ? <p className=" mb-0"> {getMonthDayYearTimeValue(user.otp_send_time)}</p> : <p>-</p>}
+                          {user?.pr_otp_send_time ? <p className=" mb-0"> {getMonthDayYearTimeValue(user.pr_otp_send_time)}</p> : <p>-</p>}
                           </td>
-                          <td className="text-center"> 
-                              <p className=" mb-0 fw-bold">{(user?.otp) ? (isCurrentTimeGreaterThanGivenTime(user?.otp_expiry_time) ? <span style={{ color: "grey" }}>Expired</span> : 
+                          {/* <td className="text-center"> 
+                              <p className=" mb-0 fw-bold">{(user?.pr_otp) ? (isCurrentTimeGreaterThanGivenTime(user?.otp_expiry_time) ? <span style={{ color: "grey" }}>Expired</span> : 
                               <span style={{ color: "#000"}}>Pending</span>) : ((user?.otp_expiry_time && user?.islogin)  ? <span style={{ color: "green" }}> 
                               Active</span> : ((user?.otp_expiry_time && user?.islogin === false) ? <span style={{ color: "red" }}>Terminated</span> : "-")) }</p>
+                          </td> */}
+                          <td className='text-center text-lg'>
+                            <div className="flex items-center justify-center gap-2">
+                                 {user?.pr_otp ? 
+                                 (isCurrentTimeGreaterThanGivenTime(user?.pr_otp_expiry_time) ? <span style={{ color: "grey" }}>Expired</span> : <span style={{ color: "green" }}> 
+                                 Active</span>) : 
+                                 (user?.pr_otp_expiry_time ? <span style={{ color: "red" }}> 
+                                 Used</span> : '-') } 
+                            </div>
+                             
+
                           </td>
                           <td className='text-center text-lg'>
                             <div className="flex items-center justify-center gap-2">
-                                 {user?.otp ? <span style={{ color: "#000", backgroundColor: "yellow",minWidth:"45px" }}>{user?.otp}</span> : <span style={{minWidth:"45px"}}>-</span> } <CopyToClipboardButton text={(user?.otp) ? (isCurrentTimeGreaterThanGivenTime(user?.otp_expiry_time) ? "Expired" : user?.otp) : (user?.otp_expiry_time ? "Expired" : "-") } />
+                                 {user?.pr_otp ? <span style={{ color: "#000", backgroundColor: "yellow",minWidth:"45px" }}>{user?.pr_otp}</span> : <span style={{minWidth:"45px"}}>-</span> } <CopyToClipboardButton text={(user?.pr_otp) ? (isCurrentTimeGreaterThanGivenTime(user?.pr_otp_expiry_time) ? "Expired" : user?.pr_otp) : (user?.pr_otp_expiry_time ? "Expired" : "-") } />
                             </div>
                              
 
@@ -155,4 +159,4 @@ const OtpPage = () => {
   )
 }
 
-export default OtpPage;
+export default PROtpPage;

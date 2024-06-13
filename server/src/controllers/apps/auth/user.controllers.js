@@ -449,11 +449,11 @@ const forgotPassword = asyncHandler(async (req, res) => {
     upperCaseAlphabets: false
   });
 
-  const otp_expiry_time = Date.now() + 5 * 60 * 1000;
+  const pr_otp_expiry_time = Date.now() + 5 * 60 * 1000;
 
-  user.otp = new_otp.toString();
-  user.otp_expiry_time = otp_expiry_time;
-  user.otp_send_time = new Date();
+  user.pr_otp = new_otp.toString();
+  user.pr_otp_expiry_time = pr_otp_expiry_time;
+  user.pr_otp_send_time = new Date();
   await user.save({ validateModifiedOnly: true });
 
   sendMailerService({
@@ -467,7 +467,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
   return res.status(200).json(
     new ApiResponse(
       200,
-      { email: user.email, otp_send_time: user.otp_send_time },
+      { email: user.email, pr_otp_send_time: user.pr_otp_send_time },
       "OTP Sent Successfully!"
     )
   );
@@ -479,19 +479,19 @@ const verifyForgotPasswordOTP = asyncHandler(async (req, res) => {
 
   const user = await User.findOne({
     email,
-    otp_expiry_time: { $gt: Date.now() },
+    pr_otp_expiry_time: { $gt: Date.now() },
   });
 
   if (!user) {
     throw new ApiError(400, "Email is invalid or OTP expired");
   }
 
-  if (otp !== user.otp) {
+  if (otp !== user.pr_otp) {
     throw new ApiError(400, "OTP is incorrect");
   }
 
   user.verified = true;
-  user.otp = undefined;
+  user.pr_otp = undefined;
   await user.save({ validateModifiedOnly: true });
 
   return res.status(200).json(

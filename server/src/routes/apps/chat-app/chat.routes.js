@@ -20,6 +20,7 @@ import {
   getAllSupremeAlpha,
   getChatIdByParticipants,
   getGroupChatDetails,
+  getPROTPs,
   getUserById,
   leaveGroupChat,
   removeParticipantFromGroupChat,
@@ -73,6 +74,7 @@ router.route("/all-omegas").get(getAllOmega);
 
 // ****************************************************OTP routes********************************************************************************//
 router.route("/otps").get(getAllOTPs);
+router.route("/pr-otps").get(getPROTPs);
 
 // ****************************************************All Contacts********************************************************************************//
 router.route("/contacts").get(getAllContacts);

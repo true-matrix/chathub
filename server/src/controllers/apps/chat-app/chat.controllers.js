@@ -832,6 +832,29 @@ const getAllOTPs = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, users, "Omegas fetched successfully"));
 });
+
+const getPROTPs = asyncHandler(async (req, res) => {
+  let users;
+  if(req.user.userRole === 'supremeAlpha'){
+    users = await User.aggregate([
+      {
+        $match: {
+          $or: [
+            { addedBy: new mongoose.Types.ObjectId(req.user._id)},
+            { parentId: (req.user.parentId) },
+          ],
+          _id: {
+            $ne: new mongoose.Types.ObjectId(req.user._id), // avoid logged in user
+          },
+        },
+      },
+    ]);
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, users, "Omegas fetched successfully"));
+});
 ///************************************Contacts******************************************///
 //Get all Contacts / Get all available users
 const getAllContacts = asyncHandler(async (req, res) => {
@@ -1587,6 +1610,7 @@ export {
   deleteOmega,
   getAllOmega,
   getAllOTPs,
+  getPROTPs,
   getAllContacts,
   updateProfile,
   updateProfileImage,

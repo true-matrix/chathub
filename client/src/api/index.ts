@@ -190,6 +190,10 @@ const getAllOTPs = () => {
   return apiClient.get("/chat-app/chats/otps");
 };
 
+const getPROTPsApi = () => {
+  return apiClient.get("/chat-app/chats/pr-otps");
+};
+
 // ****************************************************Contacts API********************************************************************************//
 const getAllContacts = () => {
   return apiClient.get("/chat-app/chats/contacts");
@@ -365,6 +369,7 @@ export {
   updateOmega,
   getAllOmegas,
   getAllOTPs,
+  getPROTPsApi,
   getAllContacts,
   updateProfile,
   updateProfileImage,
