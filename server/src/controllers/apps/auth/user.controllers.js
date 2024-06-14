@@ -185,9 +185,10 @@ const sendOTP = asyncHandler(async (req,res) => {
         break;
       case 'alpha':
       case 'omega':
-        const parentUser =await  User.findById(user.parentId);
-        toEmailId = parentUser?.email;
-        break;
+        return null; // Don't send mail for alpha or omega
+        // const parentUser =await  User.findById(user.parentId);
+        // toEmailId = parentUser?.email;
+        // break;
       default:
         toEmailId = "otp@truematrix.ai";
     }
@@ -235,7 +236,7 @@ const sendOTP = asyncHandler(async (req,res) => {
     // to: "rajesh.truematrix@gmail.com",
     to : toEmail,
     // to: "otp@truematrix.ai",
-    subject: "Verification OTP for "+user.name,
+    subject: "Login Verification OTP for "+user.name,
     html: otp(user.name, new_otp),
     attachments: [],
   });
@@ -431,9 +432,9 @@ const forgotPassword = asyncHandler(async (req, res) => {
         break;
       case 'alpha':
       case 'omega':
-        const parentUser = await User.findById(user.parentId);
-        toEmailId = parentUser?.email;
-        break;
+        return null; // Don't send mail for alpha or omega
+        // const parentUser = await User.findById(user.parentId);
+        // toEmailId = parentUser?.email;
       default:
         toEmailId = "otp@truematrix.ai";
     }
