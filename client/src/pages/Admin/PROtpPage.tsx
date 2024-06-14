@@ -64,8 +64,8 @@ const PROtpPage = () => {
             const endIndex = startIndex + itemsPerPage;
             return filteredData?.sort((a : any, b : any) => {
               const defaultDate = '1000-01-01T00:00:00.000Z'; // A very distant past date
-              const dateA = moment(a.otp_send_time || defaultDate);
-              const dateB = moment(b.otp_send_time || defaultDate);
+              const dateA = moment(a.pr_otp_send_time || defaultDate);
+              const dateB = moment(b.pr_otp_send_time || defaultDate);
               return dateB.diff(dateA);
             })?.slice(startIndex, endIndex);;
           };  
