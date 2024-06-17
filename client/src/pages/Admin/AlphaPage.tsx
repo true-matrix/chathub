@@ -235,7 +235,7 @@ const AlphaPage = () => {
             { key: "name", value: "Name" },
           //   { key: "email", value: "Email" },
             { key: "phone", value: "Phone No." },
-            { key: "status", value: "Status" },
+            { key: "status", value: "Current Status" },
             { key: "actions", value: "Actions" },
           ];
         
