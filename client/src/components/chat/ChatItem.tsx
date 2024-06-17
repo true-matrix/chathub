@@ -118,7 +118,10 @@ const ChatItem: React.FC<{
             }}
             className="self-center  relative"
           >
-            <EllipsisVerticalIcon className="h-6 group-hover:w-6 group-hover:opacity-100 w-0 opacity-0 transition-all ease-in-out duration-100 text-zinc-500" />
+            {/* <EllipsisVerticalIcon className="h-6 group-hover:w-6 group-hover:opacity-100 w-0 opacity-0 transition-all ease-in-out duration-100 text-zinc-500" /> */}
+            {/* <EllipsisVerticalIcon className="h-6 group-hover:w-6 group-hover:opacity-100 w-0 opacity-0 transition-all ease-in-out duration-100 text-zinc-500 group-hover:border group-hover:border-dotted group-hover:border-red-500" /> */}
+            <EllipsisVerticalIcon className="h-6 group-hover:w-6 group-hover:opacity-100 w-0 opacity-0 transition-all ease-in-out duration-100 text-white shadow-black bg-green-500 transition duration-200 transform hover:scale-150" />
+
             <div
               className={classNames(
                 "z-20 text-left absolute bottom-0 translate-y-full text-sm w-52 bg-white rounded-2xl p-2 shadow-md ",
@@ -161,14 +164,14 @@ const ChatItem: React.FC<{
               <> 
             <img
                 src={getChatObjectMetadata(chat, user!).avatar}
-                className="w-12 h-12 rounded-full object-cover"
+                className="w-12 h-12 rounded-full object-cover transition duration-200 transform hover:scale-110"
               /> 
               {/* <span className="user-active"></span> */}
               </>
             ) : (<>
               <img
                   src={getChatObjectMetadata(chat, user!).avatar} 
-                  className={`w-12 h-12 rounded-full object-cover border-2 ${getBorderColor(isOnline)}`}
+                  className={`w-12 h-12 rounded-full object-cover border-2 ${getBorderColor(isOnline)} transition duration-200 transform hover:scale-110`}
                 />
                 {isOnline === "online" && <span className="user-active"></span>}
                 {isOnline === "away" && <span className="user-away"></span>}
