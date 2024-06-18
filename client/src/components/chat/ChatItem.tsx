@@ -1,5 +1,4 @@
 import {
-  EllipsisVerticalIcon,
   PaperClipIcon,
   TrashIcon,
   PencilSquareIcon,
