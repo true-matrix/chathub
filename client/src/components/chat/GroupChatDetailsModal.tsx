@@ -14,6 +14,7 @@ import {
   getAllContacts,
   getGroupInfo,
   removeParticipantFromGroup,
+  toggleAnonymous,
   updateGroupImage,
   updateGroupName,
 } from "../../api";
@@ -55,8 +56,27 @@ const GroupChatDetailsModal: React.FC<{
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [isImageEditing, setIsImageEditing] = useState(false);
   const [imgFormData, setImgFormData] = useState(null);
+  const [isToggled, setIsToggled] = useState(false);
+  const [toggleLoading, setToggleLoading] = useState(false);
 
-
+  const handleToggle = async () => {
+    setIsToggled(!isToggled);
+    setToggleLoading(true);
+    await requestHandler(
+      //  A callback function that performs the deletion of a one-on-one chat by its ID.
+      async () => await toggleAnonymous(user._id, !isToggled),
+      null,
+      // Success callback
+      (res) => {
+        const { data } = res; // Extract data from response
+        console.log('data',data);
+        // onSuccess(data); // Execute the onSuccess function with received data
+      },
+      // The 'alert' function (likely to display error messages to the user.
+      alert
+    );
+    setToggleLoading(false);
+  }
 
   // Function to handle the update of the group name.
   const handleGroupNameUpdate = async () => {
@@ -402,6 +422,24 @@ const GroupChatDetailsModal: React.FC<{
                             participants
                           </p>
                         </div>
+                        
+                        <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
+                          {isToggled ? 'Turn Off Anonymous' : 'Keep me Anonymous'}
+                        </span>
+
+                        <label className="inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          value=""
+                          className="sr-only peer"
+                          checked={isToggled}
+                          onChange={handleToggle}
+                          // disabled={loading} // Disable button while loading
+                        />
+                        <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                        {toggleLoading && <span className="ms-3 text-sm font-medium text-gray-500 dark:text-gray-400">Loading...</span>}
+                      </label>
+
                         <div className="sidebar-tabs">
                         <Tabs>
                         <TabList>
