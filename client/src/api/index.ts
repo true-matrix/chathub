@@ -283,6 +283,13 @@ const removeParticipantFromGroup = (chatId: string, participantId: string) => {
   return apiClient.delete(`/chat-app/chats/group/${chatId}/${participantId}`);
 };
 
+const toggleAnonymous = (userId: string, isAnonymous: boolean) => {
+  return apiClient.post(`/chat-app/chats/group/toggleAnonymous`,{
+    userId: userId,
+    isAnonymous: isAnonymous
+  });
+};
+
 const getChatMessages = (chatId: string) => {
   return apiClient.get(`/chat-app/messages/${chatId}`);
 };
@@ -380,4 +387,5 @@ export {
   deleteMessage,
   updateVerifiedStatus,
   updateGroupImage,
+  toggleAnonymous
 };
