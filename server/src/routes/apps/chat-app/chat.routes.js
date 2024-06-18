@@ -26,6 +26,7 @@ import {
   removeParticipantFromGroupChat,
   renameGroupChat,
   searchAvailableUsers,
+  toggleAnonymous,
   updateAlpha,
   updateGroupImage,
   updateOmega,
@@ -139,5 +140,9 @@ router
 router
   .route("/remove/:chatId")
   .delete(mongoIdPathVariableValidator("chatId"), validate, deleteOneOnOneChat);
+
+router
+  .route("/group/toggleAnonymous")
+  .post(toggleAnonymous);  
 
 export default router;
