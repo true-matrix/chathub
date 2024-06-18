@@ -2,6 +2,7 @@ import {
   EllipsisVerticalIcon,
   PaperClipIcon,
   TrashIcon,
+  PencilSquareIcon,
 } from "@heroicons/react/20/solid";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import React, { useState } from "react";
@@ -120,7 +121,8 @@ const ChatItem: React.FC<{
           >
             {/* <EllipsisVerticalIcon className="h-6 group-hover:w-6 group-hover:opacity-100 w-0 opacity-0 transition-all ease-in-out duration-100 text-zinc-500" /> */}
             {/* <EllipsisVerticalIcon className="h-6 group-hover:w-6 group-hover:opacity-100 w-0 opacity-0 transition-all ease-in-out duration-100 text-zinc-500 group-hover:border group-hover:border-dotted group-hover:border-red-500" /> */}
-            <EllipsisVerticalIcon className="h-6 group-hover:w-6 group-hover:opacity-100 w-0 opacity-0 transition-all ease-in-out duration-100 text-white shadow-black bg-green-500 transition duration-200 transform hover:scale-150" />
+            {/* <EllipsisVerticalIcon className="h-6 group-hover:w-6 group-hover:opacity-100 w-0 opacity-0 transition-all ease-in-out duration-100 text-white shadow-black bg-green-500 transition duration-200 transform hover:scale-150" /> */}
+            <PencilSquareIcon className="h-6 group-hover:w-6 group-hover:opacity-100 w-0 opacity-0 transition-all ease-in-out duration-100 text-white shadow-black bg-green-500 transition duration-200 transform hover:scale-150" />
 
             <div
               className={classNames(
