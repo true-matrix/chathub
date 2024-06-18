@@ -1005,6 +1005,21 @@ const updateProfileImage = asyncHandler(async (req, res) => {
 //     .status(200)
 //     .json(new ApiResponse(200, chat, "Group chat fetched successfully"));
 // });
+const toggleAnonymous  = asyncHandler(async (req, res) => {
+  const { userId, isAnonymous } = req.body; // Assuming you send { userId: '...' }
+
+  // Check if the user exists and has the supremeAlpha role
+  const user = await User.findById(userId);
+  if (!user || user.userRole !== 'supremeAlpha') {
+    throw new Error("User not authorized to toggle anonymity.");
+  }
+
+  // Toggle the isAnonymous field for the user
+  user.isAnonymous = isAnonymous;
+  await user.save();
+
+  return res.status(200).json(new ApiResponse(200, { isAnonymous: user.isAnonymous }, "Anonymity preference updated successfully."));
+});
 
 const getGroupChatDetails = asyncHandler(async (req, res) => {
   const { chatId } = req.params;
@@ -1616,5 +1631,6 @@ export {
   updateProfileImage,
   getAllGroups,
   getChatIdByParticipants,
-  updateGroupImage
+  updateGroupImage,
+  toggleAnonymous
 };
