@@ -365,9 +365,22 @@ const AlphaPage = () => {
                               {user.verified ? 'Active' : 'Inactive'}
                             </td> */}
                           <td>
-                          {checkOnlineStatus(user) === "online" && (<><p className="text-center text-green-500">Online</p></>)}
-                          {checkOnlineStatus(user) === "away" && (<><p className="text-center text-yellow-500">Away</p></>)}
-                          {checkOnlineStatus(user) === "offline" && (<><p className="text-center text-red-500">Offline</p></>)}
+                          {checkOnlineStatus(user) === "online" && 
+                          (<><div className="flex justify-center items-center gap-x-1">
+                            <p className="w-3 h-3 me-3 bg-green-500 rounded-full"></p>
+                            <p className="text-center text-green-500">Online</p></div>
+                            </>)}
+                          {checkOnlineStatus(user) === "away" && 
+                          (<><div className="flex justify-center items-center gap-x-1">
+                            <p className="w-3 h-3 me-3 bg-yellow-300 rounded-full"></p>
+                            <p className="text-center text-yellow-500">Away</p></div>
+                            </>)}
+                          {checkOnlineStatus(user) === "offline" && 
+                          (<><div className="flex justify-center items-center gap-x-1">
+                            <p className="w-3 h-3 bg-red-500 rounded-full"></p>
+                            <p className="text-center text-red-500">Offline</p>
+                          </div>
+                          </>)}
                           </td> 
                           <td className="text-center">
                             <button className="focus:outline-none text-white bg-yellow-500 hover:bg-yellow-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2 me-2  dark:focus:ring-yellow-900" onClick={()=>handleUpdateUser(user._id)}  >Edit</button>
