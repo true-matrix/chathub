@@ -51,7 +51,8 @@ const chatMessageSchema = new Schema(
     updatedParentMessage: {
       type: Object,
       default: null,
-    }
+    },
+    isAnonymous: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
