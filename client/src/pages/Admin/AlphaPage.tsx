@@ -10,6 +10,9 @@ import { useAuth } from "../../context/AuthContext";
 import { confirmAlert } from "react-confirm-alert";
 import { ConfirmAlert } from "../../components/ConfirmAlert";
 import { generateUniqueId } from "../../commonhelper";
+import { useSocket } from "../../context/SocketContext";
+
+const UPDATE_STATUS = 'updateStatus';
 
 interface CreateUserFormValues {
     username: string;
@@ -28,7 +31,8 @@ interface CreateUserFormValues {
 
 const AlphaPage = () => {
     const navigate = useNavigate();
-    const {user} = useAuth()
+    const {user} = useAuth();
+    const { socket } = useSocket();
     const [currentPage, setCurrentPage] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
     const [isCreateUserModalOpen, setCreateUserModalOpen] = useState(false);
@@ -37,6 +41,8 @@ const AlphaPage = () => {
     const [selectedUser, setSelectedUser] = useState<any[]>([]);
     const [selectedId, setSelectedId] = useState<any>("");
     const [isLoading, setIsLoading] = useState(false);
+    const [onlineUsers, setOnlineUsers] = useState([])
+
     let uid = generateUniqueId();
 
     const initValues : CreateUserFormValues = {
@@ -65,6 +71,76 @@ const AlphaPage = () => {
   console.log(selectedId);
   console.log(isLoading);
   
+
+  // This useEffect handles the setting up and tearing down of socket event listeners.
+  useEffect(() => {
+    // If the socket isn't initialized, we don't set up listeners.
+    if (!socket) return;
+    socket.on('get-users', (users) => {
+      setOnlineUsers(users);
+    })
+    
+   const handleVisibilityChange = () => {
+    if (document.visibilityState === 'hidden') {
+      // socket.emit(UPDATE_STATUS, 'away');
+      (window as any).activityTimeout = setTimeout(() => socket.emit(UPDATE_STATUS, 'away'), 60000);
+
+    } else {
+      clearTimeout((window as any).activityTimeout);
+      socket.emit(UPDATE_STATUS, 'online');
+
+    }
+  };
+
+  const handleWindowBlur = () => {
+      // socket.emit(UPDATE_STATUS, 'away');
+      (window as any).activityTimeout = setTimeout(() => socket.emit(UPDATE_STATUS, 'away'), 60000);
+    
+  };
+
+  const handleWindowFocus = () => {
+      clearTimeout((window as any).activityTimeout);
+      socket.emit(UPDATE_STATUS, 'online');
+
+  };
+
+  const handleWindowClose = () => {
+
+    socket.emit(UPDATE_STATUS, 'away');
+
+
+  };
+
+  const resetActivityTimeout = () => {
+    clearTimeout((window as any).activityTimeout);
+      socket.emit(UPDATE_STATUS, 'online');
+    (window as any).activityTimeout = setTimeout(() => {
+      socket.emit(UPDATE_STATUS, 'away');
+
+    }, 60000); // 60 secs of inactivity
+  };
+
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+  window.addEventListener('blur', handleWindowBlur);
+  window.addEventListener('focus', handleWindowFocus);
+  window.addEventListener('beforeunload', handleWindowClose);
+  document.addEventListener('mousemove', resetActivityTimeout);
+  document.addEventListener('keydown', resetActivityTimeout);
+
+  return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('blur', handleWindowBlur);
+      window.removeEventListener('focus', handleWindowFocus);
+      window.removeEventListener('beforeunload', handleWindowClose);
+      document.removeEventListener('mousemove', resetActivityTimeout);
+      document.removeEventListener('keydown', resetActivityTimeout);
+  }
+  },[socket])
+
+  const checkOnlineStatus = (user : any) => {
+      const onlineUser : any = onlineUsers.find((u: any) => u.userId === user?._id);
+      return onlineUser ? onlineUser.status : 'offline';
+  };
 
     // Function to retrieve available users.
     const getUsers = useCallback( async () => {
@@ -241,7 +317,8 @@ const AlphaPage = () => {
         
           const startIndex = currentPage * itemsPerPage;
           const endIndex = startIndex + itemsPerPage;
-          const currentData = filteredData.slice(startIndex, endIndex);      
+          const currentData = filteredData.slice(startIndex, endIndex);   
+             
   return (
     <> 
     <div className="flex justify-between items-center mb-4">
@@ -284,9 +361,14 @@ const AlphaPage = () => {
                               </div>  
                           </td>
                           <td className="text-center">{user.phone ? user.phone : '9876543210'}</td>
-                          <td className={`text-center ${user.verified ? 'text-green-500' : 'text-red-500'}`}>
+                          {/* <td className={`text-center ${user.verified ? 'text-green-500' : 'text-red-500'}`}>
                               {user.verified ? 'Active' : 'Inactive'}
-                            </td>
+                            </td> */}
+                          <td>
+                          {checkOnlineStatus(user) === "online" && (<><p className="text-center text-green-500">Online</p></>)}
+                          {checkOnlineStatus(user) === "away" && (<><p className="text-center text-yellow-500">Away</p></>)}
+                          {checkOnlineStatus(user) === "offline" && (<><p className="text-center text-red-500">Offline</p></>)}
+                          </td> 
                           <td className="text-center">
                             <button className="focus:outline-none text-white bg-yellow-500 hover:bg-yellow-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2 me-2  dark:focus:ring-yellow-900" onClick={()=>handleUpdateUser(user._id)}  >Edit</button>
                             <button className="focus:outline-none text-white bg-red-500 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 me-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900" onClick={()=>handleDelete(user._id)}>Delete</button>
