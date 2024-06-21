@@ -46,6 +46,7 @@ import { useGlobal } from "../context/GlobalContext";
 import Sidebar from "./Common/Sidebar";
 import { useNavigate } from "react-router-dom";
 import { useIntersectionObserver } from "../commonhelper";
+import ContentLoader from "react-content-loader";
 
 const CONNECTED_EVENT = "connected";
 const DISCONNECT_EVENT = "disconnect";
@@ -1100,7 +1101,40 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
           </div>
           {loadingChats ? (
             <div className="flex justify-center items-center h-[calc(100%-88px)]">
-              <Typing />
+              {/* <Typing /> */}
+              <ContentLoader viewBox="0 0 500 950" height={950} width={500}>
+                  {/* <circle cx="70" cy="60" r="30" />
+                  <rect x="110" y="45" width="100" height="10" />
+                  <rect x="110" y="65" width="200" height="10" /> */}
+                  
+                  <circle cx="70" cy="160" r="30" />
+                  <rect x="110" y="145" width="100" height="10" />
+                  <rect x="110" y="165" width="200" height="10" />
+                  
+                  <circle cx="70" cy="260" r="30" />
+                  <rect x="110" y="245" width="100" height="10" />
+                  <rect x="110" y="265" width="200" height="10" />
+                  
+                  <circle cx="70" cy="360" r="30" />
+                  <rect x="110" y="345" width="100" height="10" />
+                  <rect x="110" y="365" width="200" height="10" />
+                  
+                  <circle cx="70" cy="460" r="30" />
+                  <rect x="110" y="445" width="100" height="10" />
+                  <rect x="110" y="465" width="200" height="10" />
+                  
+                  <circle cx="70" cy="560" r="30" />
+                  <rect x="110" y="545" width="100" height="10" />
+                  <rect x="110" y="565" width="200" height="10" />
+                  
+                  <circle cx="70" cy="660" r="30" />
+                  <rect x="110" y="645" width="100" height="10" />
+                  <rect x="110" y="665" width="200" height="10" />
+                  
+                  <circle cx="70" cy="760" r="30" />
+                  <rect x="110" y="745" width="100" height="10" />
+                  <rect x="110" y="765" width="200" height="10" />
+                </ContentLoader>
             </div>
           ) : (
             // Iterating over the chats array
