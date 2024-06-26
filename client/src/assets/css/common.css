@@ -876,6 +876,63 @@ span.user-away {
   background-color: #ffffff;
 }
 
+/* Access Denied Start */
+.access-denied {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ad-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.86;
+}
+
+.ad-message {
+  text-align: center;
+  color: #b20000;
+  font-family: Arial, sans-serif;
+}
+
+.ad-symbol {
+  font-size: 50px;
+  margin-bottom: 20px;
+}
+
+.ad-text h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.ad-text p {
+  font-size: 16px;
+}
+
+.ad-text a {
+  color: #ff6600;
+  text-decoration: none;
+}
+
+.ad-text a:hover {
+  text-decoration: underline;
+}
+
+/* Access Denied End */
+
+
 /* Pretty complex animation, so each side needs its own @keyframes. */
 
 @keyframes slide1 {
