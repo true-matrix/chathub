@@ -113,6 +113,10 @@ const userSchema = new Schema(
       // unselect
       type: Date,
     },
+    blocked: {
+      type: Boolean,
+      default: false,
+    },
     verified: {
       type: Boolean,
       default: false,
