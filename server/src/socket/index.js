@@ -126,6 +126,18 @@ const initializeSocketIO = (io) => {
         io.emit('get-users', activeUsers);
       };
 
+      // Update blocked status
+      const updateBlockedStatus = (userId, status) => {
+        User.findByIdAndUpdate(userId, { blocked: status }, { new: true })
+          .then((user) => {
+            if (user) {
+              io.to(userId).emit('user-block-status-changed', { blocked: user.blocked });
+              io.emit('get-users', activeUsers); // Update the list of active users
+            }
+          })
+          .catch((error) => console.error(error));
+      };
+
       socket.on("markMessagesAsSeen", async (conversationId, userId) => {
         try {
     
@@ -191,6 +203,17 @@ const initializeSocketIO = (io) => {
             socket.on(ChatEventEnum.UPDATE_STATUS, (status) => {
               updateUserStatus(socket.user._id.toString(), status);
             });
+
+            // Block User
+          socket.on('block-user', async (userId) => {
+            await User.findByIdAndUpdate({ _id: userId }, { $set: { verified: false, islogin: false, isOnline: false } })
+            updateBlockedStatus(userId, true);
+          });
+
+          // Unblock User
+          socket.on('unblock-user', (userId) => {
+            updateBlockedStatus(userId, false);
+          });
 
       emitConnectedUsers(); // Emit connectedUsers data after adding the user
       console.log("User connected 🗼. userId: ", user._id.toString());
