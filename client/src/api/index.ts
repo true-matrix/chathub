@@ -63,6 +63,19 @@ const getAllGroups = () => {
   return apiClient.get("/chat-app/chats/allgroups");
 };
 
+// ****************************************************Block/Unblock API********************************************************************************//
+
+const block = (data:{
+  userToBlockId: string,
+}) => {
+  return apiClient.patch(`/chat-app/chats/block`, data);
+};
+const unblock = (
+  userToBlockId: string,
+) => {
+  return apiClient.patch(`/chat-app/chats/unblock`, userToBlockId);
+};
+
 // ****************************************************SupremeAlpha CRUD API********************************************************************************//
 const addUser = (data: {
   username: string;
@@ -387,5 +400,7 @@ export {
   deleteMessage,
   updateVerifiedStatus,
   updateGroupImage,
-  toggleAnonymous
+  toggleAnonymous,
+  block,
+  unblock
 };
