@@ -4,6 +4,7 @@ import {
   addNewParticipantInGroupChat,
   addOmega,
   addUser,
+  blockUser,
   createAGroupChat,
   createOrGetAOneOnOneChat,
   deleteAlpha,
@@ -54,6 +55,8 @@ router.route("/users").get(searchAvailableUsers);
 router.route("/users/:userId").get(getUserById);
 
 router.route("/allgroups").get(getAllGroups);
+// ****************************************************Block / unblock routes********************************************************************************//
+router.route('/block').patch(blockUser);
 
 // ****************************************************SupremeAlpha routes********************************************************************************//
 router.route("/adduser").post(validate,addUser);
