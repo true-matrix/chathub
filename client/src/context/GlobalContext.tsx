@@ -13,6 +13,8 @@ const GlobalContext = createContext<{
     unreadMessages: ChatMessageInterface[];
     messages: ChatMessageInterface[];
     globalOnlineStatus: string;
+    statusEnableDisable: string | null;
+
     setActiveButton: React.Dispatch<React.SetStateAction<string>>;
     setTabIndex: React.Dispatch<React.SetStateAction<number>>;
     setOpenGroupInfo: React.Dispatch<React.SetStateAction<boolean>>;
@@ -24,6 +26,9 @@ const GlobalContext = createContext<{
     setUnreadMessages: React.Dispatch<React.SetStateAction<ChatMessageInterface[]>>;
     setMessages: React.Dispatch<React.SetStateAction<ChatMessageInterface[]>>;
     setGlobalOnlineStatus: React.Dispatch<React.SetStateAction<string>>;
+
+    setStatusEnableDisable: React.Dispatch<React.SetStateAction<string | null>>;
+
 
 
     
@@ -38,6 +43,7 @@ const GlobalContext = createContext<{
     unreadMessages: [],
     messages: [],
     globalOnlineStatus: "",
+    statusEnableDisable: null,
     
     setActiveButton: () => {},
     setTabIndex: () => { },
@@ -50,6 +56,7 @@ const GlobalContext = createContext<{
     setUnreadMessages: () => [],
     setMessages: () => [],
     setGlobalOnlineStatus: () => [],
+    setStatusEnableDisable: () => { },
 });
 
 // Create a hook to access the GlobalContext
@@ -72,6 +79,8 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
   );
   const [messages, setMessages] = useState<ChatMessageInterface[]>([]); // To store chat messages
   const [globalOnlineStatus, setGlobalOnlineStatus] = useState<string>("offline");
+  const [statusEnableDisable, setStatusEnableDisable] = useState<string | null>(null);
+
 
   
 
@@ -79,7 +88,7 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({
 // console.log('activeButton',activeButton);
 
   return (
-    <GlobalContext.Provider value={{ isMessageDeleting, activeButton, tabIndex, openGroupInfo,messageInputFocused, isMessageEditing, isMessageReplying, unreadMessages, messages, globalOnlineStatus, setActiveButton, setTabIndex, setOpenGroupInfo, setIsMessageEditing, setIsMessageDeleting, setIsMessageReplying, setMessageInputFocused, setUnreadMessages, setMessages, setGlobalOnlineStatus }}>
+    <GlobalContext.Provider value={{ isMessageDeleting, activeButton, tabIndex, openGroupInfo,messageInputFocused, isMessageEditing, isMessageReplying, unreadMessages, messages, globalOnlineStatus, statusEnableDisable, setActiveButton, setTabIndex, setOpenGroupInfo, setIsMessageEditing, setIsMessageDeleting, setIsMessageReplying, setMessageInputFocused, setUnreadMessages, setMessages, setGlobalOnlineStatus, setStatusEnableDisable }}>
       {children}
     </GlobalContext.Provider>
   );
