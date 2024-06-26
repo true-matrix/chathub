@@ -23,6 +23,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import EmailVerifyOtp from "./pages/Auth/EmailVerifyOtp";
 import ChangePassword from "./pages/Auth/ChangePassword";
+import AccessDenied from "./components/AccessDenied";
 
 const MESSAGE_RECEIVED_EVENT = "messageReceived";
 
@@ -34,8 +35,14 @@ const App = () => {
   const navigate = useNavigate();
   console.log(isLoading);
   const { socket } = useSocket();
-  const { setUnreadMessages, activeButton } = useGlobal();
+  const { setUnreadMessages, activeButton, statusEnableDisable } = useGlobal();
   const currentChat = useRef<ChatListItemInterface | null>(null);
+  // const [isRestricted, setIsRestricted] = useState(false);
+  const [isRestricted, setIsRestricted] = useState(() => {
+    // Initialize isRestricted from localStorage or default to false
+    const storedIsRestricted = LocalStorage.get("isRestricted");
+    return storedIsRestricted ? JSON.parse(storedIsRestricted) : false;
+  });
   
 
   useEffect(() => {
@@ -120,18 +127,18 @@ const App = () => {
   }, []);
 
 
-// Clear localstorage data on tab close
-  useEffect(() => {
-    const clearLocalStorage = () => {
-      localStorage.clear();
-    };
+// // Clear localstorage data on tab close
+//   useEffect(() => {
+//     const clearLocalStorage = () => {
+//       localStorage.clear();
+//     };
 
-    window.addEventListener('beforeunload', clearLocalStorage);
+//     window.addEventListener('beforeunload', clearLocalStorage);
 
-    return () => {
-      window.removeEventListener('beforeunload', clearLocalStorage);
-    };
-  }, []);
+//     return () => {
+//       window.removeEventListener('beforeunload', clearLocalStorage);
+//     };
+//   }, []);
 
   
    const showNotification = (title : any, options : any, duration = 2500) => {
@@ -187,15 +194,31 @@ const App = () => {
     // Listener for when a new message is received.
     socket.on(MESSAGE_RECEIVED_EVENT, onMessageReceived);
 
+    // Listen for block status changes
+    socket.on('user-block-status-changed', (data) => {
+      setIsRestricted(data.blocked);
+      LocalStorage.set('isRestricted', JSON.stringify(data.blocked));
+    });
+    if(isRestricted){
+      socket?.emit('block-user', statusEnableDisable);
+    } else {
+      socket?.emit('unblock-user', statusEnableDisable);
+    }
+
     // When the component using this hook unmounts or if `socket` or `chats` change:
     return () => {
       // Remove all the event listeners we set up to avoid memory leaks and unintended behaviors.
       socket.off(MESSAGE_RECEIVED_EVENT, onMessageReceived);
+      socket.off('user-block-status-changed');
     };
 
   }, [socket, activeButton]);
+console.log('user',user);
 
   return (
+    <>
+    {isRestricted && <AccessDenied />}
+    {!isRestricted && 
     <Routes>
       {/* Root route: Redirects to chat if the user is logged in, else to the login page */}
       <Route
@@ -313,6 +336,8 @@ const App = () => {
       {/* Wildcard route for undefined paths. Shows a 404 error */}
       <Route path="*" element={<p>404 Not found</p>} />
     </Routes>
+    }
+    </>
   );
 };
 
