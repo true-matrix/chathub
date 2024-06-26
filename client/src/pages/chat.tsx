@@ -1102,7 +1102,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
           {loadingChats ? (
             <div className="flex justify-center items-center h-[calc(100%-88px)]">
               {/* <Typing /> */}
-              <ContentLoader viewBox="0 0 500 950" height={950} width={500}>
+              <ContentLoader viewBox="0 0 500 950" height={950} width={500} backgroundColor="#cfe8f7" foregroundColor="#ecebeb">
                   {/* <circle cx="70" cy="60" r="30" />
                   <rect x="110" y="45" width="100" height="10" />
                   <rect x="110" y="65" width="200" height="10" /> */}
