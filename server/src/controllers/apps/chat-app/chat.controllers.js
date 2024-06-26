@@ -397,6 +397,105 @@ const createAGroupChat = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, payload, "Group chat created successfully"));
 });
 
+// ****************************************************Block/Unblock********************************************************************************//
+// Block-Unblock a user
+const blockUser = asyncHandler(async (req, res) => {
+  const { userToBlockId } = req.body;
+
+  const userToBlock = await User.findById(userToBlockId);
+
+  if (!userToBlock) {
+    throw new ApiError(404, "User not found");
+  }
+
+  if(!userToBlock.blocked){
+    userToBlock.verified = false,
+    userToBlock.islogin = false,
+    userToBlock.isOnline = false
+  }
+  // Toggle the blocked status
+  userToBlock.blocked = !userToBlock.blocked;
+
+  await userToBlock.save();
+
+  return res.status(200).json(new ApiResponse(200, userToBlock, `User ${userToBlock.blocked ? 'blocked' : 'unblocked'} successfully`));
+});
+
+// const blockUser = asyncHandler(async (req, res) => {
+//   const { userToBlockId } = req.body;
+
+//   const userToBlock = await User.findById(userToBlockId);
+
+//   if (!userToBlock) {
+//     throw new ApiError(404, "User not found");
+//   }
+
+//   // Toggle the blocked status
+//   userToBlock.blocked = !userToBlock.blocked;
+
+//   if (userToBlock.blocked) {
+//     // If the user is being blocked, log them out
+//     userToBlock.verified = false;
+//     userToBlock.islogin = false;
+//     userToBlock.refreshToken = undefined;
+//     userToBlock.isOnline = false;
+//   }
+
+//   await userToBlock.save();
+
+//   const options = {
+//     httpOnly: true,
+//     secure: process.env.NODE_ENV === "production",
+//   };
+
+//   if (userToBlock.blocked) {
+//     res.clearCookie("accessToken", options)
+//        .clearCookie("refreshToken", options);
+//   }
+
+//   return res.status(200).json(new ApiResponse(200, userToBlock, `User ${userToBlock.blocked ? 'blocked' : 'unblocked'} successfully`));
+// });
+
+// const blockUser = asyncHandler(async (req, res) => {
+//   const { userId } = req.body;
+
+//   if (!userId) {
+//     throw new ApiError(400, "User ID is required");
+//   }
+
+//   const user = await User.findById(userId);
+
+//   if (!user) {
+//     throw new ApiError(404, "User not found");
+//   }
+
+//   await User.findByIdAndUpdate(
+//     userId,
+//     {
+//       $set: {
+//         verified: false,
+//         islogin: false,
+//         refreshToken: undefined,
+//       },
+//     },
+//     { new: true }
+//   );
+
+//   const options = {
+//     httpOnly: true,
+//     secure: process.env.NODE_ENV === "production",
+//   };
+
+//   // Clear cookies (if applicable)
+//   res.clearCookie("accessToken", options);
+//   res.clearCookie("refreshToken", options);
+
+//   return res.status(200).json(new ApiResponse(200, {}, `User ${userId} logged out successfully`));
+// });
+
+
+
+
 // ****************************************************Supreme Alpha********************************************************************************//
 const addUser = asyncHandler(async (req, res) => {
   const { username, name, email, password, phone, userRole, addedBy, aiStatus, gender, role } = req.body;
@@ -1632,5 +1731,6 @@ export {
   getAllGroups,
   getChatIdByParticipants,
   updateGroupImage,
-  toggleAnonymous
+  toggleAnonymous,
+  blockUser,
 };
