@@ -19,7 +19,8 @@ const ChatItem: React.FC<{
   unreadCount?: number;
   onChatDelete: (chatId: string) => void;
   isOnline?: any;
-}> = ({ chat, onClick, isActive, unreadCount = 0, onChatDelete, isOnline }) => {
+  blocked?: boolean;
+}> = ({ chat, onClick, isActive, unreadCount = 0, onChatDelete, isOnline, blocked }) => {
   const { user } = useAuth();
   // const { openGroupInfo, setOpenGroupInfo } = useGlobal();
   const [openOptions, setOpenOptions] = useState(false);
@@ -110,7 +111,8 @@ const ChatItem: React.FC<{
             : ""
         )}
       >
-        <div className="py-2 group flex justify-between gap-3 items-start cursor-pointer border-b-[0.1px] "> 
+        {JSON.stringify(blocked)}
+        <div className={`py-2 group flex justify-between gap-3 items-start cursor-pointer border-b-[0.1px] ${ getChatObjectMetadata(chat, user!)?.blocked ? 'disabled-userlist' : ''}`}> 
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -203,9 +205,11 @@ const ChatItem: React.FC<{
             {(chat.isGroupChat && user.userRole ==='supremeAlpha') && chat?.participants?.map((part: any) => {
               return (
                 <React.Fragment key={part._id}>
-                  {part.userRole === 'supremeAlpha' && part._id !== chat.admin && <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M13.75 8.75V5.625C13.75 4.63044 13.3549 3.67661 12.6516 2.97335C11.9484 2.27009 10.9946 1.875 10 1.875C9.00544 1.875 8.05161 2.27009 7.34835 2.97335C6.64509 3.67661 6.25 4.63044 6.25 5.625V8.75M5.625 18.125H14.375C14.8723 18.125 15.3492 17.9275 15.7008 17.5758C16.0525 17.2242 16.25 16.7473 16.25 16.25V10.625C16.25 10.1277 16.0525 9.65081 15.7008 9.29917C15.3492 8.94754 14.8723 8.75 14.375 8.75H5.625C5.12772 8.75 4.65081 8.94754 4.29917 9.29917C3.94754 9.65081 3.75 10.1277 3.75 10.625V16.25C3.75 16.7473 3.94754 17.2242 4.29917 17.5758C4.65081 17.9275 5.12772 18.125 5.625 18.125Z" stroke="#71717ab0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                  </svg>}
+                  {part.userRole === 'supremeAlpha' && part._id !== chat.admin && <div className="svg-container pendulum-on-hover">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M13.75 8.75V5.625C13.75 4.63044 13.3549 3.67661 12.6516 2.97335C11.9484 2.27009 10.9946 1.875 10 1.875C9.00544 1.875 8.05161 2.27009 7.34835 2.97335C6.64509 3.67661 6.25 4.63044 6.25 5.625V8.75M5.625 18.125H14.375C14.8723 18.125 15.3492 17.9275 15.7008 17.5758C16.0525 17.2242 16.25 16.7473 16.25 16.25V10.625C16.25 10.1277 16.0525 9.65081 15.7008 9.29917C15.3492 8.94754 14.8723 8.75 14.375 8.75H5.625C5.12772 8.75 4.65081 8.94754 4.29917 9.29917C3.94754 9.65081 3.75 10.1277 3.75 10.625V16.25C3.75 16.7473 3.94754 17.2242 4.29917 17.5758C4.65081 17.9275 5.12772 18.125 5.625 18.125Z" stroke="#71717ab0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+  </div>}
                 </React.Fragment>)})
               }
             {/* // <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
