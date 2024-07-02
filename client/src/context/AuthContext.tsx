@@ -54,6 +54,11 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       (res) => {
         const { data } = res;
         setUser(data.user);
+        if(data.user.blocked){
+          window.alert("Your account is 🚫Restricted. Please contact Supreme Alpha.");
+          navigate("/login")
+          return;
+        }
         setToken(data.accessToken);
         // LocalStorage.set("user", data.user);
         LocalStorage.set("token", data.accessToken);
