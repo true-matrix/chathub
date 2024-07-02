@@ -457,7 +457,7 @@ const GroupChatDetailsModal: React.FC<{
                             {groupDetails?.participants?.map((part : any) => {
                               return (
                                 <React.Fragment key={part._id}>
-                                  <div className="flex justify-between items-center w-full py-2">
+                                  <div className={`flex justify-between items-center w-full py-2 ${part?.blocked ? 'disabled-userlist' : ''}`}>
                                     <div className="flex justify-start items-start gap-3 w-full">
                                       <img
                                         className="h-12 w-12 rounded-full"
@@ -522,6 +522,7 @@ const GroupChatDetailsModal: React.FC<{
                                         label: user.name,
                                         value: user._id,
                                         imageSrc: user.avatar.url,
+                                        blocked: user.blocked,
                                       }))}
                                       onChange={({ value }) => {
                                         setParticipantToBeAdded(value);
