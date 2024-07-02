@@ -199,11 +199,11 @@ const App = () => {
       setIsRestricted(data.blocked);
       LocalStorage.set('isRestricted', JSON.stringify(data.blocked));
     });
-    if(isRestricted){
-      socket?.emit('block-user', statusEnableDisable);
-    } else {
-      socket?.emit('unblock-user', statusEnableDisable);
-    }
+    // if(isRestricted){
+    //   socket?.emit('block-user', statusEnableDisable);
+    // } else {
+    //   socket?.emit('unblock-user', statusEnableDisable);
+    // }
 
     // When the component using this hook unmounts or if `socket` or `chats` change:
     return () => {
