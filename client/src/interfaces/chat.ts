@@ -9,6 +9,7 @@ export interface ChatListItemInterface {
   participants: UserInterface[];
   updatedAt: string;
   _id: string;
+  blocked?: boolean;
 }
 
 export interface ChatMessageInterface {
