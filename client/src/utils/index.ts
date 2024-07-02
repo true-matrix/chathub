@@ -90,6 +90,7 @@ export const getChatObjectMetadata = (
       title: participant?.name, // Participant's username serves as the title.
       description: participant?.email, // Email address of the participant.
       lastMessage,
+      blocked: participant?.blocked, // Group name serves as the title.
     };
   }
 };
