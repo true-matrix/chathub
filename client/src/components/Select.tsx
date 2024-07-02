@@ -9,6 +9,7 @@ const Select: React.FC<{
     label: string;
     imageSrc?: string;
     userRole?: string;
+    blocked?: boolean;
   }[];
   value: string;
   onChange: (value: { value: string; label: string }) => void;
@@ -55,7 +56,7 @@ const Select: React.FC<{
                 className={({ active }) =>
                   classNames(
                     "cursor-pointer relative rounded-2xl select-none py-4 pl-3 pr-9",
-                    active ? "bg-light text-dark" : "text-dark"
+                    active ? "bg-light text-dark" : "text-dark", option?.blocked ? 'disabled-userlist' : ''
                   )
                 }
               >
