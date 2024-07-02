@@ -35,7 +35,7 @@ const App = () => {
   const navigate = useNavigate();
   console.log(isLoading);
   const { socket } = useSocket();
-  const { setUnreadMessages, activeButton, statusEnableDisable } = useGlobal();
+  const { setUnreadMessages, activeButton } = useGlobal();
   const currentChat = useRef<ChatListItemInterface | null>(null);
   // const [isRestricted, setIsRestricted] = useState(false);
   const [isRestricted, setIsRestricted] = useState(() => {
