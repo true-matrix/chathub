@@ -47,7 +47,6 @@ const Login = () => {
         <div className="logo">
         <img src={logoitem}/>
         </div>  
-
       </div>
       <div className="w-2/3">
           <div className="flex justify-center items-center flex-col h-screen bg-white rounded-xl relative"> 
