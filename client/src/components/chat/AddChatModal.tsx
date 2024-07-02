@@ -243,6 +243,7 @@ const AddChatModal: React.FC<{
                           value: user._id,
                           imageSrc: user.avatar.url,
                           userRole : user.userRole,
+                          blocked : user.blocked,
                         };
                       })}
                       onChange={({ value }) => {
