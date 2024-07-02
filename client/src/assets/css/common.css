@@ -729,7 +729,24 @@ span.blink {
   background-color: #ec2d2d;
   opacity: 0.7;
   border-radius: 50%;
-
+  animation: blink 1s linear infinite;
+}
+div.online-green-indicator {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  margin-right: 10px;
+  background-color: #5cea68;
+  border-radius: 50%;
+  position: relative;
+}
+span.blink-green {
+  display: block;
+  width: 15px;
+  height: 15px;
+  background-color: #0dc416;
+  opacity: 0.7;
+  border-radius: 50%;
   animation: blink 1s linear infinite;
 }
 .chat-image {
@@ -840,8 +857,8 @@ span.user-away {
   position: fixed;
   top: 50%;
   left: 50%;
-  width: 11vh;
-  height: 11vh;
+  width: 31vh;
+  height: 31vh;
   margin-left: -17vh;
   margin-top: -17vh;
   overflow: hidden;
@@ -854,8 +871,8 @@ span.user-away {
   position: absolute;
   left: 0.5vh;
   top: 0.5vh;
-  width: 10vh;
-  height: 10vh;
+  width: 20vh;
+  height: 20vh;
   background: #34324b;
   background: -moz-linear-gradient(-45deg, #34324b 0%, #161222 100%);
   background: -webkit-linear-gradient(-45deg, #34324b 0%, #161222 100%);
@@ -932,6 +949,56 @@ span.user-away {
 
 /* Access Denied End */
 
+.disabled-userlist {
+  position: relative; /* Ensure the div is positioned relatively for the overlay */
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.disabled-user-sendmessage {
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+/* Chat Lock Animation Start */
+.svg-container {
+  position: relative;
+  display: inline-block;
+}
+
+.pendulum-on-hover svg {
+  transition: filter 0.3s ease-in-out;
+}
+
+.pendulum-on-hover:hover svg {
+  animation: swing 1s ease-in-out infinite;
+}
+
+.pendulum-on-hover:hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 20px;
+  border-radius: 25%;
+  background-color: rgba(253, 38, 38, 0.575);
+  animation: spark 0.3s linear forwards;
+}
+
+@keyframes swing {
+  0% { transform: rotate(5deg); }
+  50% { transform: rotate(-5deg); }
+  100% { transform: rotate(5deg); }
+}
+
+@keyframes spark {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Chat Lock Animation End */
 
 /* Pretty complex animation, so each side needs its own @keyframes. */
 
