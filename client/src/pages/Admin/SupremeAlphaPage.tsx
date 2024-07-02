@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import 'react-tabs/style/react-tabs.css';
 import ReactPaginate from 'react-paginate';
-import { addUser, getAllSupremeAlphas, getUserById, updateUser, deleteUser } from "../../api";
-import { requestHandler } from "../../utils";
+import { addUser, getAllSupremeAlphas, getUserById, updateUser, deleteUser, block } from "../../api";
+import { LocalStorage, requestHandler } from "../../utils";
 import { ErrorMessage, Field, Formik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,10 @@ import { useAuth } from "../../context/AuthContext";
 import { confirmAlert } from "react-confirm-alert";
 import { ConfirmAlert } from "../../components/ConfirmAlert";
 import { generateUniqueId } from "../../commonhelper";
+import { useGlobal } from "../../context/GlobalContext";
+import { useSocket } from "../../context/SocketContext";
 
+const UPDATE_STATUS = 'updateStatus';
 interface CreateUserFormValues {
     username: string;
     name: string;
@@ -27,7 +30,8 @@ interface CreateUserFormValues {
 
 const SupremeALphaPage = () => {
     const navigate = useNavigate();
-    const {user} = useAuth()
+    const {user} = useAuth();
+    const { socket } = useSocket();
     const [currentPage, setCurrentPage] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
     const [isCreateUserModalOpen, setCreateUserModalOpen] = useState(false);
@@ -36,6 +40,10 @@ const SupremeALphaPage = () => {
     const [selectedUser, setSelectedUser] = useState<any[]>([]);
     const [selectedId, setSelectedId] = useState<any>("");
     const [isLoading, setIsLoading] = useState(false);
+    const [onlineUsers, setOnlineUsers] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const { setStatusEnableDisable } = useGlobal();
+    
     let uid = generateUniqueId();
 
     const initValues : CreateUserFormValues = {
@@ -71,6 +79,76 @@ const SupremeALphaPage = () => {
       const [formInititalState, setFormInitState] = useState(initValues);
   console.log(selectedId);
   console.log(isLoading);
+
+      useEffect(() => {
+        // If the socket isn't initialized, we don't set up listeners.
+        if (!socket) return;
+        socket.on('get-users', (users) => {
+          setOnlineUsers(users);
+        })
+        
+        const handleVisibilityChange = () => {
+        if (document.visibilityState === 'hidden') {
+          // socket.emit(UPDATE_STATUS, 'away');
+          (window as any).activityTimeout = setTimeout(() => socket.emit(UPDATE_STATUS, 'away'), 60000);
+
+        } else {
+          clearTimeout((window as any).activityTimeout);
+          socket.emit(UPDATE_STATUS, 'online');
+
+        }
+      };
+
+      const handleWindowBlur = () => {
+          // socket.emit(UPDATE_STATUS, 'away');
+          (window as any).activityTimeout = setTimeout(() => socket.emit(UPDATE_STATUS, 'away'), 60000);
+        
+      };
+
+      const handleWindowFocus = () => {
+          clearTimeout((window as any).activityTimeout);
+          socket.emit(UPDATE_STATUS, 'online');
+
+      };
+
+      const handleWindowClose = () => {
+
+        socket.emit(UPDATE_STATUS, 'away');
+
+
+      };
+
+      const resetActivityTimeout = () => {
+        clearTimeout((window as any).activityTimeout);
+          socket.emit(UPDATE_STATUS, 'online');
+        (window as any).activityTimeout = setTimeout(() => {
+          socket.emit(UPDATE_STATUS, 'away');
+
+        }, 60000); // 60 secs of inactivity
+      };
+
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+      window.addEventListener('blur', handleWindowBlur);
+      window.addEventListener('focus', handleWindowFocus);
+      window.addEventListener('beforeunload', handleWindowClose);
+      document.addEventListener('mousemove', resetActivityTimeout);
+      document.addEventListener('keydown', resetActivityTimeout);
+
+      return () => {
+          document.removeEventListener('visibilitychange', handleVisibilityChange);
+          window.removeEventListener('blur', handleWindowBlur);
+          window.removeEventListener('focus', handleWindowFocus);
+          window.removeEventListener('beforeunload', handleWindowClose);
+          document.removeEventListener('mousemove', resetActivityTimeout);
+          document.removeEventListener('keydown', resetActivityTimeout);
+      }
+      },[socket])
+
+      const checkOnlineStatus = (user : any) => {
+        const onlineUser : any = onlineUsers.find((u: any) => u.userId === user?._id);
+        return onlineUser ? onlineUser.status : 'offline';
+    };
+
     // Function to retrieve available users.
     const getUsers = useCallback( async () => {
         requestHandler(
@@ -90,6 +168,17 @@ const SupremeALphaPage = () => {
         getUsers();
       }, []);
 
+      useEffect(() => {
+        if(!socket) return;
+        socket.on('user-block-status-changed', (data) => {
+          setUsers(users.map(user => user?._id === data?._id ? { ...user, blocked: data.blocked } : user));
+          LocalStorage.set('isRestricted', JSON.stringify(data.blocked));
+        });
+    
+        return () => {
+          socket.off('user-block-status-changed');
+        };
+      }, [socket, users]);
   
     const itemsPerPage = 3; // Number of items per page
     // const pageCount = Math.ceil(users?.length / itemsPerPage);
@@ -171,6 +260,31 @@ const SupremeALphaPage = () => {
         });
         }, []);
 
+        const handleToggle = async (id:string) =>{
+          setLoading(true);
+          setStatusEnableDisable(id);
+          requestHandler(
+              // Call api
+              async () => await block({
+                userToBlockId: id
+              }),
+              setIsLoading,
+              // On successful retrieval,
+              (res) => {
+                const {data} = res;
+                if(data.blocked){
+                  socket?.emit('block-user', data._id);
+                } else {
+                  socket?.emit('unblock-user', data._id);
+                }
+                getUsers();
+                navigate("/dashboard");
+              },
+              alert // Use default alert for any error messages.
+              );
+          setLoading(false);
+        }        
+
     const handleSubmit = async(values:any, { setSubmitting }:any) => {
             if (values?._id) {
               if (values._id) {
@@ -239,13 +353,28 @@ const SupremeALphaPage = () => {
             { key: "name", value: "Name" },
           //   { key: "email", value: "Email" },
             { key: "phone", value: "Phone No." },
-            { key: "status", value: "Status" },
+            { key: "status", value: "Current Status" },
+            { key: "enable_disable", value: "User Account" },
             { key: "actions", value: "Actions" },
           ];
         
           const startIndex = currentPage * itemsPerPage;
           const endIndex = startIndex + itemsPerPage;
-          const currentData = filteredData.slice(startIndex, endIndex);      
+          const currentData = filteredData.slice(startIndex, endIndex);  
+          
+          const EnableDisableHeader = () => (
+            <div className="flex items-center space-x-2">
+              <span>User Account</span>
+              <div className="relative group">
+                <svg className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 px-2 py-1 text-xs text-white bg-black rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                  Enable/Disable the user account during Online Status
+                </span>
+              </div>
+            </div>
+          );       
   return (
     <> 
     <div className="flex justify-between items-center mb-4">
@@ -271,7 +400,7 @@ const SupremeALphaPage = () => {
                     <thead>
                       <tr>
                         {tableFields.map(field => (
-                          <th key={field.key}>{field.value}</th>
+                          <th key={field.key}>{field.key === "enable_disable" ? <EnableDisableHeader /> : field.value}</th>
                         ))}
                       </tr>
                     </thead>
@@ -289,8 +418,41 @@ const SupremeALphaPage = () => {
                               </div>  
                           </td>
                           <td className="text-center">{user.phone ? user.phone : '9876543210'}</td>
-                          <td className={`text-center ${user.verified ? 'text-green-500' : 'text-red-500'}`}>
+                          {/* <td className={`text-center ${user.verified ? 'text-green-500' : 'text-red-500'}`}>
                             {user.verified ? 'Active' : 'Inactive'}
+                          </td> */}
+                          <td>
+                             {checkOnlineStatus(user) === "online" && 
+                                (<><div className="flex justify-center items-center gap-x-1">
+                                  {/* <p className="w-3 h-3 me-3 bg-green-500 rounded-full"></p> */}
+                                  <div className="online-green-indicator"><span className={"blink-green"}></span></div>
+                                  <p className="text-center text-green-500">Online</p></div>
+                                  </>)}
+                                {checkOnlineStatus(user) === "away" && 
+                                (<><div className="flex justify-center items-center gap-x-1">
+                                  <p className="w-3 h-3 me-3 bg-yellow-300 rounded-full"></p>
+                                  <p className="text-center text-yellow-500">Away</p></div>
+                                  </>)}
+                                {checkOnlineStatus(user) === "offline" && 
+                                (<><div className="flex justify-center items-center gap-x-1">
+                                  <p className="w-3 h-3 bg-red-500 rounded-full"></p>
+                                  <p className="text-center text-red-500">Offline</p>
+                                </div>
+                              </>)}
+                            </td> 
+                          <td className="text-center">
+                          <label className="inline-flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              value=""
+                              className="sr-only peer"
+                              checked={user?.blocked ? false : true}
+                              onChange={() => handleToggle(user._id)}
+                              disabled={loading} // Disable button while loading
+                            />
+                            <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
+                            {loading && <span className="ms-3 text-sm font-medium text-gray-500 dark:text-gray-400">Loading...</span>}
+                          </label>
                           </td>
                           <td className="text-center">
                             <button className="focus:outline-none text-white bg-yellow-500 hover:bg-yellow-600 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-4 py-2 me-2  dark:focus:ring-yellow-900" onClick={()=>handleUpdateUser(user._id)}  >Edit</button>
