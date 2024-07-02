@@ -1182,6 +1182,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
                         LocalStorage.remove("currentChat");
                       }
                     }}
+                    blocked={chat?.blocked}
                   />
                 );
               })
@@ -1373,11 +1374,8 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
                     </div> 
                 </div>)}
 
-
-
-                
-
-              <div className="sticky top-full p-4 flex justify-between items-center w-full gap-2 border-t-[0.1px] border-secondary">
+{/*  ${getChatObjectMetadata(currentChat.current, user!)?.blocked ? 'disabled-userlist' : ''}  */}
+              <div className={`sticky top-full p-4 flex justify-between items-center w-full gap-2 border-t-[0.1px] border-secondary ${getChatObjectMetadata(currentChat.current, user!)?.blocked ? 'disabled-user-sendmessage' : ''}`}>
                 <input
                   hidden
                   id="attachments"
