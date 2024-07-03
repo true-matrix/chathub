@@ -256,7 +256,7 @@ const getAllMessages = asyncHandler(async (req, res) => {
     throw new ApiError(400, "User is not a part of this chat");
   }
 
-  const otherParticipantId = selectedChat.participants.find(participantId => !participantId.equals(req.user._id));
+  const otherParticipantId = selectedChat.participants.find(participantId => !participantId?.equals(req.user._id));
   const recipient = await User.findById(otherParticipantId);
 
   const messages = await ChatMessage.aggregate([
@@ -342,7 +342,7 @@ const sendMessage = asyncHandler(async (req, res) => {
   }
 
   const chatData = await Chat.findById(chatId);
-  const otherParticipantId = chatData.participants.find(participantId => !participantId.equals(req.user._id));
+  const otherParticipantId = chatData.participants.find(participantId => !participantId?.equals(req.user._id));
   const receiver = await User.findById(otherParticipantId);
 
   // Determine the initial status of the message
