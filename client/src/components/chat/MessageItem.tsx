@@ -290,7 +290,7 @@ const MessageItem: React.FC<{
                 src={message.sender?.avatar?.url}
                 className={classNames(
                   "h-8 w-8 object-cover rounded-full flex flex-shrink-0",
-                  isOwnMessage ? "order-2" : "order-1"
+                  isOwnMessage ? "order-2 hidden" : "order-1"
               )} />}
           </div>
            
