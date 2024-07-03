@@ -55,7 +55,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         const { data } = res;
         setUser(data.user);
         if(data.user.blocked){
-          window.alert("Your account is 🚫Restricted. Please contact Supreme Alpha.");
+          window.alert("Your account is 🚫Disabled. Please contact your account admin.");
           navigate("/login")
           return;
         }
