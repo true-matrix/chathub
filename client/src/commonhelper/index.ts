@@ -60,8 +60,53 @@ export const getMonthDayYearTimeValue = (date: string | any) => {
 };
 
 // // For local test
+// export const getRecentTime = (date: string | any) => {
+//   // const currentTime: any = new Date();
+//   const messageTime: any = new Date(date);
+
+//   const isToday = (someDate: any) => {
+//     const today = new Date();
+//     return (
+//       someDate.getDate() === today.getDate() &&
+//       someDate.getMonth() === today.getMonth() &&
+//       someDate.getFullYear() === today.getFullYear()
+//     );
+//   };
+
+//   // const timeDiffSeconds = (currentTime - messageTime) / 1000;
+
+//   let formattedTime;
+
+//   // if (timeDiffSeconds < 60) {
+//   //   formattedTime = "a few seconds ago";
+//   // } else if (timeDiffSeconds >= 60 && timeDiffSeconds < 120) {
+//   //   formattedTime = "1 minute ago";
+//   // }
+//   if (isToday(messageTime)) {
+//     const hours = messageTime.getHours();
+//     const minutes = messageTime.getMinutes();
+//     const ampm = hours >= 12 ? "pm" : "am";
+//     const formattedHours = hours % 12 || 12;
+//     formattedTime = `Today, ${formattedHours}:${minutes
+//       .toString()
+//       .padStart(2, "0")}${ampm}`;
+//   } else {
+//     const day = messageTime.getDate().toString().padStart(2, "0");
+//     const month = messageTime.toLocaleString("default", { month: "short" });
+//     const year = messageTime.getFullYear().toString().slice(-2);
+//     const hours = messageTime.getHours();
+//     const minutes = messageTime.getMinutes();
+//     const ampm = hours >= 12 ? "pm" : "am";
+//     const formattedHours = hours % 12 || 12;
+//     formattedTime = `${day}-${month}-${year}, ${formattedHours}:${minutes
+//       .toString()
+//       .padStart(2, "0")}${ampm}`;
+//   }
+
+//   return formattedTime;
+// };
+
 export const getRecentTime = (date: string | any) => {
-  // const currentTime: any = new Date();
   const messageTime: any = new Date(date);
 
   const isToday = (someDate: any) => {
@@ -73,38 +118,48 @@ export const getRecentTime = (date: string | any) => {
     );
   };
 
-  // const timeDiffSeconds = (currentTime - messageTime) / 1000;
+  const isYesterday = (someDate: any) => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    return (
+      someDate.getDate() === yesterday.getDate() &&
+      someDate.getMonth() === yesterday.getMonth() &&
+      someDate.getFullYear() === yesterday.getFullYear()
+    );
+  };
+
+  const isWithinLastFiveDays = (someDate: any) => {
+    const today = new Date();
+    const fiveDaysAgo = new Date();
+    fiveDaysAgo.setDate(today.getDate() - 5);
+    return someDate > fiveDaysAgo && someDate < today;
+  };
 
   let formattedTime;
 
-  // if (timeDiffSeconds < 60) {
-  //   formattedTime = "a few seconds ago";
-  // } else if (timeDiffSeconds >= 60 && timeDiffSeconds < 120) {
-  //   formattedTime = "1 minute ago";
-  // }
   if (isToday(messageTime)) {
     const hours = messageTime.getHours();
     const minutes = messageTime.getMinutes();
     const ampm = hours >= 12 ? "pm" : "am";
     const formattedHours = hours % 12 || 12;
-    formattedTime = `Today, ${formattedHours}:${minutes
+    formattedTime = `${formattedHours}:${minutes
       .toString()
       .padStart(2, "0")}${ampm}`;
+  } else if (isYesterday(messageTime)) {
+    formattedTime = "Yesterday";
+  } else if (isWithinLastFiveDays(messageTime)) {
+    const day = messageTime.toLocaleString("default", { weekday: "long" });
+    formattedTime = day;
   } else {
     const day = messageTime.getDate().toString().padStart(2, "0");
     const month = messageTime.toLocaleString("default", { month: "short" });
     const year = messageTime.getFullYear().toString().slice(-2);
-    const hours = messageTime.getHours();
-    const minutes = messageTime.getMinutes();
-    const ampm = hours >= 12 ? "pm" : "am";
-    const formattedHours = hours % 12 || 12;
-    formattedTime = `${day}-${month}-${year}, ${formattedHours}:${minutes
-      .toString()
-      .padStart(2, "0")}${ampm}`;
+    formattedTime = `${day}-${month}-${year}`;
   }
 
   return formattedTime;
 };
+
 
 //For live server => live server time is 13h30mins advance
 // export const getRecentTime = (date: string | any) => {
