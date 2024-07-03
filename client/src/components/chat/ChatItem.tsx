@@ -224,7 +224,7 @@ const ChatItem: React.FC<{
 
 
 
-          <button
+          {/* <button
             onClick={(e) => {
               e.stopPropagation();
               setOpenOptions(!openOptions);
@@ -233,7 +233,6 @@ const ChatItem: React.FC<{
           > 
             <PencilSquareIcon className="h-6 group-hover:w-6 group-hover:opacity-100 w-0 opacity-0 transition-all ease-in-out duration-100 text-white shadow-black bg-green-500 transition duration-200 transform " />
 
-            {/* <img src={bottomArrow} className="h-6 group-hover:w-6 group-hover:opacity-100 w-0 opacity-0 transition-all ease-in-out duration-100 text-white shadow-black bg-green-500 transition duration-200 transform hover:scale-150"/> */}
 
             <div
               className={classNames(
@@ -281,7 +280,7 @@ const ChatItem: React.FC<{
                   Options 3
               </p>
             </div>
-          </button>
+          </button> */}
 
           </div>
 
