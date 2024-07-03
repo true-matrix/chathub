@@ -264,7 +264,7 @@ const MessageItem: React.FC<{
               {isOwnMessage && (
                 <>
                 {/* {message.status ? message.status : '-'} */}
-                {JSON.stringify(onSeen)}
+                {/* {JSON.stringify(onSeen)} */}
 
                  
                  {!onSeen ? (
@@ -286,12 +286,12 @@ const MessageItem: React.FC<{
               )}
               </div>
 
-              <img
+              {isGroupChatMessage && <img
                 src={message.sender?.avatar?.url}
                 className={classNames(
                   "h-8 w-8 object-cover rounded-full flex flex-shrink-0",
                   isOwnMessage ? "order-2" : "order-1"
-              )} />
+              )} />}
           </div>
            
           
