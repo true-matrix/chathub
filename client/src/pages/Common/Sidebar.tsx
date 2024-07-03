@@ -92,7 +92,7 @@ const Sidebar = () => {
                 <li className="nav-item dropdown profile-user-dropdown mt-auto"> 
                 <Popup trigger={
                   <button
-                    className="profile-user rounded-full bg-primary text-white text-md py-3 px-4"
+                    className="profile-user rounded-full bg-primary text-white text-md py-3 px-4 border-2 border-green-500 transition duration-200 transform hover:scale-110"
                     title={user?.name}
                   >
                     {capitalizeName(user?.name)}
