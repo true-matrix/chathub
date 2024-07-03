@@ -794,7 +794,9 @@ span.user-away {
   margin-top: 0.5rem;
   font-size: 0.875rem;
 }
-
+.edituser-dropdown{
+  
+}
 .password-strength0 { 
   background: #e00707;
   border-radius: 5px;

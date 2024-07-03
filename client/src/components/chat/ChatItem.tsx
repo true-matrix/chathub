@@ -11,6 +11,7 @@ import { ChatListItemInterface } from "../../interfaces/chat";
 import { classNames, getChatObjectMetadata, requestHandler } from "../../utils";
 import GroupChatDetailsModal from "./GroupChatDetailsModal";
 import { getRecentTime } from "../../commonhelper";
+import {bottomArrow} from "../../assets/images/arrow-bottom.svg";
 
 const ChatItem: React.FC<{
   chat: ChatListItemInterface;
@@ -113,55 +114,7 @@ const ChatItem: React.FC<{
       >
         {JSON.stringify(blocked)}
         <div className={`py-2 group flex justify-between gap-3 items-start cursor-pointer border-b-[0.1px] ${ getChatObjectMetadata(chat, user!)?.blocked ? 'disabled-userlist' : ''}`}> 
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpenOptions(!openOptions);
-            }}
-            className="self-center  relative"
-          >
-            {/* <EllipsisVerticalIcon className="h-6 group-hover:w-6 group-hover:opacity-100 w-0 opacity-0 transition-all ease-in-out duration-100 text-zinc-500" /> */}
-            {/* <EllipsisVerticalIcon className="h-6 group-hover:w-6 group-hover:opacity-100 w-0 opacity-0 transition-all ease-in-out duration-100 text-zinc-500 group-hover:border group-hover:border-dotted group-hover:border-red-500" /> */}
-            {/* <EllipsisVerticalIcon className="h-6 group-hover:w-6 group-hover:opacity-100 w-0 opacity-0 transition-all ease-in-out duration-100 text-white shadow-black bg-green-500 transition duration-200 transform hover:scale-150" /> */}
-            <PencilSquareIcon className="h-6 group-hover:w-6 group-hover:opacity-100 w-0 opacity-0 transition-all ease-in-out duration-100 text-white shadow-black bg-green-500 transition duration-200 transform hover:scale-150" />
 
-            <div
-              className={classNames(
-                "z-20 text-left absolute bottom-0 translate-y-full text-sm w-52 bg-white rounded-2xl p-2 shadow-md ",
-                openOptions ? "block" : "hidden"
-              )}
-            >
-              {chat.isGroupChat ? (
-                <p
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setOpenGroupInfo(true);
-                  }}
-                  role="button"
-                  className="p-4 w-full rounded-lg inline-flex items-center hover:bg-secondary hover:text-white"
-                >
-                  <InformationCircleIcon className="h-4 w-4 mr-2" /> About pack
-                </p>
-              ) : (
-                <p
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    const ok = confirm(
-                      "Are you sure you want to delete this chat?"
-                    );
-                    if (ok) {
-                      deleteChat();
-                    }
-                  }}
-                  role="button"
-                  className="p-4 text-danger rounded-lg w-full inline-flex items-center hover:bg-danger hover:text-white"
-                >
-                  <TrashIcon className="h-4 w-4 mr-2" />
-                  Delete chat
-                </p>
-              )}
-            </div>
-          </button>
           <div className="flex justify-center items-center flex-shrink-0 relative">
             {chat.isGroupChat ? (
               <> 
@@ -196,7 +149,7 @@ const ChatItem: React.FC<{
             </div>
           </div>
           <div className="flex text-white/50 h-full text-sm flex-col justify-between items-end">
-            <small className="mb-2 inline-flex flex-shrink-0 w-max text-zinc-400">
+            <small className="mb-1 inline-flex flex-shrink-0 w-max text-zinc-400">
               {/* {moment(chat.updatedAt).add("TIME_ZONE", "hours").fromNow(true)} */}
               {/* {moment(chat.updatedAt).subtract("TIME_ZONE", "hours").fromNow(true)} */}
               {getRecentTime(chat.updatedAt)}
@@ -206,15 +159,12 @@ const ChatItem: React.FC<{
               return (
                 <React.Fragment key={part._id}>
                   {part.userRole === 'supremeAlpha' && part._id !== chat.admin && <div className="svg-container pendulum-on-hover">
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M13.75 8.75V5.625C13.75 4.63044 13.3549 3.67661 12.6516 2.97335C11.9484 2.27009 10.9946 1.875 10 1.875C9.00544 1.875 8.05161 2.27009 7.34835 2.97335C6.64509 3.67661 6.25 4.63044 6.25 5.625V8.75M5.625 18.125H14.375C14.8723 18.125 15.3492 17.9275 15.7008 17.5758C16.0525 17.2242 16.25 16.7473 16.25 16.25V10.625C16.25 10.1277 16.0525 9.65081 15.7008 9.29917C15.3492 8.94754 14.8723 8.75 14.375 8.75H5.625C5.12772 8.75 4.65081 8.94754 4.29917 9.29917C3.94754 9.65081 3.75 10.1277 3.75 10.625V16.25C3.75 16.7473 3.94754 17.2242 4.29917 17.5758C4.65081 17.9275 5.12772 18.125 5.625 18.125Z" stroke="#71717ab0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-    </svg>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.75 8.75V5.625C13.75 4.63044 13.3549 3.67661 12.6516 2.97335C11.9484 2.27009 10.9946 1.875 10 1.875C9.00544 1.875 8.05161 2.27009 7.34835 2.97335C6.64509 3.67661 6.25 4.63044 6.25 5.625V8.75M5.625 18.125H14.375C14.8723 18.125 15.3492 17.9275 15.7008 17.5758C16.0525 17.2242 16.25 16.7473 16.25 16.25V10.625C16.25 10.1277 16.0525 9.65081 15.7008 9.29917C15.3492 8.94754 14.8723 8.75 14.375 8.75H5.625C5.12772 8.75 4.65081 8.94754 4.29917 9.29917C3.94754 9.65081 3.75 10.1277 3.75 10.625V16.25C3.75 16.7473 3.94754 17.2242 4.29917 17.5758C4.65081 17.9275 5.12772 18.125 5.625 18.125Z" stroke="#71717ab0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
   </div>}
                 </React.Fragment>)})
               }
-            {/* // <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            //   <path d="M13.75 8.75V5.625C13.75 4.63044 13.3549 3.67661 12.6516 2.97335C11.9484 2.27009 10.9946 1.875 10 1.875C9.00544 1.875 8.05161 2.27009 7.34835 2.97335C6.64509 3.67661 6.25 4.63044 6.25 5.625V8.75M5.625 18.125H14.375C14.8723 18.125 15.3492 17.9275 15.7008 17.5758C16.0525 17.2242 16.25 16.7473 16.25 16.25V10.625C16.25 10.1277 16.0525 9.65081 15.7008 9.29917C15.3492 8.94754 14.8723 8.75 14.375 8.75H5.625C5.12772 8.75 4.65081 8.94754 4.29917 9.29917C3.94754 9.65081 3.75 10.1277 3.75 10.625V16.25C3.75 16.7473 3.94754 17.2242 4.29917 17.5758C4.65081 17.9275 5.12772 18.125 5.625 18.125Z" stroke="#71717ab0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-            // </svg>} */}
 
 
 
@@ -224,7 +174,71 @@ const ChatItem: React.FC<{
                 {unreadCount > 9 ? "9+" : unreadCount}
               </span>
             )}
+
+
+
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpenOptions(!openOptions);
+            }}
+            className="self-endd  relative"
+          > 
+            <PencilSquareIcon className="h-6 group-hover:w-6 group-hover:opacity-100 w-0 opacity-0 transition-all ease-in-out duration-100 text-white shadow-black bg-green-500 transition duration-200 transform " />
+
+            {/* <img src={bottomArrow} className="h-6 group-hover:w-6 group-hover:opacity-100 w-0 opacity-0 transition-all ease-in-out duration-100 text-white shadow-black bg-green-500 transition duration-200 transform hover:scale-150"/> */}
+
+            <div
+              className={classNames(
+                "edituser-dropdown right-0 z-20 text-left absolute bottom-0 translate-y-full text-sm w-52 bg-white rounded-2xl p-2 shadow-md ",
+                openOptions ? "block" : "hidden"
+              )}
+            >
+              {chat.isGroupChat ? (
+                <p
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setOpenGroupInfo(true);
+                  }}
+                  role="button"
+                  className="p-3 w-full text-dark rounded-lg inline-flex items-center hover:bg-secondary hover:text-white"
+                >
+                  <InformationCircleIcon className="h-4 w-4 mr-2" /> About pack
+                </p>
+              ) : (
+                <p
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const ok = confirm(
+                      "Are you sure you want to delete this chat?"
+                    );
+                    if (ok) {
+                      deleteChat();
+                    }
+                  }}
+                  role="button"
+                  className="p-3 text-danger rounded-lg w-full inline-flex items-center hover:bg-danger hover:text-white"
+                >
+                  <TrashIcon className="h-4 w-4 mr-2" />
+                  Delete chat
+                </p>
+              )}
+
+              <p className="p-3 text-zinc-500 rounded-lg w-full inline-flex items-center hover:bg-zinc-100 hover:text-zinc-900" > 
+                  Options 1
+              </p>
+              <p className="p-3 text-zinc-500 rounded-lg w-full inline-flex items-center hover:bg-zinc-100 hover:text-zinc-900" > 
+                  Options 2
+              </p>
+              <p className="p-3 text-zinc-500 rounded-lg w-full inline-flex items-center hover:bg-zinc-100 hover:text-zinc-900" > 
+                  Options 3
+              </p>
+            </div>
+          </button>
+
           </div>
+
+          
         </div>
       </div>
     </>
