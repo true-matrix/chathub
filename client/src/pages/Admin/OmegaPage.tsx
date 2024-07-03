@@ -434,7 +434,7 @@ const OmegaPage = () => {
                                     <div className="font-normal text-gray-500">{user.email}</div>
                                 </div>  
                             </td>
-                            <td>{user.phone ? user.phone : '9876543210'}</td>
+                            <td className="text-center">{user.phone ? user.phone : '9876543210'}</td>
                             {/* <td className={`text-center ${user.verified ? 'text-green-500' : 'text-red-500'}`}>
                                 {user.verified ? 'Active' : 'Inactive'}
                             </td> */}
@@ -457,7 +457,7 @@ const OmegaPage = () => {
                                 </div>
                               </>)}
                             </td> 
-                            <td className="text-center">
+                            <td className="text-left">
                           <label className="inline-flex items-center cursor-pointer">
                             <input
                               type="checkbox"

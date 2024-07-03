@@ -440,7 +440,7 @@ const SupremeALphaPage = () => {
                                 </div>
                               </>)}
                             </td> 
-                          <td className="text-center">
+                          <td className="text-left">
                           <label className="inline-flex items-center cursor-pointer">
                             <input
                               type="checkbox"
