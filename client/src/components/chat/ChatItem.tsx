@@ -111,8 +111,8 @@ const ChatItem: React.FC<{
             : ""
         )}
       >
-        {JSON.stringify(blocked)}
-        <div className={`py-2 group flex justify-between gap-3 items-start cursor-pointer border-b-[0.1px] ${ getChatObjectMetadata(chat, user!)?.blocked ? 'disabled-userlist' : ''}`}> 
+        {/* {JSON.stringify(blocked)} */}
+        <div className={`py-2 group flex justify-between gap-3 items-start cursor-pointer border-b-[0.1px] `}> 
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -162,7 +162,7 @@ const ChatItem: React.FC<{
               )}
             </div>
           </button>
-          <div className="flex justify-center items-center flex-shrink-0 relative">
+          <div className={`flex justify-center items-center flex-shrink-0 relative ${ getChatObjectMetadata(chat, user!)?.blocked ? 'disabled-chatitem' : ''}`}>
             {chat.isGroupChat ? (
               <> 
             <img
@@ -181,7 +181,7 @@ const ChatItem: React.FC<{
                 {isOnline === "offline" && <span className="user-inactive"></span>}
             </>)}
           </div>
-          <div className="w-full">
+          <div className={`w-full ${ getChatObjectMetadata(chat, user!)?.blocked ? 'disabled-chatitem' : ''}`}>
             <p className="truncate-1 text-sm">
               {getChatObjectMetadata(chat, user!).title}
             </p>
