@@ -163,7 +163,7 @@ console.log(isLoading);
             <div className="relative mx-auto">
               <div className="flex justify-center">
                 {/* <img src="https://tecdn.b-cdn.net/img/new/avatars/2.webp" alt="" className="rounded-full mx-auto w-32 h-32 shadow-md border-4 border-white transition duration-200 transform hover:scale-110"/> */}
-                <img src={user?.avatar?.url} alt="" className="rounded-full mx-auto w-32 h-32 shadow-md border-4 border-white transition duration-200 transform hover:scale-110"/>
+                <img src={user?.avatar?.url} alt="" className="rounded-full mx-auto w-32 h-32 shadow-md border-4 border-white transition duration-200 transform hover:scale-110 hover:border-animation"/>
               </div>
               <div className="mt-3">
                 <h1 className="font-bold text-center text-3xl text-gray-900">{ user.name ? user.name: user?.username}</h1>

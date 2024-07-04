@@ -1009,6 +1009,24 @@ span.user-away {
 
 /* Chat Lock Animation End */
 
+/* Profile border animation */
+
+@keyframes borderAnimation {
+  0% {
+    border-color: #f80f9781
+  }
+  50% {
+    border-color: #f4f73385;
+  }
+  100% {
+    border-color: rgba(14, 212, 30, 0.596);
+  }
+}
+
+.hover\:border-animation:hover {
+  animation: borderAnimation 2s infinite;
+}
+
 /* Pretty complex animation, so each side needs its own @keyframes. */
 
 @keyframes slide1 {
