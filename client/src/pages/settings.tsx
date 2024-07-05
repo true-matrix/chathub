@@ -146,6 +146,24 @@ console.log(isLoading);
       }
   }
 };
+
+const handleShare = async () => {
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: 'Invite a friend to Wolfpack Messenger',
+        text: 'Check out this cool app!',
+        url: 'http://app.wolfpackmessenger.com',
+      });
+      console.log('Successfully shared');
+    } catch (error) {
+      console.error('Something went wrong sharing the link', error);
+    }
+  } else {
+    // Fallback for browsers that do not support the Web Share API
+    alert('Sharing not supported on this browser. Copy this link: http://app.wolfpackmessenger.com');
+  }
+};
   
   return (
     <>
@@ -167,7 +185,7 @@ console.log(isLoading);
               </div>
               <div className="mt-3">
                 <h1 className="font-bold text-center text-3xl text-gray-900">{ user.name ? user.name: user?.username}</h1>
-                <p className="text-center text-sm text-gray-400 font-medium">{showUserRole(user?.userRole)}</p>
+                <div className="flex justify-center items-center mt-3"><p className="text-center text-sm text-black-400 font-bold glowing-border">{showUserRole(user?.userRole)}</p></div>
                 <div className="w-full">
                   <div className="mt-5 w-full flex flex-col items-center overflow-hidden text-sm">
                     <a href="#" className="w-full text-gray-600 py-2 pl-3 pr-3 w-full block">
@@ -186,8 +204,23 @@ console.log(isLoading);
         <div className="ml-4">
           <div className="w-full">
               <div className="mt-5 w-full flex flex-col items-center overflow-hidden text-sm">
-                <a href="https://truematrix.ai/contact/" className="w-full text-gray-600 py-2 pl-3 pr-3 w-full block" target="_blank" rel="noopener noreferrer">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 size-6 inline-block mr-3">
+              <button
+                  onClick={handleShare}
+                  className="w-full text-gray-600 py-2 pl-3 pr-3 block font-bold rounded flex items-center"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 size-6 inline-block mr-3 text-gray-900">
+                    <path fillRule="evenodd" d="M15.75 4.5a3 3 0 1 1 .825 2.066l-8.421 4.679a3.002 3.002 0 0 1 0 1.51l8.421 4.679a3 3 0 1 1-.729 1.31l-8.421-4.678a3 3 0 1 1 0-4.132l8.421-4.679a3 3 0 0 1-.096-.755Z" clipRule="evenodd" />
+                  </svg>
+                  Invite a friend
+                </button>
+              </div>
+          </div>
+        </div>
+        <div className="ml-4">
+          <div className="w-full">
+              <div className=" w-full flex flex-col items-center overflow-hidden text-sm">
+                <a href="https://truematrix.ai/contact/" className="w-full text-gray-600 py-2 pl-3 pr-3 font-bold w-full block" target="_blank" rel="noopener noreferrer">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 size-6 inline-block mr-3 text-gray-900">
                   <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 0 1-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 0 1-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 0 1-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584ZM12 18a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clipRule="evenodd" />
                 </svg>
                   Help center
