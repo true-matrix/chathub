@@ -1009,6 +1009,47 @@ span.user-away {
 
 /* Chat Lock Animation End */
 
+/* Settings -> userRole animation start*/
+/* Define the custom property for the angle */
+@property --angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+/* Define the rotating gradient border */
+.glowing-border {
+  padding: 0.4rem;
+  border-radius: 0.6rem;
+  background: linear-gradient(var(--angle), #e5ff00, #00e231);
+  animation: rotate 5s linear infinite;
+  display: inline-block; /* Ensure the padding is applied correctly */
+}
+
+@keyframes rotate {
+  from {
+    --angle: 0deg;
+  }
+  to {
+    --angle: 360deg;
+  }
+}
+
+/* Define the container for text with equal padding */
+.text-container {
+  padding: 2rem 3rem;
+  border-radius: 0.6rem;
+  background: #0f172a; /* Background color inside the border */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+/* Settings -> userRole animation end*/
+
 /* Profile border animation */
 
 @keyframes borderAnimation {
