@@ -175,7 +175,7 @@ const AddChatModal: React.FC<{
                       as="h3"
                       className="text-lg font-semibold leading-6 text-dark"
                     >
-                      Create chat
+                      Howl
                     </Dialog.Title>
                     <button
                       type="button"
