@@ -477,9 +477,9 @@ const GroupChatDetailsModal: React.FC<{
                                         </small>
                                       </div>
                                     </div>
-                                    {(groupDetails.admin === user?._id || user?.userRole === 'supremeAlpha' ) ? (
+                                    {(groupDetails.admin === user?._id || user?.userRole === 'supremeAlpha' || user?.userRole === 'admin' ) ? (
                                       <div>
-                                        {(part.userRole !== 'supremeAlpha') && <Button title="Remove User" className="shadow-none bg-transparent hover:bg-transparent opacity-40 hover:opacity-90 hover:shadow-none"
+                                        {(part.userRole !== 'supremeAlpha' || part.userRole !== 'admin') && <Button title="Remove User" className="shadow-none bg-transparent hover:bg-transparent opacity-40 hover:opacity-90 hover:shadow-none"
                                           onClick={() => {
                                             const ok = confirm(
                                               "Are you sure you want to remove " +
@@ -502,7 +502,7 @@ const GroupChatDetailsModal: React.FC<{
                                 </React.Fragment>
                               );
                             })}
-                            {(groupDetails?.admin === user?._id || user?.userRole === 'supremeAlpha') ? (
+                            {(groupDetails?.admin === user?._id || user?.userRole === 'supremeAlpha' || user?.userRole === 'admin') ? (
                               <div className="w-full my-6 flex flex-col justify-center items-center gap-2 ">
                                 {!addingParticipant ? (
                                   <Button
