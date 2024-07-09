@@ -256,7 +256,7 @@ const getAllMessages = asyncHandler(async (req, res) => {
     throw new ApiError(400, "User is not a part of this chat");
   }
 
-  const otherParticipantId = selectedChat.participants.find(participantId => !participantId?.equals(req.user._id));
+  const otherParticipantId = selectedChat.participants.find(participantId => !participantId?.equals(req.user?._id));
   const recipient = await User.findById(otherParticipantId);
 
   const messages = await ChatMessage.aggregate([
@@ -280,9 +280,9 @@ const getAllMessages = asyncHandler(async (req, res) => {
   for (const message of messages) {
     if (
       message.status !== 'read' &&
-      message.sender.toString() !== req.user._id.toString() && 
-      selectedChat.participants.includes(req.user._id) &&
-      req.user._id.toString() === recipient._id.toString()
+      message.sender.toString() !== req.user?._id.toString() && 
+      selectedChat.participants.includes(req.user?._id) &&
+      req.user?._id?.toString() === recipient?._id?.toString()
     ) {
       message.status = 'read';
       messageUpdates.push({ _id: message._id, status: 'read' });
@@ -342,7 +342,7 @@ const sendMessage = asyncHandler(async (req, res) => {
   }
 
   const chatData = await Chat.findById(chatId);
-  const otherParticipantId = chatData.participants.find(participantId => !participantId?.equals(req.user._id));
+  const otherParticipantId = chatData.participants.find(participantId => !participantId?.equals(req.user?._id));
   const receiver = await User.findById(otherParticipantId);
 
   // Determine the initial status of the message
@@ -398,12 +398,12 @@ const sendMessage = asyncHandler(async (req, res) => {
   emitSocketEvent(req, chatId, ChatEventEnum.MESSAGE_SENT_EVENT, receivedMessage);
 
   chatData.participants.forEach((participantObjectId) => {
-    if (participantObjectId.toString() === req.user._id.toString()) return;
+    if (participantObjectId?.toString() === req.user?._id?.toString()) return;
 
-    emitSocketEvent(req, participantObjectId.toString(), ChatEventEnum.MESSAGE_RECEIVED_EVENT, receivedMessage);
+    emitSocketEvent(req, participantObjectId?.toString(), ChatEventEnum.MESSAGE_RECEIVED_EVENT, receivedMessage);
 
      // Check if receiver is online
-     if (receiver.isOnline) {
+     if (receiver?.isOnline) {
       receivedMessage.status = 'delivered';
       // receivedMessage.save();
       emitSocketEvent(req,req.user._id,'messageStatusUpdate', receivedMessage) // Notify sender about delivery
