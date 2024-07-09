@@ -41,6 +41,57 @@ const Login = () => {
 //     setIsPasswordHide(!isPasswordHide)
 // }
 
+// useEffect(() => {
+//   const loadBrevoChatWidget = () => {
+//     (function(d : any, w : any, c : any) {
+//       w.BrevoConversationsID = '6687ec88639ffb23da4da477';
+//       w[c] = w[c] || function() {
+//         (w[c].q = w[c].q || []).push(arguments);
+//       };
+//       const s = d.createElement('script');
+//       s.async = true;
+//       s.src = 'https://conversations-widget.brevo.com/brevo-conversations.js';
+//       if (d.head) d.head.appendChild(s);
+//     })(document, window, 'BrevoConversations');
+//   };
+
+
+//   const removeBrevoChatWidget = () => {
+//     const script = document.querySelector('script[src="https://conversations-widget.brevo.com/brevo-conversations.js"]');
+//     if (script) {
+//       script.remove();
+//       delete window.BrevoConversations;
+//     }
+//   };
+
+//   const isTokenAvailable = () => {
+//     const token = localStorage.getItem('token');
+//     return !!token; // Return true if token is found
+//   };
+
+//   if (window.location.pathname === '/login' && !isTokenAvailable()) {
+//     loadBrevoChatWidget();
+//   }
+
+//   // Cleanup when navigating away from '/login'
+//   const handleRouteChange = () => {
+//     if (window.location.pathname !== '/login') {
+//       removeBrevoChatWidget();
+//     }
+//   };
+
+//   // Listen to route changes
+//   window.addEventListener('popstate', handleRouteChange);
+
+//   return () => {
+//     // Cleanup on component unmount
+//     window.removeEventListener('popstate', handleRouteChange);
+//     if (window.location.pathname !== '/login') {
+//       removeBrevoChatWidget();
+//     }
+//   };
+// }, []);
+
   return (
     <div className="w-full justify-between items-stretch h-screen flex flex-shrink-0 overflow-hidden g-0 login-page" >
       <div className="w-1/3 relative px-0 bg-success p-4 align-center">
