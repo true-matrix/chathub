@@ -531,7 +531,27 @@ const changePassword = asyncHandler(async (req, res) => {
   );
 });
 
+//change password from settings api
+const changePasswordFromSettings = asyncHandler(async (req, res) => {
+  const { email, newPassword } = req.body;
 
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new ApiError(404, "User does not exist");
+  }
+
+  user.password = newPassword;
+  await user.save({ validateModifiedOnly: true });
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      { email: user.email },
+      "Password changed successfully!"
+    )
+  );
+});
 
 // Define the updateUserVerifiedStatus handler function
 const updateUserVerifiedStatus = asyncHandler(async (req, res) => {
@@ -905,5 +925,6 @@ export {
   verifyEmail,
   forgotPassword,
   verifyForgotPasswordOTP,
-  changePassword
+  changePassword,
+  changePasswordFromSettings
 };
