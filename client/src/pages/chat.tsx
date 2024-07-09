@@ -116,7 +116,6 @@ const ChatPage = () => {
   const [onlineUsers, setOnlineUsers] = useState([])
   let isSending = false; // this flag to indicate if the message is currently being sent
 
-
   // const [allConnectedUsers, setAllConnectedUsers] = useState<any>([]);
   // const [notificationShown, setNotificationShown] = useState(false);
   useEffect(() => {
