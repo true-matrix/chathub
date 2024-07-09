@@ -4,12 +4,19 @@ import { useAuth } from "../context/AuthContext";
 import rain from '../assets/videos/rain.webm';
 import email from '../assets/images/envelope.svg';
 import phone from '../assets/images/phone-alt.svg'; 
-import { ErrorMessage, Field, Formik } from 'formik';
+import view from "../assets/images/view.png";
+import hidden from "../assets/images/hidden.png";
+import { ErrorMessage, Field, Formik, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useEffect, useState } from "react";
 import { LocalStorage, requestHandler } from "../utils";
-import { updateProfile, updateProfileImage } from "../api";
+import { changePasswordFromSettings, updateProfile, updateProfileImage } from "../api";
 import { useNavigate } from "react-router-dom";
+import Button from "../components/Button";
+import Input from "../components/Input";
+import { passwordStrength } from "check-password-strength";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface CreateUserFormValues {
     id: string,
@@ -17,6 +24,11 @@ interface CreateUserFormValues {
     email: string;
     phone: string;
     gender: string;
+}
+interface FormValues {
+  email: any;
+  newPassword: string;
+  confirmPassword: string;
 }
   
 const SettingsPage = () => {
@@ -27,6 +39,12 @@ const SettingsPage = () => {
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [isImageEditing, setIsImageEditing] = useState(false);
   const [imgFormData, setImgFormData] = useState(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isPasswordHide, setIsPasswordHide] = useState(true);
+  const [passwordStrengthResult, setPasswordStrengthResult] = useState<{ id: number; value: string }>({ id: 0, value: '' });
+  const [passwordLength, setPasswordLength] = useState(12);
+  const [generatedPassword, setGeneratedPassword] = useState('');
+
 
   const showUserRole = (userRole : string) => {
     switch (userRole) {
@@ -48,14 +66,52 @@ const SettingsPage = () => {
         phone: '',
         gender: '',
   };
+  const formInititalValues: FormValues = {
+    email: user?.email,
+    newPassword: '',
+    confirmPassword: ''
+  };
+
   const validationSchema = Yup.object().shape({
         name: Yup.string().required('Name is required'),
         email: Yup.string().email('Invalid email address').required('Email is required'),
         phone: Yup.string().matches(/^\d{10}$/, 'Invalid phone number').required('Phone number is required'),
         gender: Yup.string().required('Gender is required'),
   });
+
+  const PasswordSchema = Yup.object({
+    newPassword: Yup.string()
+      .required('New Password is required')
+      .min(6, 'Password must be at least 6 characters')
+      .max(30, 'Password must be 30 characters or less'),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref('newPassword'), undefined], 'Passwords must match')
+      .required('Confirm Password is required'),
+  });
+
   const [formInititalState, setFormInitState] = useState(initValues);
 console.log(isLoading);
+
+const formik = useFormik({
+  enableReinitialize: true,
+  initialValues: formInititalValues,
+  validationSchema: PasswordSchema,
+  onSubmit: async (values: any) => {
+    // Handle the form submission here
+    try {
+      const response = await changePasswordFromSettings(values);
+      const {data} = response;
+      setIsDropdownOpen(false);
+      // Show a toast message on success
+      toast.success(data?.message);
+
+      // Other success logic...
+    } catch (error) {
+      // Handle errors
+      toast.error("Error changing password.");
+    }
+  },
+});
 
   useEffect(() => {
     setFormInitState((prevState) => ({
@@ -164,6 +220,34 @@ const handleShare = async () => {
     alert('Sharing not supported on this browser. Copy this link: http://app.wolfpackmessenger.com');
   }
 };
+
+const handlePasswordHide = () => {
+  setIsPasswordHide(!isPasswordHide);
+};
+
+const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const newPassword = e.target.value;
+  formik.setFieldValue('newPassword', newPassword);
+  setPasswordStrengthResult(passwordStrength(newPassword));
+};
+
+const generatePassword = (length: number) => {
+  const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
+  let password = "";
+  for (let i = 0, n = charset.length; i < length; ++i) {
+    password += charset.charAt(Math.floor(Math.random() * n));
+  }
+  setGeneratedPassword(password);
+  formik.setFieldValue('newPassword', password);
+  setPasswordStrengthResult(passwordStrength(password));
+};
+
+const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text).then(() => {
+    alert('Password copied to clipboard!');
+  });
+};
+
   
   return (
     <>
@@ -188,15 +272,126 @@ const handleShare = async () => {
                 <div className="flex justify-center items-center mt-3"><p className="text-center text-sm text-black-400 font-bold glowing-border">{showUserRole(user?.userRole)}</p></div>
                 <div className="w-full">
                   <div className="mt-5 w-full flex flex-col items-center overflow-hidden text-sm">
-                    <a href="#" className="w-full text-gray-600 py-2 pl-3 pr-3 w-full block">
+                    <a href="#" className="w-full text-gray-600 py-2 pl-3 pr-3 w-full block hover:text-green-600">
                       <img src={email} alt="" className="h-4 inline-block mr-3"/>{user.email} 
                     </a>
-                    <a href="#" className="w-full text-gray-600 py-2 pl-3 pr-3 w-full block">
+                    <a href="#" className="w-full text-gray-600 py-2 pl-3 pr-3 w-full block hover:text-green-600">
                       <img src={phone} alt="" className="h-4 inline-block mr-3"/>{user.phone ? user.phone : '9876543210'} 
                     </a>
                   </div>
                 </div>
               </div>
+            {/* Add Change Password Section */}
+              <div>
+              <button
+                className="flex justify-between items-center text-gray-600 py-2 pl-3 pr-3 w-full hover:text-green-600"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              >
+                <div className="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 size-6 inline-block mr-3 text-gray-900">
+                    <path fillRule="evenodd" d="M12.516 2.17a.75.75 0 0 0-1.032 0 11.209 11.209 0 0 1-7.877 3.08.75.75 0 0 0-.722.515A12.74 12.74 0 0 0 2.25 9.75c0 5.942 4.064 10.933 9.563 12.348a.749.749 0 0 0 .374 0c5.499-1.415 9.563-6.406 9.563-12.348 0-1.39-.223-2.73-.635-3.985a.75.75 0 0 0-.722-.516l-.143.001c-2.996 0-5.717-1.17-7.734-3.08Zm3.094 8.016a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" />
+                  </svg>
+                  Change Password
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 size-6 inline-block text-gray-900">
+                  <path fillRule="evenodd" d="M12.53 16.28a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 0 1 1.06-1.06L12 14.69l6.97-6.97a.75.75 0 1 1 1.06 1.06l-7.5 7.5Z" clipRule="evenodd" />
+                </svg>
+              </button>
+
+
+
+        {isDropdownOpen && (
+          <div>
+            <form onSubmit={formik.handleSubmit} className="w-full">
+              <div className="flex items-center mb-4">
+                <Input
+                  type="number"
+                  id="passwordLength"
+                  name="passwordLength"
+                  placeholder="Password Length"
+                  onChange={(e) => setPasswordLength(Number(e.target.value))}
+                  value={passwordLength}
+                  className="mr-2"
+                />
+                <Button
+                  type="button"
+                  size="small"
+                  onClick={() => generatePassword(passwordLength)}
+                >
+                  Generate
+                </Button>
+                <Button
+                  type="button"
+                  size="small"
+                  onClick={() => copyToClipboard(generatedPassword)}
+                  className="ml-2"
+                >
+                  Copy
+                </Button>
+              </div>
+
+              <div className="wrapper relative mb-4">
+                <Input
+                  type={isPasswordHide ? "password" : "text"}
+                  id="newPassword"
+                  name="newPassword"
+                  placeholder="New Password"
+                  onChange={handlePasswordChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.newPassword}
+                  className="mt-2"
+                />
+                {formik.touched.newPassword && typeof formik.errors.newPassword === 'string' ? (
+                  <div className='error-msg'>{formik.errors.newPassword}</div>
+                ) : null}
+                {passwordStrengthResult && (
+                  <div className={`password-strength${passwordStrengthResult.id}`}>
+                    <span>{passwordStrengthResult.value}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="wrapper relative">
+                <Input
+                  type={isPasswordHide ? "password" : "text"}
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  placeholder="Confirm Password"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.confirmPassword}
+                />
+                {formik.touched.confirmPassword && typeof formik.errors.confirmPassword === 'string' ? (
+                  <div className='error-msg'>{formik.errors.confirmPassword}</div>
+                ) : null}
+                <Button
+                  className="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted rounded-full p-0 mt-3 pwd-eye"
+                  type="button"
+                  onClick={handlePasswordHide}
+                >
+                  <img
+                    src={isPasswordHide ? hidden : view}
+                    alt={isPasswordHide ? "Hide Password" : "Show Password"}
+                    className="align-middle h-4 w-4"
+                  />
+                </Button>
+              </div>
+
+              <Button
+                // fullWidth
+                size="small"
+                className="mt-3 mb-5 text-md py-2 px-4 w-fit ms-auto"
+                type="submit"
+                disabled={!formik.isValid || formik.isSubmitting}
+              >
+                Reset Password
+              </Button>
+            </form>
+          </div>
+        )}
+        <ToastContainer />
+      </div>
+
             </div>
           </div>
         </div>
@@ -206,7 +401,7 @@ const handleShare = async () => {
               <div className="mt-5 w-full flex flex-col items-center overflow-hidden text-sm">
               <button
                   onClick={handleShare}
-                  className="w-full text-gray-600 py-2 pl-3 pr-3 block font-bold rounded flex items-center"
+                  className="w-full text-gray-600 py-2 pl-3 pr-3 block font-bold rounded flex items-center hover:text-green-600"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 size-6 inline-block mr-3 text-gray-900">
                     <path fillRule="evenodd" d="M15.75 4.5a3 3 0 1 1 .825 2.066l-8.421 4.679a3.002 3.002 0 0 1 0 1.51l8.421 4.679a3 3 0 1 1-.729 1.31l-8.421-4.678a3 3 0 1 1 0-4.132l8.421-4.679a3 3 0 0 1-.096-.755Z" clipRule="evenodd" />
@@ -219,7 +414,7 @@ const handleShare = async () => {
         <div className="ml-4">
           <div className="w-full">
               <div className=" w-full flex flex-col items-center overflow-hidden text-sm">
-                <a href="https://truematrix.ai/contact/" className="w-full text-gray-600 py-2 pl-3 pr-3 font-bold w-full block" target="_blank" rel="noopener noreferrer">
+                <a href="https://truematrix.ai/contact/" className="w-full text-gray-600 py-2 pl-3 pr-3 font-bold w-full block hover:text-green-600" target="_blank" rel="noopener noreferrer">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 size-6 inline-block mr-3 text-gray-900">
                   <path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 0 1-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 0 1-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 0 1-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584ZM12 18a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clipRule="evenodd" />
                 </svg>
@@ -229,6 +424,7 @@ const handleShare = async () => {
           </div>
         </div>
 
+ 
 
       </div>}
 
