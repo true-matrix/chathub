@@ -137,7 +137,8 @@ const formik = useFormik({
                   }),
                   setIsLoading,
                   () => {
-                    alert("User updated successfully");
+                    // alert("User updated successfully");
+                    toast.success("User updated successfully");
 
                     user.name = values.name;
                     user.phone = values.phone;
@@ -244,7 +245,8 @@ const generatePassword = (length: number) => {
 
 const copyToClipboard = (text: string) => {
   navigator.clipboard.writeText(text).then(() => {
-    alert('Password copied to clipboard!');
+    // alert('Password copied to clipboard!');
+    toast.info("Password copied to clipboard!");
   });
 };
 
