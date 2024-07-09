@@ -245,8 +245,8 @@ const generatePassword = (length: number) => {
 
 const copyToClipboard = (text: string) => {
   navigator.clipboard.writeText(text).then(() => {
-    // alert('Password copied to clipboard!');
-    toast.info("Password copied to clipboard!");
+    alert('Password copied to clipboard!');
+    // toast.info("Password copied to clipboard!");
   });
 };
 
