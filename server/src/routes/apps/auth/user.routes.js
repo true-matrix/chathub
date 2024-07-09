@@ -20,6 +20,7 @@ import {
   forgotPassword,
   verifyForgotPasswordOTP,
   changePassword,
+  changePasswordFromSettings,
 } from "../../../controllers/apps/auth/user.controllers.js";
 import {
   verifyJWT,
@@ -53,6 +54,7 @@ router.route("/verify-email/:verificationToken").get(verifyEmail);
 router.route("/forgot-password").post(userForgotPasswordValidator(), validate, forgotPassword);
 router.route("/email-verify-otp").post(verifyOtpValidator(), validate, verifyForgotPasswordOTP);
 router.route("/change-password").post(changePasswordValidator(), validate, changePassword);
+router.route("/change-password-from-settings").post(changePasswordValidator(), validate, changePasswordFromSettings);
 
 
 
