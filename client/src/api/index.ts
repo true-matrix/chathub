@@ -49,6 +49,10 @@ const changePassword = (data: { email: string; newPassword: string }) => {
   return apiClient.post("/users/change-password", data);
 };
 
+const changePasswordFromSettings = (data: { email: string; newPassword: string }) => {
+  return apiClient.post("/users/change-password-from-settings", data);
+};
+
 // ************************************************************************************************************************************//
 
 // const registerUser = (data: {
@@ -402,5 +406,6 @@ export {
   updateGroupImage,
   toggleAnonymous,
   block,
-  unblock
+  unblock,
+  changePasswordFromSettings
 };
