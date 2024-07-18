@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import 'react-tabs/style/react-tabs.css';
 import ReactPaginate from 'react-paginate';
-import { addOmega, getAllOmegas, getUserById, updateOmega, deleteOmega, getAllAlphas, block } from "../../api";
+import { addOmega, getAllOmegas, getUserById, updateOmega, deleteOmega, getAllAlphas, block, changePasswordFromSettings } from "../../api";
 import { LocalStorage, requestHandler } from "../../utils";
-import { ErrorMessage, Field, Formik } from 'formik';
+import { ErrorMessage, Field, Formik, useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -12,6 +12,10 @@ import { ConfirmAlert } from "../../components/ConfirmAlert";
 import { generateUniqueId } from "../../commonhelper";
 import { useSocket } from "../../context/SocketContext";
 import { useGlobal } from "../../context/GlobalContext";
+import Button from "../../components/Button";
+import Input from "../../components/Input";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const UPDATE_STATUS = 'updateStatus';
 
@@ -31,6 +35,10 @@ interface CreateUserFormValues {
     role: string; 
   }
 
+  interface FormValues {
+    email: any;
+    newPassword: string;
+  }
 
 const OmegaPage = () => {
     const navigate = useNavigate();
@@ -48,6 +56,9 @@ const OmegaPage = () => {
     const [onlineUsers, setOnlineUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const { setStatusEnableDisable } = useGlobal();
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [userEmail, setUserEmail] = useState("");
+
 
     let uid = generateUniqueId();
 
@@ -66,6 +77,12 @@ const OmegaPage = () => {
         gender: '',
         role: 'USER'
       };
+
+      const formInititalPasswordValues: FormValues = {
+        email: '',
+        newPassword: '',
+      };
+      
       const validationSchema = Yup.object().shape({
         name: Yup.string().required('Name is required'),
         email: Yup.string().email('Invalid email address').required('Email is required'),
@@ -74,10 +91,44 @@ const OmegaPage = () => {
         selectedAlpha: (user.userRole==='supremeAlpha') ? Yup.string().required("Alpha is Required") : Yup.string().optional(),
         gender: Yup.string().required('Gender is required'),
       });
+
+      const PasswordSchema = Yup.object({
+        newPassword: Yup.string()
+          .required('New Password is required')
+          .min(6, 'Password must be at least 6 characters')
+          .max(30, 'Password must be 30 characters or less'),
+      });
     
       const [formInititalState, setFormInitState] = useState(initValues);
   console.log(selectedId);
   console.log(isLoading);
+
+  const formik = useFormik({
+    enableReinitialize: true,
+    initialValues: formInititalPasswordValues,
+    validationSchema: PasswordSchema,
+    onSubmit: async (values: any) => {
+      // Handle the form submission here
+      console.log('new pass=>',values);
+      let updatedValues = {
+        ...values, email: userEmail
+      }
+      try {
+        const response = await changePasswordFromSettings(updatedValues);
+        const {data} = response;
+        setIsDropdownOpen(false);
+        // Show a toast message on success
+        // console.log(data?.message);
+        toast.success(data?.message);
+  
+        // Other success logic...
+      } catch (error) {
+        // Handle errors
+        // console.log(error);
+        toast.error("Error changing password.");
+      }
+    },
+  });
 
     // This useEffect handles the setting up and tearing down of socket event listeners.
     useEffect(() => {
@@ -244,6 +295,7 @@ const OmegaPage = () => {
           }));
 
                 setSelectedUser(data || []);
+                setUserEmail(data.email)
             },
             alert // Use default alert for any error messages.
             );
@@ -390,7 +442,13 @@ const OmegaPage = () => {
           </span>
         </div>
       </div>
-    );       
+    );  
+    
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newPassword = e.target.value;
+      formik.setFieldValue('newPassword', newPassword);
+    };
+
   return (
     <>
 
@@ -496,7 +554,7 @@ const OmegaPage = () => {
                 />
                   {/* Create User Modal */}
   {isCreateUserModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center">
+        <div className={`fixed inset-0 flex items-center justify-center ${isDropdownOpen ? 'blur-sm' : ''}`}>
           <div className="absolute inset-0 bg-gray-800 opacity-75"></div>
           <Formik initialValues={formInititalState} onSubmit={handleSubmit} validationSchema={validationSchema} enableReinitialize >
         {(formik) => {
@@ -556,6 +614,61 @@ const OmegaPage = () => {
                 <ErrorMessage name="gender" component="div" className="text-danger" />
                 </div>
               {/* Add other form fields similarly */}
+              <>{ isEditing && 
+                <div className="mb-4 w-fit">
+                
+                {/* <button
+                  type="button"
+                  onClick={handleCloseModal}
+                  className="rounded-md border-none  bg-gray-500 text-white px-4 py-2"
+                >
+                  Change Password
+                </button> */}
+                {/* <button
+                type="button"
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="flex justify-between items-center text-gray-600 py-2 pr-3 w-full hover:text-green-600"
+                
+              >
+                <div className="flex items-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 size-6 inline-block mr-3 text-green-700">
+                    <path fillRule="evenodd" d="M12.516 2.17a.75.75 0 0 0-1.032 0 11.209 11.209 0 0 1-7.877 3.08.75.75 0 0 0-.722.515A12.74 12.74 0 0 0 2.25 9.75c0 5.942 4.064 10.933 9.563 12.348a.749.749 0 0 0 .374 0c5.499-1.415 9.563-6.406 9.563-12.348 0-1.39-.223-2.73-.635-3.985a.75.75 0 0 0-.722-.516l-.143.001c-2.996 0-5.717-1.17-7.734-3.08Zm3.094 8.016a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" />
+                  </svg>
+                  Change Password
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 size-6 inline-block text-gray-900">
+                  <path fillRule="evenodd" d="M12.53 16.28a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 0 1 1.06-1.06L12 14.69l6.97-6.97a.75.75 0 1 1 1.06 1.06l-7.5 7.5Z" clipRule="evenodd" />
+                </svg>
+              </button> */}
+              <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="flex justify-between items-center text-gray-600 py-2 pr-3 w-full hover:text-green-600"
+                    type="button"
+                  >
+                    <div className="flex items-center">
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        viewBox="0 0 24 24" 
+                        fill="currentColor" 
+                        className="h-5 size-6 inline-block mr-3 text-green-700"
+                      >
+                        <path 
+                          fillRule="evenodd" 
+                          d="M12.516 2.17a.75.75 0 0 0-1.032 0 11.209 11.209 0 0 1-7.877 3.08.75.75 0 0 0-.722.515A12.74 12.74 0 0 0 2.25 9.75c0 5.942 4.064 10.933 9.563 12.348a.749.749 0 0 0 .374 0c5.499-1.415 9.563-6.406 9.563-12.348 0-1.39-.223-2.73-.635-3.985a.75.75 0 0 0-.722-.516l-.143.001c-2.996 0-5.717-1.17-7.734-3.08Zm3.094 8.016a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" 
+                          clipRule="evenodd" 
+                        />
+                      </svg>
+                      Change Password
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-5 size-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="m12.75 15 3-3m0 0-3-3m3 3h-7.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                  </svg>
+
+                  </button>
+
+                </div>
+              }
+              </>
               <div className="mb-4 ms-auto w-fit">
                 
                 <button
@@ -578,7 +691,66 @@ const OmegaPage = () => {
           </Formik>
         </div>
       )}
-
+      {isDropdownOpen && (
+        <div 
+          id="authentication-modal" 
+          aria-hidden="true" 
+          // className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden h-[calc(100%-1rem)] max-h-full">
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto overflow-x-hidden h-[calc(100%-1rem)] max-h-full bg-black bg-opacity-50">
+          <div className="relative p-4 w-full max-w-md max-h-full">
+            {/* Modal content */}
+            <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+              {/* Modal header */}
+              <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  Change Password
+                </h3>
+                <button 
+                  type="button" 
+                  className="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" 
+                  onClick={()=> setIsDropdownOpen(!isDropdownOpen)}>
+                  <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                  </svg>
+                </button>
+              </div>
+              {/* Modal body */}
+              <div className="p-4 md:p-5">
+                <form onSubmit={formik.handleSubmit} className="space-y-4">
+                  <div>
+                    <label 
+                      // htmlFor="password" 
+                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                      New Password
+                    </label>
+                    <Input 
+                      type="text" 
+                      name="newPassword" 
+                      id="newPassword" 
+                      placeholder="••••••••" 
+                      onChange={handlePasswordChange}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.newPassword}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" 
+                      required 
+                    />
+                    {formik.touched.newPassword && typeof formik.errors.newPassword === 'string' ? (
+                  <div className='error-msg'>{formik.errors.newPassword}</div>
+                ) : null}
+                  </div>
+                  <Button 
+                    type="submit" 
+                    disabled={!formik.isValid || formik.isSubmitting}
+                    className="w-full text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+                    Submit
+                  </Button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+        <ToastContainer />
     </>
   )
 }
