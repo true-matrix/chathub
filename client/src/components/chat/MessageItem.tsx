@@ -1,5 +1,6 @@
 import {
   ArrowDownTrayIcon,
+  ArrowRightOnRectangleIcon,
   MagnifyingGlassPlusIcon,
   PaperClipIcon,
   XMarkIcon,
@@ -16,6 +17,8 @@ import {PencilIcon, TrashIcon, ArrowUturnLeftIcon } from '@heroicons/react/20/so
 import CopyText from "../CopyText";
 import { useGlobal } from "../../context/GlobalContext";
 import { deleteMessage } from "../../api";
+import ForwardMessageModal from "./ForwardMessageModal";
+import { useNavigate } from "react-router-dom";
 
 const MessageItem: React.FC<{
   isOwnMessage?: boolean;
@@ -42,6 +45,8 @@ const MessageItem: React.FC<{
   //  const [highlightedMessageId, setHighlightedMessageId] = useState("");
   // const messageRefs : any = useRef({});
   // const messageRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const [openForwardChat, setOpenForwardChat] = useState(false); // To control the 'Add Chat' modal
+  const navigate = useNavigate();
 
 
 
@@ -230,8 +235,42 @@ const MessageItem: React.FC<{
   //   };
   // }, [message._id, onSeen]);
 
+  const handleForwardMessage = (message: any) => {
+    // onMessageReply(message);
+    setOpenForwardChat(true)
+    setIsMessageReplying(false);
+    setIsMessageEditing(false);
+    setIsMessageDeleting(false);
+    console.log('message',message);
+    // navigate("/settings")
+    
+  }
+
+
+  // const getChats = async () => {
+  //   requestHandler(
+  //     async () => await getUserChats(),
+  //     setLoadingChats,
+  //     (res) => {
+  //       const { data } = res;
+  //       setChats(data || []);
+  //       LocalStorage.set("userChats", data);
+  //     },
+  //     alert
+  //   );
+  // };
+
   return (
     <>
+    <ForwardMessageModal
+        open={openForwardChat}
+        onClose={() => {
+          setOpenForwardChat(false);
+        }}
+        onSuccess={() => {
+          [{'name': 'rajesh gole'}]
+        }}
+      />
       {resizedImage ? (
         <div className="h-full z-40 p-8 overflow-hidden w-full absolute inset-0 bg-black/70 flex justify-center items-center">
           <XMarkIcon
@@ -311,6 +350,10 @@ const MessageItem: React.FC<{
                 <div className="flex items-center" onClick={() => handleReplyMessage({ 'content': message.content, 'id': message._id, 'data': message })}>
                     <ArrowUturnLeftIcon className="w-5 h-5 mr-2" />
                   <span>Reply</span>
+                </div>
+                <div className="flex items-center" onClick={() => handleForwardMessage({ 'content': message.content, 'id': message._id, 'data': message })}>
+                    <ArrowRightOnRectangleIcon className="w-5 h-5 mr-2" />
+                  <span>Forward</span>
                 </div>
                 {(message.content && isOwnMessage) && <div className="flex items-center" onClick={() => handleEditMessage({ 'content': message.content, 'id': message._id })}>
                   <PencilIcon className="w-5 h-5 mr-2" />
