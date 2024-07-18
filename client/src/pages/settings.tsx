@@ -1,7 +1,6 @@
 import { useGlobal } from "../context/GlobalContext";
 import Sidebar from "./Common/Sidebar"
 import { useAuth } from "../context/AuthContext";
-import rain from '../assets/videos/rain.webm';
 import email from '../assets/images/envelope.svg';
 import phone from '../assets/images/phone-alt.svg'; 
 import view from "../assets/images/view.png";

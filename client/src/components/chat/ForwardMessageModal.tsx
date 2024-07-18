@@ -1,13 +1,11 @@
-import { Dialog, Switch, Transition } from "@headlessui/react";
+import { Dialog, Transition } from "@headlessui/react";
 import {
-  UserGroupIcon,
-  XCircleIcon,
   XMarkIcon,
 } from "@heroicons/react/20/solid";
 import { Fragment, useEffect, useState } from "react";
-import { createGroupChat, createUserChat, getAllContacts, getForwardContacts } from "../../api";
+import { getForwardContacts } from "../../api";
 import { ChatListItemInterface } from "../../interfaces/chat";
-import { classNames, requestHandler } from "../../utils";
+import {  requestHandler } from "../../utils";
 import Select from "../Select";
 import { useAuth } from "../../context/AuthContext";
 
@@ -15,12 +13,12 @@ const ForwardMessageModal: React.FC<{
   open: boolean;
   onClose: () => void;
   onSuccess: (chat: ChatListItemInterface) => void;
-}> = ({ open, onClose, onSuccess }) => {
+}> = ({ open, onClose }) => {
   const { user } = useAuth();
   // State to store the list of users, initialized as an empty array
   const [users, setUsers] = useState<any[]>([]);
   // State to store the name of a group, initialized as an empty string
-  const [groupName, setGroupName] = useState("");
+  // const [groupName, setGroupName] = useState("");
   // State to determine if the chat is a group chat, initialized as false
   const [isGroupChat, setIsGroupChat] = useState(false);
   // State to store the list of participants in a group chat, initialized as an empty array
@@ -31,7 +29,7 @@ const ForwardMessageModal: React.FC<{
   // State to store the ID of a selected user, initialized as null
   const [selectedUserId, setSelectedUserId] = useState<null | string>(null);
   // State to determine if a chat is currently being created, initialized as false
-  const [creatingChat, setCreatingChat] = useState(false);
+  // const [creatingChat, setCreatingChat] = useState(false);
 
   // Function to fetch users
   const getUsers = async () => {
@@ -51,64 +49,64 @@ const ForwardMessageModal: React.FC<{
   };
 
   // Function to create a new chat with a user
-  const createNewChat = async () => {
-    // If no user is selected, show an alert
-    if (!selectedUserId) return alert("Please select a user");
+  // const createNewChat = async () => {
+  //   // If no user is selected, show an alert
+  //   if (!selectedUserId) return alert("Please select a user");
 
-    // Handle the request to create a chat
-    await requestHandler(
-      // Callback to create a user chat
-      async () => await createUserChat(selectedUserId),
-      setCreatingChat, // Callback to handle loading state
-      // Success callback
-      (res) => {
-        const { data } = res; // Extract data from response
-        // If chat already exists with the selected user
-        if (res.statusCode === 200) {
-          alert("Chat with selected user already exists");
-          return;
-        }
-        onSuccess(data); // Execute the onSuccess function with received data
-        handleClose(); // Close the modal or popup
-      },
-      alert // Use the alert as the error handler
-    );
-  };
+  //   // Handle the request to create a chat
+  //   await requestHandler(
+  //     // Callback to create a user chat
+  //     async () => await createUserChat(selectedUserId),
+  //     setCreatingChat, // Callback to handle loading state
+  //     // Success callback
+  //     (res) => {
+  //       const { data } = res; // Extract data from response
+  //       // If chat already exists with the selected user
+  //       if (res.statusCode === 200) {
+  //         alert("Chat with selected user already exists");
+  //         return;
+  //       }
+  //       onSuccess(data); // Execute the onSuccess function with received data
+  //       handleClose(); // Close the modal or popup
+  //     },
+  //     alert // Use the alert as the error handler
+  //   );
+  // };
 
   // Function to create a new group chat
-  const createNewGroupChat = async () => {
-    // Check if a group name is provided
-    if (!groupName) return alert("Group name is required");
-    // Ensure there are at least 2 group participants
-    if (!groupParticipants.length || groupParticipants.length < 2)
-      return alert("There must be at least 2 group participants");
+  // const createNewGroupChat = async () => {
+  //   // Check if a group name is provided
+  //   if (!groupName) return alert("Group name is required");
+  //   // Ensure there are at least 2 group participants
+  //   if (!groupParticipants.length || groupParticipants.length < 2)
+  //     return alert("There must be at least 2 group participants");
 
-    // // Adding user.parentId conditionally based on user role
-    // const updatedParticipants = user.userRole !== 'supremeAlpha'
-    //   ? [...groupParticipants, user.parentId]
-    //   : groupParticipants;
+  //   // // Adding user.parentId conditionally based on user role
+  //   // const updatedParticipants = user.userRole !== 'supremeAlpha'
+  //   //   ? [...groupParticipants, user.parentId]
+  //   //   : groupParticipants;
 
-    // // Setting the updated list of participants
-    // setGroupParticipants(updatedParticipants);
+  //   // // Setting the updated list of participants
+  //   // setGroupParticipants(updatedParticipants);
 
-    // Handle the request to create a group chat
-    await requestHandler(
-      // Callback to create a group chat with name and participants
-      async () =>
-        await createGroupChat({
-          name: groupName,
-          participants: groupParticipants,
-        }),
-      setCreatingChat, // Callback to handle loading state
-      // Success callback
-      (res) => {
-        const { data } = res; // Extract data from response
-        onSuccess(data); // Execute the onSuccess function with received data
-        handleClose(); // Close the modal or popup
-      },
-      alert // Use the alert as the error handler
-    );
-  };
+  //   // Handle the request to create a group chat
+  //   await requestHandler(
+  //     // Callback to create a group chat with name and participants
+  //     async () =>
+  //       await createGroupChat({
+  //         name: groupName,
+  //         participants: groupParticipants,
+  //       }),
+  //     setCreatingChat, // Callback to handle loading state
+  //     // Success callback
+  //     (res) => {
+  //       const { data } = res; // Extract data from response
+  //       onSuccess(data); // Execute the onSuccess function with received data
+  //       handleClose(); // Close the modal or popup
+  //     },
+  //     alert // Use the alert as the error handler
+  //   );
+  // };
 
   // Function to reset local state values and close the modal/dialog
   const handleClose = () => {
@@ -117,7 +115,7 @@ const ForwardMessageModal: React.FC<{
     // Reset the selected user ID
     setSelectedUserId("");
     // Clear the group name
-    setGroupName("");
+    // setGroupName("");
     // Clear the group participants list
     setGroupParticipants([user.parentId]);
     // Set the chat type to not be a group chat

@@ -18,7 +18,7 @@ import CopyText from "../CopyText";
 import { useGlobal } from "../../context/GlobalContext";
 import { deleteMessage } from "../../api";
 import ForwardMessageModal from "./ForwardMessageModal";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 const MessageItem: React.FC<{
   isOwnMessage?: boolean;
@@ -46,7 +46,7 @@ const MessageItem: React.FC<{
   // const messageRefs : any = useRef({});
   // const messageRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const [openForwardChat, setOpenForwardChat] = useState(false); // To control the 'Add Chat' modal
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
 
 
