@@ -170,6 +170,150 @@ const adminNamePopulateAggregation = () => {
     },
   ]
 }
+
+// const forwardContactsCommonAggregation = async (user) => {
+//   let contacts = [];
+//   let chats = [];
+
+//   if (user.userRole === 'omega') {
+//     contacts = await User.aggregate([
+//       {
+//         $match: {
+//           $or: [
+//             { _id: new mongoose.Types.ObjectId(user.addedBy) },
+//             { $and: [{ _id: new mongoose.Types.ObjectId(user.parentId), userRole: 'supremeAlpha' }] },
+//             { $and: [{ parentId: user.parentId.toString(), userRole: 'alpha' }] },
+//           ],
+//           _id: { $ne: new mongoose.Types.ObjectId(user._id) },
+//         },
+//       },
+//     ]);
+//   } else if (user.userRole === 'alpha') {
+//     contacts = await User.aggregate([
+//       {
+//         $match: {
+//           $or: [
+//             { _id: new mongoose.Types.ObjectId(user.addedBy) },
+//             { _id: new mongoose.Types.ObjectId(user.parentId) },
+//             { parentId: user.parentId.toString() },
+//           ],
+//           _id: { $ne: new mongoose.Types.ObjectId(user._id) },
+//         },
+//       },
+//     ]);
+//   } else if (user.userRole === 'supremeAlpha') {
+//     contacts = await User.aggregate([
+//       {
+//         $match: {
+//           $or: [
+//             { addedBy: new mongoose.Types.ObjectId(user._id) },
+//             { parentId: user.parentId },
+//           ],
+//           _id: { $ne: new mongoose.Types.ObjectId(user._id) },
+//         },
+//       },
+//     ]);
+//   } else if (user.userRole === 'admin') {
+//     contacts = await User.aggregate([
+//       {
+//         $match: {
+//           userRole: 'supremeAlpha',
+//         },
+//       },
+//     ]);
+//   }
+
+//   chats = await Chat.aggregate([
+//     {
+//       $match: {
+//         participants: { $elemMatch: { $eq: user._id } },
+//       },
+//     },
+//     {
+//       $sort: {
+//         updatedAt: -1,
+//       },
+//     },
+//     ...chatCommonAggregation(),
+//   ]);
+
+//   return { contacts, chats };
+// };
+
+const forwardContactsCommonAggregation = async (user) => {
+  let contacts = [];
+  let chats = [];
+
+  if (user.userRole === 'omega') {
+    contacts = await User.aggregate([
+      {
+        $match: {
+          $or: [
+            { _id: new mongoose.Types.ObjectId(user.addedBy) },
+            { $and: [{ _id: new mongoose.Types.ObjectId(user.parentId), userRole: 'supremeAlpha' }] },
+            { $and: [{ parentId: user.parentId.toString(), userRole: 'alpha' }] },
+          ],
+          _id: { $ne: new mongoose.Types.ObjectId(user._id) },
+        },
+      },
+    ]);
+  } else if (user.userRole === 'alpha') {
+    contacts = await User.aggregate([
+      {
+        $match: {
+          $or: [
+            { _id: new mongoose.Types.ObjectId(user.addedBy) },
+            { _id: new mongoose.Types.ObjectId(user.parentId) },
+            { parentId: user.parentId.toString() },
+          ],
+          _id: { $ne: new mongoose.Types.ObjectId(user._id) },
+        },
+      },
+    ]);
+  } else if (user.userRole === 'supremeAlpha') {
+    contacts = await User.aggregate([
+      {
+        $match: {
+          $or: [
+            { addedBy: new mongoose.Types.ObjectId(user._id) },
+            { parentId: user.parentId },
+          ],
+          _id: { $ne: new mongoose.Types.ObjectId(user._id) },
+        },
+      },
+    ]);
+  } else if (user.userRole === 'admin') {
+    contacts = await User.aggregate([
+      {
+        $match: {
+          userRole: 'supremeAlpha',
+        },
+      },
+    ]);
+  }
+
+  chats = await Chat.aggregate([
+    {
+      $match: {
+        participants: { $elemMatch: { $eq: user._id } },
+        $or: [
+          { isGroupChat: true },
+          { name: { $ne: "One on one chat" } }
+        ]
+      },
+    },
+    {
+      $sort: {
+        updatedAt: -1,
+      },
+    },
+    ...chatCommonAggregation(),
+  ]);
+
+  return { contacts, chats };
+};
+
+
 /**
  *
  * @param {string} chatId
@@ -1697,6 +1841,95 @@ const getChatIdByParticipants = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { chatId: chat._id }, "Chat ID fetched successfully"));
 });
 
+// const getForwardContacts = asyncHandler(async (req, res) => {
+//   let users;
+//   let chats;
+
+//   // Fetch Contacts
+//   if (req.user.userRole === 'omega') {
+//     users = await User.aggregate([
+//       {
+//         $match: {
+//           $or: [
+//             { _id: new mongoose.Types.ObjectId(req.user.addedBy) },
+//             { $and: [{ _id: new mongoose.Types.ObjectId(req.user.parentId), userRole: 'supremeAlpha' }] },
+//             { $and: [{ parentId: req.user.parentId.toString(), userRole: 'alpha' }] },
+//           ],
+//           _id: { $ne: new mongoose.Types.ObjectId(req.user._id) },
+//         },
+//       },
+//     ]);
+//   } else if (req.user.userRole === 'alpha') {
+//     users = await User.aggregate([
+//       {
+//         $match: {
+//           $or: [
+//             { _id: new mongoose.Types.ObjectId(req.user.addedBy) },
+//             { _id: new mongoose.Types.ObjectId(req.user.parentId) },
+//             { parentId: req.user.parentId.toString() },
+//           ],
+//           _id: { $ne: new mongoose.Types.ObjectId(req.user._id) },
+//         },
+//       },
+//     ]);
+//   } else if (req.user.userRole === 'supremeAlpha') {
+//     users = await User.aggregate([
+//       {
+//         $match: {
+//           $or: [
+//             { addedBy: new mongoose.Types.ObjectId(req.user._id) },
+//             { parentId: req.user.parentId },
+//           ],
+//           _id: { $ne: new mongoose.Types.ObjectId(req.user._id) },
+//         },
+//       },
+//     ]);
+//   } else if (req.user.userRole === 'admin') {
+//     users = await User.aggregate([
+//       {
+//         $match: {
+//           userRole: 'supremeAlpha',
+//         },
+//       },
+//     ]);
+//   }
+
+//   // Fetch Chats
+//   chats = await Chat.aggregate([
+//     {
+//       $match: {
+//         participants: { $elemMatch: { $eq: req.user._id } },
+//       },
+//     },
+//     {
+//       $sort: {
+//         updatedAt: -1,
+//       },
+//     },
+//     ...chatCommonAggregation(),
+//   ]);
+
+//   return res
+//     .status(200)
+//     .json(
+//       new ApiResponse(200, { contacts: users || [], chats: chats || [] }, "Contacts and chats fetched successfully!")
+//     );
+// });
+
+const getForwardContacts = asyncHandler(async (req, res) => {
+  const { contacts, chats } = await forwardContactsCommonAggregation(req.user);
+
+  const result = [
+    ...contacts,
+    ...chats,
+  ];
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, result, "Forward contacts fetched successfully"));
+});
+
+
 
 export {
   addNewParticipantInGroupChat,
@@ -1733,4 +1966,5 @@ export {
   updateGroupImage,
   toggleAnonymous,
   blockUser,
+  getForwardContacts
 };
