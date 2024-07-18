@@ -20,6 +20,7 @@ import {
   getAllOmega,
   getAllSupremeAlpha,
   getChatIdByParticipants,
+  getForwardContacts,
   getGroupChatDetails,
   getPROTPs,
   getUserById,
@@ -82,6 +83,10 @@ router.route("/pr-otps").get(getPROTPs);
 
 // ****************************************************All Contacts********************************************************************************//
 router.route("/contacts").get(getAllContacts);
+
+// ****************************************************All Forward Contacts********************************************************************************//
+
+router.route("/forward-contacts").get(getForwardContacts);
 
 // ****************************************************User Profile routes********************************************************************************//
 router.route("/updateprofile/:userId").patch(validate, updateProfile);
