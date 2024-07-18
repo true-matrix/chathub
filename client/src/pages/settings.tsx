@@ -42,7 +42,7 @@ const SettingsPage = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isPasswordHide, setIsPasswordHide] = useState(true);
   const [passwordStrengthResult, setPasswordStrengthResult] = useState<{ id: number; value: string }>({ id: 0, value: '' });
-  const [passwordLength, setPasswordLength] = useState(12);
+  const [passwordLength, setPasswordLength] = useState<number | any>(null);
   const [generatedPassword, setGeneratedPassword] = useState('');
 
 
