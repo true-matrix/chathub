@@ -216,6 +216,12 @@ const getAllContacts = () => {
   return apiClient.get("/chat-app/chats/contacts");
 };
 
+// ****************************************************Forward-Contacts API********************************************************************************//
+const getForwardContacts = () => {
+  return apiClient.get("/chat-app/chats/forward-contacts");
+};
+
+
 // ****************************************************Update Profile API(Self Profile)********************************************************************************//
 const updateProfile = (
   userId: string,
@@ -407,5 +413,6 @@ export {
   toggleAnonymous,
   block,
   unblock,
-  changePasswordFromSettings
+  changePasswordFromSettings,
+  getForwardContacts
 };
