@@ -259,15 +259,15 @@ const copyToClipboard = (text: string) => {
        {/* Profile Sidebar */}
        {activeButton === "settings" && <div className="w-1/3 relative ring-white overflow-y-auto px-0">
        <div className="user-details  border-b border-gray-200  container p-4">
-       <video autoPlay muted loop id="myVideo" className="border-b border-gray-300">
-          <source src={rain} type="video/webm"/>
-          Your browser does not support HTML5 video.
+       <video autoPlay muted loop id="myVideo" className="border-b border-gray-300 bg-primary">
+          {/* <source src={rain} type="video/webm"/>
+          Your browser does not support HTML5 video. */}
         </video>
           <div>
             <div className="relative mx-auto">
               <div className="flex justify-center">
                 {/* <img src="https://tecdn.b-cdn.net/img/new/avatars/2.webp" alt="" className="rounded-full mx-auto w-32 h-32 shadow-md border-4 border-white transition duration-200 transform hover:scale-110"/> */}
-                <img src={user?.avatar?.url} alt="" className="rounded-full mx-auto w-32 h-32 shadow-md border-4 border-white transition duration-200 transform hover:scale-110 hover:border-animation"/>
+                <img src={user?.avatar?.url} alt="" className="object-cover rounded-full mx-auto w-32 h-32 shadow-md border-4 border-white transition duration-200 transform hover:scale-110 hover:border-animation"/>
               </div>
               <div className="mt-3">
                 <h1 className="font-bold text-center text-3xl text-gray-900">{ user.name ? user.name: user?.username}</h1>
