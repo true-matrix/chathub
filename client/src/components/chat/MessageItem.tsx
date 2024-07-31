@@ -287,7 +287,7 @@ const MessageItem: React.FC<{
 
       {/* <div className="message-wraper active bg-success-light p-4 rounded-lg"> */}
       <div key={message?.parentMessage} ref={() =>messageRef(message?.parentMessage)} className={classNames(
-        "message-wraper selected py-3",
+        "message-wraper py-3",
         (message.parentMessage === highlightedMessageId) ? "active bg-success-light p-4 rounded-lg" : ""
       )}>
         <div
