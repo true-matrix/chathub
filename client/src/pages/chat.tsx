@@ -1256,7 +1256,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
               
               <div
                 className={classNames(
-                  "p-8 overflow-y-auto flex flex-col-reverse gap-6 w-full",
+                  "p-8 overflow-y-auto flex flex-col-reverse gap-2 w-full",
                   attachedFiles.length > 0
                     ? "h-[calc(100vh-280px)]"
                     : "h-[calc(100vh-176px)]"

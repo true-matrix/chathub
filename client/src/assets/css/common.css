@@ -647,9 +647,15 @@ button.profile-user {
   right: -20px; 
 }
 
+
 .message-wraper:hover .dropdown-icon{
   display: block;
   opacity: .7;
+}
+
+.message-wraper.selected {
+  background-color: #42ab6526; 
+  border-radius: 7px;
 }
 
 a.shared-link:before {
