@@ -6,7 +6,7 @@ import { emitSocketEvent } from "../../../socket/index.js";
 import { ApiError } from "../../../utils/ApiError.js";
 import { ApiResponse } from "../../../utils/ApiResponse.js";
 import { asyncHandler } from "../../../utils/asyncHandler.js";
-import { getLocalPath, getStaticFilePath } from "../../../utils/helpers.js";
+import { getLocalPath, getStaticFilePath, removeLocalFile } from "../../../utils/helpers.js";
 import { User } from "../../../models/apps/auth/user.models.js";
 
 /**
@@ -624,50 +624,123 @@ const updatedParentMessage = await ChatMessage.findByIdAndUpdate(
 
 
 // Delete Message Controller
-const deleteMessage = asyncHandler(async (req, res) => {
-  // try {
-  const { messageId } = req.params;
-  console.log('req.params',req.params);
+// const deleteMessage = asyncHandler(async (req, res) => {
+//   // try {
+//   const { messageId } = req.params;
+//   console.log('req.params',req.params);
 
-    // Find the chat in the database
-    // const chat = await Chat.findById(chatId);
+//     // Find the chat in the database
+//     // const chat = await Chat.findById(chatId);
 
-  //   if (!chat) {
-  //     throw new ApiError(404, "Chat not found");
-  // }
+//   //   if (!chat) {
+//   //     throw new ApiError(404, "Chat not found");
+//   // }
   
-  // Find the chat in the database
-    const message = await ChatMessage.findById(messageId);
+//   // Find the chat in the database
+//     const message = await ChatMessage.findById(messageId);
 
-    if (!message) {
-      throw new ApiError(404, "Message not found");
-    }
+//     if (!message) {
+//       throw new ApiError(404, "Message not found");
+//     }
 
-    // Find the message to delete
-    const deletedMessage = await ChatMessage.findByIdAndDelete(messageId);
+//     // Find the message to delete
+//     const deletedMessage = await ChatMessage.findByIdAndDelete(messageId);
 
-    if (!deletedMessage) {
-      throw new ApiError(500, "Internal server error while deleting user");
-    }
+//     if (!deletedMessage) {
+//       throw new ApiError(500, "Internal server error while deleting user");
+//     }
 
-    // Emit a socket event to notify other participants about the deleted message
-    chat.participants.forEach((participantObjectId) => {
-      if (participantObjectId.toString() === req.user._id.toString()) return;
+//     // Emit a socket event to notify other participants about the deleted message
+//     chat.participants.forEach((participantObjectId) => {
+//       if (participantObjectId.toString() === req.user._id.toString()) return;
 
-      // Emit the message deleted event to the other participants with deleted message details
-      emitSocketEvent(
-        req,
-        participantObjectId.toString(),
-        ChatEventEnum.MESSAGE_DELETED_EVENT,
-        { messageId: deletedMessage._id }
-      );
+//       // Emit the message deleted event to the other participants with deleted message details
+//       emitSocketEvent(
+//         req,
+//         participantObjectId.toString(),
+//         ChatEventEnum.MESSAGE_DELETED_EVENT,
+//         { messageId: deletedMessage._id }
+//       );
+//     });
+
+//     return res.status(200).json(new ApiResponse(200, null, 'Message deleted successfully'));
+//   // } catch (error) {
+//   //   console.error("Error deleting message:", error);
+//   //   return res.status(500).json({ error: "Internal server error" });
+//   // }
+// });
+
+const deleteMessage = asyncHandler(async (req, res) => {
+  //controller to delete chat messages and attachments
+
+  const { chatId, messageId } = req.params;
+
+  //Find the chat based on chatId and checking if user is a participant of the chat
+  const chat = await Chat.findOne({
+    _id: new mongoose.Types.ObjectId(chatId),
+    participants: req.user?._id,
+  });
+
+  if (!chat) {
+    throw new ApiError(404, "Chat does not exist");
+  }
+
+  //Find the message based on message id
+  const message = await ChatMessage.findOne({
+    _id: new mongoose.Types.ObjectId(messageId),
+  });
+
+  if (!message) {
+    throw new ApiError(404, "Message does not exist");
+  }
+
+  // Check if user is the sender of the message
+  if (message?.sender.toString() !== req?.user?._id.toString()) {
+    throw new ApiError(
+      403,
+      "You are not the authorised to delete the message, you are not the sender"
+    );
+  }
+  if (message?.attachments.length > 0) {
+    //If the message is attachment  remove the attachments from the server
+    message.attachments.map((asset) => {
+      removeLocalFile(asset.localPath);
     });
+  }
+  //deleting the message from DB
+  await ChatMessage.deleteOne({
+    _id: new mongoose.Types.ObjectId(messageId),
+  });
 
-    return res.status(200).json(new ApiResponse(200, null, 'Message deleted successfully'));
-  // } catch (error) {
-  //   console.error("Error deleting message:", error);
-  //   return res.status(500).json({ error: "Internal server error" });
-  // }
+  //Updating the last message of the chat to the previous message after deletion if the message deleted was last message
+  if (chat?.lastMessage.toString() === message?._id.toString()) {
+    const lastMessage = await ChatMessage.findOne(
+      { chat: chatId },
+      {},
+      { sort: { createdAt: -1 } }
+    );
+
+    await Chat.findByIdAndUpdate(chatId, {
+      lastMessage: lastMessage ? lastMessage?._id : null,
+    });
+  }
+  // logic to emit socket event about the message deleted  to the other participants
+  chat.participants.forEach((participantObjectId) => {
+    // here the chat is the raw instance of the chat in which participants is the array of object ids of users
+    // avoid emitting event to the user who is deleting the message
+    if (participantObjectId.toString() === req.user._id.toString()) return;
+    // emit the delete message event to the other participants frontend with delete messageId as the payload
+    emitSocketEvent(
+      req,
+      participantObjectId.toString(),
+      ChatEventEnum.MESSAGE_DELETE_EVENT,
+      message
+    );
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, message, "Message deleted successfully"));
 });
 
 
