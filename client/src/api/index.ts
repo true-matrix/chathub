@@ -360,8 +360,12 @@ const editMessage = (
   return apiClient.put(`/chat-app/messages/${chatId}/${messageId}`, content);
 };
 
-const deleteMessage = (messageId: string) => {
-  return apiClient.delete(`/chat-app/messages/${messageId}`);
+// const deleteMessage = (messageId: string) => {
+//   return apiClient.delete(`/chat-app/messages/${messageId}`);
+// };
+
+const deleteMessage = (chatId: string, messageId: string) => {
+  return apiClient.delete(`/chat-app/messages/${chatId}/${messageId}`);
 };
 
 // Export all the API functions
