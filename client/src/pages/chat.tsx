@@ -44,7 +44,7 @@ import {
 } from "../utils";
 import { useGlobal } from "../context/GlobalContext";
 import Sidebar from "./Common/Sidebar";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { useIntersectionObserver } from "../commonhelper";
 import ContentLoader from "react-content-loader";
 
@@ -77,8 +77,8 @@ const ChatPage = () => {
   // Import the 'useAuth' and 'useSocket' hooks from their respective contexts
   const { user } = useAuth();
   const { socket } = useSocket();
-    const navigate = useNavigate();
-  const { activeButton,isMessageEditing, isMessageReplying, unreadMessages, setUnreadMessages, setIsMessageEditing, setIsMessageReplying, setIsMessageDeleting, setMessageInputFocused } = useGlobal();
+    // const navigate = useNavigate();
+  const { activeButton,isMessageEditing, isMessageReplying, unreadMessages, setUnreadMessages, setIsMessageEditing, setIsMessageReplying, setMessageInputFocused } = useGlobal();
   const [showPicker, setShowPicker] = useState(false);
   const emojiButtonRef : any = useRef();
   // Create a reference using 'useRef' to hold the currently selected chat.
