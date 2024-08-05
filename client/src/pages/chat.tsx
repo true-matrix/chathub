@@ -11,7 +11,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 // import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 // import { Logout } from './Auth/Logout';
-import { editMessage, getChatMessages, getUserChats, replyMessage, sendMessage } from "../api";
+import { deleteMessage, editMessage, getChatMessages, getUserChats, replyMessage, sendMessage } from "../api";
 import AddChatModal from "../components/chat/AddChatModal";
 import ChatItem from "../components/chat/ChatItem";
 import MessageItem from "../components/chat/MessageItem";
@@ -1019,16 +1019,54 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
     }
   };
 
-  const handleDeleteMessage = async (message: any) => {
-    if (message) {
-            setIsMessageDeleting(false);
-            navigate("/chat"); // Redirect to the login page after successful registration
-            setMessage(""); // Clear the message input
-            setAttachedFiles([]); // Clear the list of attached files
-            await getChats()
-            await getMessages();
+  // const handleDeleteMessage = async (message: any) => {
+  //   if (message) {
+  //           setIsMessageDeleting(false);
+  //           navigate("/chat"); // Redirect to the login page after successful registration
+  //           setMessage(""); // Clear the message input
+  //           setAttachedFiles([]); // Clear the list of attached files
+  //           await getChats()
+  //           await getMessages();
+  //   }
+  // }
+
+  const updateChatLastMessageOnDeletion = (
+    chatToUpdateId: string, //ChatId to find the chat
+    message: ChatMessageInterface //The deleted message
+  ) => {
+    // Search for the chat with the given ID in the chats array
+    const chatToUpdate = chats.find((chat) => chat._id === chatToUpdateId)!;
+
+    //Updating the last message of chat only in case of deleted message and chats last message is same
+    if (chatToUpdate.lastMessage?._id === message._id) {
+      requestHandler(
+        async () => getChatMessages(chatToUpdateId),
+        null,
+        (req) => {
+          const { data } = req;
+
+          chatToUpdate.lastMessage = data[0];
+          setChats([...chats]);
+        },
+        alert
+      );
     }
-  }
+  };
+
+  const deleteChatMessage = async (message: ChatMessageInterface) => {
+    //ONClick delete the message and reload the chat when deleteMessage socket gives any response in chat.tsx
+    //use request handler to prevent any errors
+
+    await requestHandler(
+      async () => await deleteMessage(message.chat, message._id),
+      null,
+      (res) => {
+        setMessages((prev) => prev.filter((msg) => msg._id !== res.data._id));
+        updateChatLastMessageOnDeletion(message.chat, message);
+      },
+      alert
+    );
+  };
 
 
   console.log('selected msg',selectedMessage);
@@ -1281,7 +1319,8 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
                           message={msg}
                           onMessageClick={handleMessageClick}
                           onMessageReply={handleMessageReply}
-                          onMessageDelete={() => handleDeleteMessage(msg._id)}
+                          // onMessageDelete={() => handleDeleteMessage(msg._id)}
+                          onMessageDelete={deleteChatMessage}
                           // messageRef={(element:any) => setMessageRef(msg.parentMessage, element)} 
                           scrollToPrevMessage={scrollToPrevMessage} 
                           highlightedMessageId={highlightedMessageId}
