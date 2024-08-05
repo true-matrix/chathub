@@ -3,20 +3,21 @@ import {
   ArrowRightOnRectangleIcon,
   MagnifyingGlassPlusIcon,
   PaperClipIcon,
+  PencilSquareIcon,
   XMarkIcon,
+  TrashIcon, 
+  ArrowUturnLeftIcon
 } from "@heroicons/react/20/solid";
 import { useRef, useState } from "react";
 import {  ChatListItemInterface, ChatMessageInterface } from "../../interfaces/chat";
-import { classNames, requestHandler } from "../../utils";
+import { classNames } from "../../utils";
 import { getRecentTime } from "../../commonhelper";
 import DOC_PREVIEW from "../../assets/images/doc-preview.png";
 import dropdown_icon from "../../assets/images/dropdown-dots.svg";
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
-import {PencilIcon, TrashIcon, ArrowUturnLeftIcon } from '@heroicons/react/20/solid';
 import CopyText from "../CopyText";
 import { useGlobal } from "../../context/GlobalContext";
-import { deleteMessage } from "../../api";
 import ForwardMessageModal from "./ForwardMessageModal";
 // import { useNavigate } from "react-router-dom";
 
@@ -26,6 +27,7 @@ const MessageItem: React.FC<{
   message: ChatMessageInterface;
   onMessageClick?: any;
   onMessageReply?: any;
+  // onMessageDelete?: any;
   onMessageDelete?: any;
   scrollToPrevMessage?: any; // Add scrollToPrevMessage prop
   highlightedMessageId?: string; // Add highlightedMessageId prop
@@ -47,7 +49,10 @@ const MessageItem: React.FC<{
   // const messageRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const [openForwardChat, setOpenForwardChat] = useState(false); // To control the 'Add Chat' modal
   // const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
 
   const containsLink = (text : string) => {
@@ -118,22 +123,29 @@ const MessageItem: React.FC<{
   const deleteChat = async (message: any) => {
     console.log('currentChat.current?._id',currentChat.current?._id);
     console.log('currentChat',currentChat);
+    console.log('ddd mmm',message);
     
-    await requestHandler(
-      //  A callback function that performs the deletion of a one-on-one chat by its ID.
-      async () => await deleteMessage(message.id),
-      null,
-      // A callback function to be executed on success. It will call 'onChatDelete'
-      // function with the chat's ID as its parameter.
-      () => {
-        onMessageDelete(message);
-        setIsMessageDeleting(true);
-        setIsMessageReplying(false);
-        setIsMessageEditing(false);
-      },
-      // The 'alert' function (likely to display error messages to the user.
-      alert
-    );
+    onMessageDelete(message);
+    setIsMessageDeleting(true);
+    setIsMessageReplying(false);
+    setIsMessageEditing(false);
+    setIsModalOpen(false)
+    
+    // await requestHandler(
+    //   //  A callback function that performs the deletion of a one-on-one chat by its ID.
+    //   async () => await deleteMessage(message.id),
+    //   null,
+    //   // A callback function to be executed on success. It will call 'onChatDelete'
+    //   // function with the chat's ID as its parameter.
+    //   () => {
+    //     onMessageDelete(message);
+    //     setIsMessageDeleting(true);
+    //     setIsMessageReplying(false);
+    //     setIsMessageEditing(false);
+    //   },
+    //   // The 'alert' function (likely to display error messages to the user.
+    //   alert
+    // );
   };
 
 //  const getClassName = (status : string) => {
@@ -348,30 +360,108 @@ const MessageItem: React.FC<{
                   <CopyText textToCopy={message.content}  className="flex items-center"/>
                 </div>}
                 <div className="flex items-center" onClick={() => handleReplyMessage({ 'content': message.content, 'id': message._id, 'data': message })}>
-                    <ArrowUturnLeftIcon className="w-5 h-5 mr-2" />
+                    <ArrowUturnLeftIcon className="w-5 h-5 mr-2 text-green-600" />
                   <span>Reply</span>
                 </div>
                 <div className="flex items-center" onClick={() => handleForwardMessage({ 'content': message.content, 'id': message._id, 'data': message })}>
-                    <ArrowRightOnRectangleIcon className="w-5 h-5 mr-2" />
+                    <ArrowRightOnRectangleIcon className="w-5 h-5 mr-2 text-blue-600" />
                   <span>Forward</span>
                 </div>
                 {(message.content && isOwnMessage) && <div className="flex items-center" onClick={() => handleEditMessage({ 'content': message.content, 'id': message._id })}>
-                  <PencilIcon className="w-5 h-5 mr-2" />
+                  <PencilSquareIcon className="w-5 h-5 mr-2 text-yellow-600" />
                   <span>Edit</span>
                 </div>}
                 {/* {(message.content && isOwnMessage) && <div className="flex items-center" onClick={() => handleDeleteMessage({ 'id': message._id })}> */}
-                {(message.content && isOwnMessage) && <div className="flex items-center" onClick={(e) => {
-                    e.stopPropagation();
-                    const ok = confirm(
-                      "Are you sure you want to delete this chat?"
-                    );
-                    if (ok) {
-                      deleteChat({ 'id': message._id });
-                    }
-                  }}>
-                  <TrashIcon className="w-5 h-5 mr-2" />
-                  <span>Delete</span>
-                </div>} 
+                  <div className="flex items-center" onClick={openModal}>
+                        <TrashIcon className="w-5 h-5 mr-2 text-red-600" />
+                        <span>Delete</span>
+                  </div>
+                {(message.content && isOwnMessage && isModalOpen ) && 
+                
+                // <div className="flex items-center" onClick={(e) => {
+                //     e.stopPropagation();
+                //     const ok = confirm(
+                //       "Are you sure you want to delete this chat?"
+                //     );
+                //     if (ok) {
+                //       deleteChat({ '_id': message._id,'chat': message.chat });
+                //     }
+                //   }}>
+                //   <TrashIcon className="w-5 h-5 mr-2" />
+                //   <span>Delete</span>
+                // </div>
+                  
+                (
+                  <div 
+                    id="popup-modal" 
+                    className="fixed inset-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50"
+                  >
+                    <div className="relative p-8 w-full max-w-md max-h-full">
+                      <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                        <button 
+                          type="button" 
+                          onClick={closeModal} 
+                          className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" 
+                          data-modal-hide="popup-modal"
+                        >
+                          <svg 
+                            className="w-3 h-3" 
+                            aria-hidden="true" 
+                            xmlns="http://www.w3.org/2000/svg" 
+                            fill="none" 
+                            viewBox="0 0 14 14"
+                          >
+                            <path 
+                              stroke="currentColor" 
+                              stroke-linecap="round" 
+                              stroke-linejoin="round" 
+                              stroke-width="2" 
+                              d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                            />
+                          </svg>
+                          <span className="sr-only">Cancel</span>
+                        </button>
+                        <div className="p-4 md:p-5 text-center">
+                          <svg 
+                            className="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" 
+                            aria-hidden="true" 
+                            xmlns="http://www.w3.org/2000/svg" 
+                            fill="none" 
+                            viewBox="0 0 20 20"
+                          >
+                            <path 
+                              stroke="currentColor" 
+                              stroke-linecap="round" 
+                              stroke-linejoin="round" 
+                              stroke-width="2" 
+                              d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                            />
+                          </svg>
+                          <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+                            Delete this message?
+                          </h3>
+                          <button 
+                            onClick={closeModal} 
+                            type="button" 
+                            className="py-2.5 px-5 ms-3 mr-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                          >
+                            Cancel
+                          </button>
+                          <button 
+                            onClick={() => deleteChat({ '_id': message._id,'chat': message.chat })} 
+                            type="button" 
+                            className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center"
+                          >
+                            Delete
+                          </button>
+                          
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )          
+                
+                } 
                 {/* <div className="flex items-center">
                   <ArrowUturnLeftIcon className="w-5 h-5 mr-2" />
                   <span>Reply</span>
