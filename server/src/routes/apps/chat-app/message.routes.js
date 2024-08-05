@@ -49,12 +49,20 @@ router
     replyToMessage
 );
 
-router.delete("/:messageId",
-  mongoIdPathVariableValidator("chatId"), // Validate the chat ID path variable
-  mongoIdPathVariableValidator("messageId"), // Validate the message ID path variable
-  // sendMessageValidator(), // Validate the request body
-  validate, // Validate the request
-  deleteMessage// Handle message editing
-);
+// router.delete("/:messageId",
+//   mongoIdPathVariableValidator("chatId"), // Validate the chat ID path variable
+//   mongoIdPathVariableValidator("messageId"), // Validate the message ID path variable
+//   // sendMessageValidator(), // Validate the request body
+//   validate, // Validate the request
+//   deleteMessage// Handle message editing
+// );
 
+router
+  .route("/:chatId/:messageId")
+  .delete(
+    mongoIdPathVariableValidator("chatId"),
+    mongoIdPathVariableValidator("messageId"),
+    validate,
+    deleteMessage
+  );
 export default router;
