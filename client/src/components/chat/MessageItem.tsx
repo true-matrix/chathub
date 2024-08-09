@@ -372,10 +372,10 @@ const MessageItem: React.FC<{
                   <span>Edit</span>
                 </div>}
                 {/* {(message.content && isOwnMessage) && <div className="flex items-center" onClick={() => handleDeleteMessage({ 'id': message._id })}> */}
-                  <div className="flex items-center" onClick={openModal}>
+                {(message.content && isOwnMessage) && <div className="flex items-center" onClick={openModal}>
                         <TrashIcon className="w-5 h-5 mr-2 text-red-600" />
                         <span>Delete</span>
-                  </div>
+                  </div>}
                 {(message.content && isOwnMessage && isModalOpen ) && 
                 
                 // <div className="flex items-center" onClick={(e) => {
