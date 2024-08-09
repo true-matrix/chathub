@@ -60,11 +60,11 @@ const MESSAGE_SEEN_BY_ONE_EVENT = "seenByOne";
 const MESSAGE_SEEN_BY_ALL_EVENT = "seenByAll";
 const MESSAGE_EDITED_EVENT = "messageEdited";
 const MESSAGE_REPLY_EVENT = "messageReplied";
-const MESSAGE_DELETED_EVENT = "messageDeleted";
 const LEAVE_CHAT_EVENT = "leaveChat";
 const UPDATE_GROUP_NAME_EVENT = "updateGroupName";
 // const SOCKET_ERROR_EVENT = "socketError";
 const UPDATE_STATUS = 'updateStatus';
+const MESSAGE_DELETE_EVENT = "messageDeleted";
 
 // declare global {
 //   interface Window {
@@ -742,9 +742,15 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
   }
 
   const onMessageDeleted = (message: ChatMessageInterface) => {
-      setMessages((prev) => [message, ...prev]);
-    // Update the last message for the chat to which the received message belongs
-      updateChatLastMessage(message.chat || "", message);
+    if (message?.chat !== currentChat.current?._id) {
+      setUnreadMessages((prev) =>
+        prev.filter((msg) => msg._id !== message._id)
+      );
+    } else {
+      setMessages((prev) => prev.filter((msg) => msg._id !== message._id));
+    }
+
+    updateChatLastMessageOnDeletion(message.chat, message);
   };
 
   const onNewChat = (chat: ChatListItemInterface) => {
@@ -887,7 +893,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
     // Listener for when a message is edited.
     socket.on(MESSAGE_REPLY_EVENT, onMessageReplied);
     // Listener for when a message is deleted.
-    socket.on(MESSAGE_DELETED_EVENT, onMessageDeleted);
+    socket.on(MESSAGE_DELETE_EVENT, onMessageDeleted);
     // Listener for the initiation of a new chat.
     socket.on(NEW_CHAT_EVENT, onNewChat);
     // Listener for when a user leaves a chat.
@@ -958,7 +964,7 @@ const onMessageSeenByAll = (message : ChatMessageInterface) => {
       socket.off(MESSAGE_SEEN_BY_ALL_EVENT, onMessageSeenByAll)
       socket.off(MESSAGE_EDITED_EVENT, onMessageEdited);
       socket.off(MESSAGE_REPLY_EVENT, onMessageReplied);
-      socket.off(MESSAGE_DELETED_EVENT, onMessageDeleted);
+      socket.off(MESSAGE_DELETE_EVENT, onMessageDeleted);
       socket.off(NEW_CHAT_EVENT, onNewChat);
       socket.off(LEAVE_CHAT_EVENT, onChatLeave);
       socket.off(UPDATE_GROUP_NAME_EVENT, onGroupNameChange);
